@@ -69,11 +69,9 @@ func (s *series) initValues(values []OHLCV) {
 }
 
 func (s *series) insertInterval(v OHLCV) {
-	log.Printf("v.S %+v", v.S)
 	t := s.getLastIntervalFromTime(v.S)
 	v.S = t
 	_, ok := s.timemap[t]
-	log.Printf("insertInterval %+v %+v %v", t, v, ok)
 	if !ok {
 		s.values = append(s.values, v)
 		s.timemap[t] = &v
@@ -215,7 +213,9 @@ func (s *series) GetValueForInterval(t time.Time) *Interval {
 	inds := make(map[string]*float64)
 	for k, v := range s.items {
 		val := v.GetValueForInterval(t)
-		inds[k] = &val.Value
+		if val != nil {
+			inds[k] = &val.Value
+		}
 	}
 	v, ok := s.timemap[t]
 	if !ok {
