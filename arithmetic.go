@@ -21,16 +21,18 @@ const (
 )
 
 type arith struct {
-	t ArithmeticType
 	a Indicator
 	b Indicator
+	o ArithmeticOpts
+	t ArithmeticType
 }
 
 // NewArithmetic generates arithmetic operation on the output of two indicators
-func NewArithmetic(t ArithmeticType, a Indicator, b Indicator) Indicator {
+func NewArithmetic(t ArithmeticType, a Indicator, b Indicator, o ArithmeticOpts) Indicator {
 	return &arith{
 		a: a,
 		b: b,
+		o: o,
 		t: t,
 	}
 }
@@ -38,32 +40,42 @@ func NewArithmetic(t ArithmeticType, a Indicator, b Indicator) Indicator {
 func (i *arith) GetValueForInterval(t time.Time) *Interval {
 	// validate if needed
 	a := i.a.GetValueForInterval(t)
-	if a == nil {
-		return nil
-	}
 	b := i.b.GetValueForInterval(t)
-	if b == nil {
+	v := i.generateValue(a, b)
+	if v == nil {
 		return nil
 	}
-	v := i.generateValue(a.Value, b.Value)
 	return &Interval{
 		StartTime: t,
-		Value:     v,
+		Value:     *v,
 	}
 }
 
-func (i *arith) generateValue(a, b float64) float64 {
+func (i *arith) generateValue(ai, bi *Interval) *float64 {
+	if ai == nil || bi == nil {
+		switch i.o.NilHandlInst {
+		case NilValueReturnNil:
+			return nil
+		case NilValueReturnZero:
+			val := 0.0
+			return &val
+		}
+	}
+	var val float64
+	a := ai.Value
+	b := bi.Value
 	switch i.t {
 	case ArithmeticAddition:
-		return a + b
+		val = a + b
 	case ArithmeticSubtraction:
-		return a - b
+		val = a - b
 	case ArithmeticMultiplication:
-		return a * b
+		val = a * b
 	case ArithmeticDivision:
-		return a / b
+		val = a / b
+
 	}
-	return 0.0
+	return &val
 }
 
 func (i *arith) Update(v OHLCV) error {

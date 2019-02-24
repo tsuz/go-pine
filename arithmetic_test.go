@@ -70,7 +70,7 @@ func TestArithmetic(t *testing.T) {
 		t.Fatal(errors.Wrap(err, "error init series"))
 	}
 	for _, o := range io {
-		ar := pine.NewArithmetic(o.t, hl2, c)
+		ar := pine.NewArithmetic(o.t, hl2, c, pine.ArithmeticOpts{})
 		s.AddIndicator(o.name, ar)
 	}
 
