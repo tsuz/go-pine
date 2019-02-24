@@ -12,6 +12,7 @@ import (
 type Series interface {
 	AddIndicator(name string, i Indicator) error
 	AddExec(v TPQ) error
+	AddOHLCV(v OHLCV) error
 	GetValueForInterval(t time.Time) *Interval
 }
 
