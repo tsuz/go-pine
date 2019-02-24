@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -15,7 +16,7 @@ func TestArithmetic(t *testing.T) {
 	now := time.Now()
 	fivemin := now.Add(5 * time.Minute)
 	hl2 := NewOHLCProp(OHLCPropOpen)
-	cval := 3.21
+	cval := 15.21
 	c := NewConstant(cval)
 
 	io := []struct {
@@ -42,6 +43,11 @@ func TestArithmetic(t *testing.T) {
 			name:    "div",
 			t:       ArithmeticDivision,
 			outputs: []float64{14 / cval, 13 / cval},
+		},
+		{
+			name:    "abs",
+			t:       ArithmeticAbsDiff,
+			outputs: []float64{math.Abs(14 - cval), math.Abs(13 - cval)},
 		},
 	}
 

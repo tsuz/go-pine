@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"math"
 	"time"
 
 	"github.com/pkg/errors"
@@ -18,6 +19,8 @@ const (
 	ArithmeticMultiplication
 	// ArithmeticDivision divides values
 	ArithmeticDivision
+	// ArithmeticAbsDiff shows absolute difference math.Abs(a-b)
+	ArithmeticAbsDiff
 )
 
 type arith struct {
@@ -73,7 +76,8 @@ func (i *arith) generateValue(ai, bi *Interval) *float64 {
 		val = a * b
 	case ArithmeticDivision:
 		val = a / b
-
+	case ArithmeticAbsDiff:
+		val = math.Abs(a - b)
 	}
 	return &val
 }
