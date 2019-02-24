@@ -12,7 +12,7 @@ Pinescript to Golang
 ## Example
 
 *PineScript*
-```
+```js
 
 study("Pine test")
 
@@ -30,7 +30,7 @@ lowerBB = basis - span
 ```
 
 *Golang*
-```
+```go
 // initiate
 initialData := make([]pine.OHLCV)
 opts := pine.SeriesOpts{
