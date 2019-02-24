@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -28,10 +27,6 @@ type series struct {
 	opts     SeriesOpts
 	values   []OHLCV
 	timemap  map[time.Time]*OHLCV
-}
-
-func (s *series) getLatestInterval() *OHLCV {
-	return s.lastOHLC
 }
 
 // NewSeries generates new OHLCV serie
@@ -84,37 +79,6 @@ func (s *series) getLastIntervalFromTime(t time.Time) time.Time {
 func (s *series) getMultiplierDiff(t time.Time, st time.Time) int {
 	diff := t.Sub(st).Seconds()
 	return int(diff / float64(s.opts.Interval))
-}
-
-func (s *series) updatePoint(v TPQ, st time.Time) {
-	if s.lastOHLC != nil && s.lastOHLC.S.Equal(st) {
-		s.lastOHLC.S = st
-		s.lastOHLC.V += v.Qty
-		s.lastOHLC.C = v.Px
-		if s.lastOHLC.H < v.Px {
-			s.lastOHLC.H = v.Px
-		} else if s.lastOHLC.L > v.Px {
-			s.lastOHLC.L = v.Px
-		}
-	} else {
-		newv := OHLCV{
-			O: v.Px,
-			L: v.Px,
-			H: v.Px,
-			C: v.Px,
-			V: v.Qty,
-			S: v.Timestamp,
-		}
-		var old OHLCV
-		if len(s.values) == s.opts.Max {
-			log.Printf("Deleting as %+v %+v", s.values, s.opts.Max)
-			old, s.values = s.values[0], s.values[1:]
-			delete(s.timemap, old.S)
-		}
-		s.values = append(s.values, newv)
-		s.lastOHLC = &newv
-		s.timemap[st] = &newv
-	}
 }
 
 func (s *series) getOHLCV(t time.Time) *OHLCV {
