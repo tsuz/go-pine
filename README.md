@@ -4,6 +4,7 @@ Pinescript to Golang
 [![Build Status](https://travis-ci.org/tsuz/go-pine.svg?branch=master)](https://travis-ci.org/tsuz/go-pine) 
 [![codecov](https://codecov.io/gh/tsuz/go-pine/branch/master/graph/badge.svg)](https://codecov.io/gh/tsuz/go-pine)
 [![Go Report Card](https://goreportcard.com/badge/tsuz/go-pine)](https://goreportcard.com/report/tsuz/go-pine) 
+[![HitCount](http://hits.dwyl.io/tsuz/go-pine.svg)](http://hits.dwyl.io/tsuz/go-pine)
 
 
 ## Example
