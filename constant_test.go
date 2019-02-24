@@ -1,7 +1,6 @@
-package pine_test
+package pine
 
 import (
-	pine "go-pine"
 	"testing"
 	"time"
 
@@ -9,17 +8,17 @@ import (
 )
 
 func TestConstantInit(t *testing.T) {
-	opts := pine.SeriesOpts{
+	opts := SeriesOpts{
 		Interval: 300,
 		Max:      100,
 	}
 
 	now := time.Now()
 	fivemin := now.Add(5 * time.Minute)
-	constant := pine.NewConstant(5.0)
+	constant := NewConstant(5.0)
 
-	data := []pine.OHLCV{
-		pine.OHLCV{
+	data := []OHLCV{
+		OHLCV{
 			O: 14,
 			H: 15,
 			L: 13,
@@ -27,7 +26,7 @@ func TestConstantInit(t *testing.T) {
 			V: 131,
 			S: now,
 		},
-		pine.OHLCV{
+		OHLCV{
 			O: 13,
 			H: 18,
 			L: 10,
@@ -36,7 +35,7 @@ func TestConstantInit(t *testing.T) {
 			S: fivemin,
 		},
 	}
-	s, err := pine.NewSeries(data, opts)
+	s, err := NewSeries(data, opts)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error init series"))
 	}

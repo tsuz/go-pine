@@ -1,7 +1,6 @@
-package pine_test
+package pine
 
 import (
-	pine "go-pine"
 	"testing"
 	"time"
 
@@ -9,18 +8,18 @@ import (
 )
 
 func TestSMA(t *testing.T) {
-	opts := pine.SeriesOpts{
+	opts := SeriesOpts{
 		Interval: 300,
 		Max:      100,
 	}
 	now := time.Now()
 	fivemin := now.Add(5 * time.Minute)
-	hl2 := pine.NewOHLCProp(pine.OHLCPropClose)
-	sma1 := pine.NewSMA(hl2, 1)
-	sma2 := pine.NewSMA(hl2, 2)
-	sma3 := pine.NewSMA(hl2, 3)
-	data := []pine.OHLCV{
-		pine.OHLCV{
+	hl2 := NewOHLCProp(OHLCPropClose)
+	sma1 := NewSMA(hl2, 1)
+	sma2 := NewSMA(hl2, 2)
+	sma3 := NewSMA(hl2, 3)
+	data := []OHLCV{
+		OHLCV{
 			O: 14,
 			H: 15,
 			L: 13,
@@ -28,7 +27,7 @@ func TestSMA(t *testing.T) {
 			V: 131,
 			S: now,
 		},
-		pine.OHLCV{
+		OHLCV{
 			O: 13,
 			H: 18,
 			L: 10,
@@ -57,7 +56,7 @@ func TestSMA(t *testing.T) {
 			output: []*float64{nil, nil},
 		},
 	}
-	s, err := pine.NewSeries(data, opts)
+	s, err := NewSeries(data, opts)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error init series"))
 	}
