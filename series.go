@@ -68,6 +68,12 @@ func (s *series) insertInterval(v OHLCV) {
 	}
 }
 
+func (s *series) updateIndicators(v OHLCV) {
+	for _, ind := range s.items {
+		ind.Update(v)
+	}
+}
+
 func (s *series) getLastIntervalFromTime(t time.Time) time.Time {
 	year, month, day := t.UTC().Date()
 	st := time.Date(year, month, day, 0, 0, 0, 0, time.UTC)
