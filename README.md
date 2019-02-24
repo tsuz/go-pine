@@ -5,6 +5,7 @@ Pinescript to Golang
 [![codecov](https://codecov.io/gh/tsuz/go-pine/branch/master/graph/badge.svg)](https://codecov.io/gh/tsuz/go-pine)
 [![Go Report Card](https://goreportcard.com/badge/tsuz/go-pine)](https://goreportcard.com/report/tsuz/go-pine) 
 
+[Full Docs](https://godoc.org/github.com/tsuz/go-pine)
 
 ## Example
 
