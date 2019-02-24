@@ -32,7 +32,6 @@ func NewSMA(i Indicator, lookback int) Indicator {
 
 func (i *sma) GetValueForInterval(t time.Time) *Interval {
 	v, ok := i.genval[t]
-	log.Printf("sma: GetValueForInterval %+v %+v", v, t)
 	if !ok {
 		return nil
 	}
@@ -74,13 +73,18 @@ func (i *sma) generateAvg(t time.Time) error {
 		Time:  t,
 		Value: avg,
 	}
-	if len(i.genvalues) == cap(i.genvalues) {
-		var old *TimeValue
-		old, i.genvalues = i.genvalues[0], i.genvalues[1:]
-		delete(i.genval, old.Time)
+	_, ok := i.genval[t]
+	if !ok {
+		if len(i.genvalues) == cap(i.genvalues) {
+			var old *TimeValue
+			old, i.genvalues = i.genvalues[0], i.genvalues[1:]
+			delete(i.genval, old.Time)
+		}
+		i.genval[t] = tv
+		i.genvalues = append(i.genvalues, tv)
+	} else {
+		i.genval[t] = tv
 	}
-	i.genval[t] = tv
-	i.genvalues = append(i.genvalues, tv)
 	return nil
 }
 
@@ -89,6 +93,7 @@ func (i *sma) Update(v OHLCV) error {
 		return errors.Wrap(err, "error received from src in SMA")
 	}
 	if !i.shouldUpdate(v) {
+		log.Print("no update")
 		return nil
 	}
 	i.lastUpdate = v
@@ -117,7 +122,7 @@ func (i *sma) Update(v OHLCV) error {
 		i.srcvalues = append(i.srcvalues, &tv)
 	} else if src.Value != val.Value {
 		// source value has changed
-		i.srcval[v.S].Value = src.Value
+		i.srcval[v.S].Value = val.Value
 	}
 	i.generateAvg(v.S)
 
