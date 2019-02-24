@@ -1,27 +1,26 @@
-package pine_test
+package pine
 
 import (
-	pine "go-pine"
 	"testing"
 )
 
 func TestSeriesInit(t *testing.T) {
-	opts := pine.SeriesOpts{
+	opts := SeriesOpts{
 		Interval: 5,
 		Max:      100,
 	}
-	_, err := pine.NewSeries(nil, opts)
+	_, err := NewSeries(nil, opts)
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestSeriesInitWithError(t *testing.T) {
-	badopts := []pine.SeriesOpts{
-		pine.SeriesOpts{},
+	badopts := []SeriesOpts{
+		SeriesOpts{},
 	}
 	for i, opts := range badopts {
-		_, err := pine.NewSeries(nil, opts)
+		_, err := NewSeries(nil, opts)
 		if err == nil {
 			t.Fatalf("expected error but got none for index: %d", i)
 		}

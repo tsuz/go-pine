@@ -1,7 +1,6 @@
-package pine_test
+package pine
 
 import (
-	pine "go-pine"
 	"math"
 	"testing"
 	"time"
@@ -10,14 +9,14 @@ import (
 )
 
 func TestOHLCProp(t *testing.T) {
-	opts := pine.SeriesOpts{
+	opts := SeriesOpts{
 		Interval: 300,
 		Max:      100,
 	}
 	now := time.Now()
 	fivemin := now.Add(5 * time.Minute)
-	data := []pine.OHLCV{
-		pine.OHLCV{
+	data := []OHLCV{
+		OHLCV{
 			O: 14,
 			H: 15,
 			L: 13,
@@ -25,7 +24,7 @@ func TestOHLCProp(t *testing.T) {
 			V: 131,
 			S: now,
 		},
-		pine.OHLCV{
+		OHLCV{
 			O: 13,
 			H: 18,
 			L: 10,
@@ -35,44 +34,44 @@ func TestOHLCProp(t *testing.T) {
 		},
 	}
 	io := []struct {
-		prop   pine.OHLCProp
+		prop   OHLCProp
 		output []float64
 	}{
 		{
-			prop:   pine.OHLCPropOpen,
+			prop:   OHLCPropOpen,
 			output: []float64{14, 13},
 		},
 		{
-			prop:   pine.OHLCPropHigh,
+			prop:   OHLCPropHigh,
 			output: []float64{15, 18},
 		},
 		{
-			prop:   pine.OHLCPropLow,
+			prop:   OHLCPropLow,
 			output: []float64{13, 10},
 		},
 		{
-			prop:   pine.OHLCPropClose,
+			prop:   OHLCPropClose,
 			output: []float64{14, 15},
 		},
 		{
-			prop:   pine.OHLCPropVolume,
+			prop:   OHLCPropVolume,
 			output: []float64{131, 12},
 		},
 		{
-			prop:   pine.OHLCPropHL2,
+			prop:   OHLCPropHL2,
 			output: []float64{14, 14},
 		},
 		{
-			prop:   pine.OHLCPropHLC3,
+			prop:   OHLCPropHLC3,
 			output: []float64{14, 14.3333},
 		},
 	}
 	for i, o := range io {
-		s, err := pine.NewSeries(data, opts)
+		s, err := NewSeries(data, opts)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error init series"))
 		}
-		p := pine.NewOHLCProp(o.prop)
+		p := NewOHLCProp(o.prop)
 		s.AddIndicator("val", p)
 		nowv := s.GetValueForInterval(now)
 		if !isWithin(*(nowv.Indicators["val"]), o.output[0], 0.001) {

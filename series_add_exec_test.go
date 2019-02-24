@@ -1,7 +1,6 @@
-package pine_test
+package pine
 
 import (
-	pine "go-pine"
 	"testing"
 	"time"
 
@@ -9,18 +8,18 @@ import (
 )
 
 func TestSeriesAddExec(t *testing.T) {
-	opts := pine.SeriesOpts{
+	opts := SeriesOpts{
 		Interval: 300,
 		Max:      100,
 	}
-	_, err := pine.NewSeries(nil, opts)
+	_, err := NewSeries(nil, opts)
 	if err != nil {
 		t.Fatal(err)
 	}
 	now := time.Now()
 	fivemin := now.Add(5 * time.Minute)
-	data := []pine.OHLCV{
-		pine.OHLCV{
+	data := []OHLCV{
+		OHLCV{
 			O: 14,
 			H: 15,
 			L: 13,
@@ -28,7 +27,7 @@ func TestSeriesAddExec(t *testing.T) {
 			V: 131,
 			S: now,
 		},
-		pine.OHLCV{
+		OHLCV{
 			O: 13,
 			H: 18,
 			L: 10,
@@ -37,13 +36,13 @@ func TestSeriesAddExec(t *testing.T) {
 			S: fivemin,
 		},
 	}
-	s, err := pine.NewSeries(data, opts)
+	s, err := NewSeries(data, opts)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// This should update high, close, and volume
-	tpqhigh := pine.TPQ{
+	tpqhigh := TPQ{
 		Timestamp: fivemin,
 		Px:        20,
 		Qty:       1,
@@ -67,7 +66,7 @@ func TestSeriesAddExec(t *testing.T) {
 	}
 
 	// This should update low, close, and volume
-	tpqlow := pine.TPQ{
+	tpqlow := TPQ{
 		Timestamp: fivemin,
 		Px:        3,
 		Qty:       4,
@@ -94,7 +93,7 @@ func TestSeriesAddExec(t *testing.T) {
 
 	// This should create new interval
 	tenmin := fivemin.Add(5 * time.Minute)
-	tpqnew := pine.TPQ{
+	tpqnew := TPQ{
 		Timestamp: tenmin,
 		Px:        10,
 		Qty:       9,
@@ -124,7 +123,7 @@ func TestSeriesAddExec(t *testing.T) {
 	// This should create 2 intervals since this spans two intervals
 	// refer to ExecInst
 	twemin := tenmin.Add(10 * time.Minute)
-	tpqtwe := pine.TPQ{
+	tpqtwe := TPQ{
 		Timestamp: twemin,
 		Px:        14,
 		Qty:       3,
