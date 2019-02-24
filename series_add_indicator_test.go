@@ -35,7 +35,7 @@ func TestSeriesAddIndicator(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	hl2 := pine.NewOHLCHL2()
+	hl2 := pine.NewOHLCProp(pine.OHLCPropHL2)
 	if err := s.AddIndicator("hl2", hl2); err != nil {
 		t.Fatal("error adding indicator")
 	}

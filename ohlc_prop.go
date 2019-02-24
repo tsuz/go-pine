@@ -18,6 +18,10 @@ const (
 	OHLCPropLow
 	// OHLCPropVolume is the volume value of OHLC
 	OHLCPropVolume
+	// OHLCPropHL2 is the midpoint value of OHLC
+	OHLCPropHL2
+	// OHLCPropHLC3 is (high + low + close) / 3 of OHLC
+	OHLCPropHLC3
 )
 
 type ohlcprop struct {
@@ -65,6 +69,12 @@ func (i *ohlcprop) Update(v OHLCV) error {
 	case OHLCPropVolume:
 		valssame = i.last.V == v.V
 		val = v.V
+	case OHLCPropHL2:
+		valssame = i.last.H == v.H && i.last.L == v.L
+		val = (v.H + v.L) / 2
+	case OHLCPropHLC3:
+		valssame = i.last.H == v.H && i.last.L == v.L && i.last.C == v.C
+		val = (v.H + v.L + v.C) / 3
 	}
 	if valssame && timesame {
 		return nil
