@@ -7,6 +7,7 @@ Pinescript to Golang
 [![HitCount](http://hits.dwyl.io/tsuz/go-pine.svg)](http://hits.dwyl.io/tsuz/go-pine)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba4f05de8cb12c615695/maintainability)](https://codeclimate.com/github/tsuz/go-pine/maintainability)
 
+[Full Docs](https://godoc.org/github.com/tsuz/go-pine)
 
 ## Example
 
