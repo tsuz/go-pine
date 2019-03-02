@@ -2,13 +2,11 @@ package pine
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"time"
 )
 
 func (s *series) AddExec(v TPQ) error {
-	log.Printf("Add exec %+v", v)
 	start := s.getLastIntervalFromTime(v.Timestamp)
 	if s.lastOHLC == nil {
 		// create first one
@@ -25,7 +23,6 @@ func (s *series) AddExec(v TPQ) error {
 		} else if v.Px < itvl.L {
 			itvl.L = v.Px
 		}
-		log.Printf("Updating existing to %+v", s.lastOHLC)
 		s.updateIndicators(*itvl)
 	} else if start.Sub(s.lastOHLC.S).Seconds() > 0 {
 		// calculate how many intervals are missing
@@ -48,7 +45,6 @@ func (s *series) AddExec(v TPQ) error {
 				s.insertInterval(ohlcv)
 				s.updateIndicators(ohlcv)
 			}
-			log.Printf("New updated %+v", s.lastOHLC)
 		case EmptyInstUseZeros:
 			// figure out how many
 			m := s.getMultiplierDiff(v.Timestamp, s.lastOHLC.S)

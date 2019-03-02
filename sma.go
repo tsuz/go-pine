@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -93,7 +92,6 @@ func (i *sma) Update(v OHLCV) error {
 		return errors.Wrap(err, "error received from src in SMA")
 	}
 	if !i.shouldUpdate(v) {
-		log.Print("no update")
 		return nil
 	}
 	i.lastUpdate = v
