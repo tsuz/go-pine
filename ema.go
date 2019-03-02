@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -32,7 +31,6 @@ func NewEMA(i Indicator, lookback int) Indicator {
 
 func (i *ema) GetValueForInterval(t time.Time) *Interval {
 	v, ok := i.genval[t]
-	log.Printf("ema: GetValueForInterval %+v %+v", v, t)
 	if !ok {
 		return nil
 	}
@@ -77,9 +75,7 @@ func (i *ema) generateEma(t time.Time) error {
 		}
 		avg := val / float64(i.lookback)
 		tv.Value = avg
-		log.Printf("first value %+v", avg)
 	} else if firstidx > 0 {
-		log.Printf("Get prev value")
 		// get previous value
 		lastgen := len(i.genvalues) - 1
 		if lastgen < 0 {
