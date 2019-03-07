@@ -2,16 +2,13 @@ package pine
 
 import (
 	"fmt"
-	"log"
 	"math"
 	"time"
 )
 
 func (s *series) AddOHLCV(v OHLCV) error {
-	log.Printf("Add OHLCV %+v", v)
 	start := s.getLastIntervalFromTime(v.S)
 	v.S = start
-	log.Printf("start %+v", start)
 	if s.lastOHLC == nil {
 		// create first one
 		s.insertInterval(v)

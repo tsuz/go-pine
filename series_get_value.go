@@ -12,6 +12,7 @@ func (s *series) GetValueForInterval(t time.Time) *Interval {
 		// if time is within interval, adjust it
 		t = s.getLastIntervalFromTime(t)
 	}
+	t = t.UTC()
 	inds := make(map[string]*float64)
 	for k, v := range s.items {
 		val := v.GetValueForInterval(t)

@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -69,10 +68,7 @@ func (i *sma) generateAvg(t time.Time) error {
 		val += i.srcvalues[j].Value
 	}
 	avg := val / float64(i.lookback)
-	tv := &TimeValue{
-		Time:  t,
-		Value: avg,
-	}
+	tv := NewTimeValue(t, avg)
 	_, ok := i.genval[t]
 	if !ok {
 		if len(i.genvalues) == cap(i.genvalues) {
@@ -93,7 +89,6 @@ func (i *sma) Update(v OHLCV) error {
 		return errors.Wrap(err, "error received from src in SMA")
 	}
 	if !i.shouldUpdate(v) {
-		log.Print("no update")
 		return nil
 	}
 	i.lastUpdate = v
@@ -105,10 +100,7 @@ func (i *sma) Update(v OHLCV) error {
 	}
 	src, ok := i.srcval[v.S]
 	if !ok {
-		tv := TimeValue{
-			Time:  v.S,
-			Value: val.Value,
-		}
+		tv := NewTimeValue(v.S, val.Value)
 		if len(i.srcvalues) >= i.lookback*2 {
 			// remove first
 			var old *TimeValue
@@ -118,8 +110,8 @@ func (i *sma) Update(v OHLCV) error {
 			}
 			delete(i.srcval, old.Time)
 		}
-		i.srcval[v.S] = &tv
-		i.srcvalues = append(i.srcvalues, &tv)
+		i.srcval[v.S] = tv
+		i.srcvalues = append(i.srcvalues, tv)
 	} else if src.Value != val.Value {
 		// source value has changed
 		i.srcval[v.S].Value = val.Value

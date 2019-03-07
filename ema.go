@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -32,7 +31,6 @@ func NewEMA(i Indicator, lookback int) Indicator {
 
 func (i *ema) GetValueForInterval(t time.Time) *Interval {
 	v, ok := i.genval[t]
-	log.Printf("ema: GetValueForInterval %+v %+v", v, t)
 	if !ok {
 		return nil
 	}
@@ -66,9 +64,7 @@ func (i *ema) generateEma(t time.Time) error {
 	if firstidx < 0 {
 		return nil
 	}
-	tv := &TimeValue{
-		Time: t,
-	}
+	tv := NewTimeValue(t, 0)
 	if firstidx == 0 {
 		// get SMA for initial value
 		val := 0.0
@@ -77,9 +73,7 @@ func (i *ema) generateEma(t time.Time) error {
 		}
 		avg := val / float64(i.lookback)
 		tv.Value = avg
-		log.Printf("first value %+v", avg)
 	} else if firstidx > 0 {
-		log.Printf("Get prev value")
 		// get previous value
 		lastgen := len(i.genvalues) - 1
 		if lastgen < 0 {
@@ -119,10 +113,7 @@ func (i *ema) Update(v OHLCV) error {
 	}
 	src, ok := i.srcval[v.S]
 	if !ok {
-		tv := TimeValue{
-			Time:  v.S,
-			Value: val.Value,
-		}
+		tv := NewTimeValue(v.S, val.Value)
 		if len(i.srcvalues) >= i.lookback*2 {
 			// remove first
 			var old *TimeValue
@@ -132,8 +123,8 @@ func (i *ema) Update(v OHLCV) error {
 			}
 			delete(i.srcval, old.Time)
 		}
-		i.srcval[v.S] = &tv
-		i.srcvalues = append(i.srcvalues, &tv)
+		i.srcval[v.S] = tv
+		i.srcvalues = append(i.srcvalues, tv)
 	} else if src.Value != val.Value {
 		// source value has changed
 		i.srcval[v.S].Value = src.Value
