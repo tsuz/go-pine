@@ -63,10 +63,13 @@ func (s *series) insertInterval(v OHLCV) {
 	}
 }
 
-func (s *series) updateIndicators(v OHLCV) {
+func (s *series) updateIndicators(v OHLCV) error {
 	for _, ind := range s.items {
-		ind.Update(v)
+		if err := ind.Update(v); err != nil {
+			return errors.Wrap(err, "error updating indicator")
+		}
 	}
+	return nil
 }
 
 func (s *series) getLastIntervalFromTime(t time.Time) time.Time {
