@@ -10,14 +10,27 @@ type chg struct {
 	lastUpdate OHLCV
 	lookback   int
 	opts       *SeriesOpts
+	chgopts    *ChangeOpts
 	src        Indicator
 }
 
+type ChangeOpts struct {
+	DiffType ChangeDiffType
+}
+
+type ChangeDiffType int
+
+const (
+	ChangeDiffTypeDiff ChangeDiffType = iota
+	ChangeDiffTypeRatio
+)
+
 // NewChange creates a new Change indicator
-func NewChange(i Indicator, lookback int) Indicator {
+func NewChange(i Indicator, lookback int, opts *ChangeOpts) Indicator {
 	return &chg{
-		src:      i,
+		chgopts:  opts,
 		lookback: lookback,
+		src:      i,
 	}
 }
 
@@ -31,9 +44,15 @@ func (i *chg) GetValueForInterval(t time.Time) *Interval {
 		// handle empty case values
 		return nil
 	}
+	var computed float64
+	if i.chgopts != nil && i.chgopts.DiffType == ChangeDiffTypeRatio {
+		computed = v1.Value / v2.Value
+	} else {
+		computed = v1.Value - v2.Value
+	}
 	return &Interval{
 		StartTime: t,
-		Value:     v1.Value - v2.Value,
+		Value:     computed,
 	}
 }
 
