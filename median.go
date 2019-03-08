@@ -67,11 +67,11 @@ func (i *median) generateMedian(t time.Time) error {
 	var avg float64
 	// odd number
 	if i.lookback%2 == 1 {
-		idx := firstidx + (total-1)/2
+		idx := firstidx + (i.lookback-1)/2
 		avg = i.srcvalues[idx].Value
 	} else {
 		// even number
-		i1 := firstidx + total/2
+		i1 := firstidx + i.lookback/2
 		i2 := i1 - 1
 		avg = (i.srcvalues[i1].Value + i.srcvalues[i2].Value) / 2.0
 	}
