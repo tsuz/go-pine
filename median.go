@@ -3,6 +3,8 @@ package pine
 import (
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/pkg/errors"
 )
 
@@ -73,7 +75,10 @@ func (i *median) generateMedian(t time.Time) error {
 		// even number
 		i1 := firstidx + i.lookback/2
 		i2 := i1 - 1
-		avg = (i.srcvalues[i1].Value + i.srcvalues[i2].Value) / 2.0
+		avg, _ = decimal.NewFromFloat(i.srcvalues[i1].Value).
+			Add(decimal.NewFromFloat(i.srcvalues[i2].Value)).
+			Div(decimal.NewFromFloat(2.0)).
+			Float64()
 	}
 	tv := NewTimeValue(t, avg)
 	_, ok := i.genval[t]

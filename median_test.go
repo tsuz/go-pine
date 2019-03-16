@@ -89,7 +89,7 @@ func TestMedian(t *testing.T) {
 			if v.Indicators[name] == nil || o.output == nil {
 				t.Fatalf("expected both to be non nil but got %+v vs %+v at idx: %d for %s", v.Indicators[name], o.output, i, name)
 			}
-			if !isWithin(*(v.Indicators[name]), *(o.output)[name], 0.001) {
+			if *(v.Indicators[name]) != *(o.output)[name] {
 				t.Errorf("expected: %+v but got %+v for idx: %d for %s", *(o.output)[name], *(v.Indicators[name]), i, name)
 			}
 		}

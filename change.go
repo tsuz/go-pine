@@ -3,6 +3,8 @@ package pine
 import (
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/pkg/errors"
 )
 
@@ -44,15 +46,17 @@ func (i *chg) GetValueForInterval(t time.Time) *Interval {
 		// handle empty case values
 		return nil
 	}
-	var computed float64
+	var computed decimal.Decimal
 	if i.chgopts != nil && i.chgopts.DiffType == ChangeDiffTypeRatio {
-		computed = v1.Value / v2.Value
+		computed = decimal.NewFromFloat(v1.Value).Div(decimal.NewFromFloat(v2.Value))
+		// computed = v1.Value / v2.Value
 	} else {
-		computed = v1.Value - v2.Value
+		computed = decimal.NewFromFloat(v1.Value).Sub(decimal.NewFromFloat(v2.Value))
 	}
+	v, _ := computed.Float64()
 	return &Interval{
 		StartTime: t,
-		Value:     computed,
+		Value:     v,
 	}
 }
 

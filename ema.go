@@ -3,6 +3,8 @@ package pine
 import (
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/pkg/errors"
 )
 
@@ -67,12 +69,12 @@ func (i *ema) generateEma(t time.Time) error {
 	tv := NewTimeValue(t, 0)
 	if firstidx == 0 {
 		// get SMA for initial value
-		val := 0.0
+		val := decimal.NewFromFloat(0.0)
 		for j := firstidx; j < total; j++ {
-			val += i.srcvalues[j].Value
+			val = val.Add(decimal.NewFromFloat(i.srcvalues[j].Value))
 		}
-		avg := val / float64(i.lookback)
-		tv.Value = avg
+		avg := val.Div(decimal.NewFromFloat(float64(i.lookback)))
+		tv.Value, _ = avg.Float64()
 	} else if firstidx > 0 {
 		// get previous value
 		lastgen := len(i.genvalues) - 1
@@ -80,12 +82,16 @@ func (i *ema) generateEma(t time.Time) error {
 			return errors.New("Last gen value should have been there")
 		}
 		last := i.genvalues[lastgen]
-		k := 2.0 / float64(i.lookback+1.0)
+		k := decimal.NewFromFloat(2.0).Div(decimal.NewFromFloat(float64(i.lookback + 1.0)))
 		srcval := i.src.GetValueForInterval(t)
 		if srcval == nil {
 			return errors.New("srcval cannot be obtained in EMA")
 		}
-		tv.Value = (srcval.Value-last.Value)*float64(k) + last.Value
+		tv.Value, _ = decimal.NewFromFloat(srcval.Value).
+			Sub(decimal.NewFromFloat(last.Value)).
+			Mul(k).
+			Add(decimal.NewFromFloat(last.Value)).
+			Float64()
 	}
 	if len(i.genvalues) == cap(i.genvalues) {
 		var old *TimeValue

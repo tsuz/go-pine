@@ -1,8 +1,9 @@
 package pine
 
 import (
-	"math"
 	"time"
+
+	"github.com/shopspring/decimal"
 
 	"github.com/pkg/errors"
 )
@@ -64,22 +65,23 @@ func (i *arith) generateValue(ai, bi *Interval) *float64 {
 			return &val
 		}
 	}
-	var val float64
-	a := ai.Value
-	b := bi.Value
+	var val decimal.Decimal
+	a := decimal.NewFromFloat(ai.Value)
+	b := decimal.NewFromFloat(bi.Value)
 	switch i.t {
 	case ArithmeticAddition:
-		val = a + b
+		val = a.Add(b)
 	case ArithmeticSubtraction:
-		val = a - b
+		val = a.Sub(b)
 	case ArithmeticMultiplication:
-		val = a * b
+		val = a.Mul(b)
 	case ArithmeticDivision:
-		val = a / b
+		val = a.Div(b)
 	case ArithmeticAbsDiff:
-		val = math.Abs(a - b)
+		val = a.Sub(b).Abs()
 	}
-	return &val
+	f64, _ := val.Float64()
+	return &f64
 }
 
 func (i *arith) Update(v OHLCV) error {
