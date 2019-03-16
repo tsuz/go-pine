@@ -49,7 +49,6 @@ func (i *chg) GetValueForInterval(t time.Time) *Interval {
 	var computed decimal.Decimal
 	if i.chgopts != nil && i.chgopts.DiffType == ChangeDiffTypeRatio {
 		computed = decimal.NewFromFloat(v1.Value).Div(decimal.NewFromFloat(v2.Value))
-		// computed = v1.Value / v2.Value
 	} else {
 		computed = decimal.NewFromFloat(v1.Value).Sub(decimal.NewFromFloat(v2.Value))
 	}
