@@ -84,7 +84,7 @@ func TestEMA(t *testing.T) {
 		if v.Indicators[name] == nil || o.output == nil {
 			t.Fatalf("expected both to be non nil but got %+v vs %+v at idx: %d", v.Indicators[name], o.output, i)
 		}
-		if !isWithin(*(v.Indicators[name]), *(o.output), 0.001) {
+		if *(v.Indicators[name]) != *(o.output) {
 			t.Errorf("expected: %+v but got %+v for idx: %d", *(o.output), *(v.Indicators[name]), i)
 		}
 	}

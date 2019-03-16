@@ -1,11 +1,11 @@
 package pine
 
 import (
-	"math"
 	"testing"
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/shopspring/decimal"
 )
 
 func TestArithmetic(t *testing.T) {
@@ -22,32 +22,47 @@ func TestArithmetic(t *testing.T) {
 	io := []struct {
 		name    string
 		t       ArithmeticType
-		outputs []float64
+		outputs []decimal.Decimal
 	}{
 		{
-			name:    "add",
-			t:       ArithmeticAddition,
-			outputs: []float64{14 + cval, 13 + cval},
+			name: "add",
+			t:    ArithmeticAddition,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14).Add(decimal.NewFromFloat(float64(cval))),
+				decimal.NewFromFloat(13).Add(decimal.NewFromFloat(float64(cval))),
+			},
 		},
 		{
-			name:    "sub",
-			t:       ArithmeticSubtraction,
-			outputs: []float64{14 - cval, 13 - cval},
+			name: "sub",
+			t:    ArithmeticSubtraction,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14).Sub(decimal.NewFromFloat(float64(cval))),
+				decimal.NewFromFloat(13).Sub(decimal.NewFromFloat(float64(cval))),
+			},
 		},
 		{
-			name:    "mul",
-			t:       ArithmeticMultiplication,
-			outputs: []float64{14 * cval, 13 * cval},
+			name: "mul",
+			t:    ArithmeticMultiplication,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14).Mul(decimal.NewFromFloat(float64(cval))),
+				decimal.NewFromFloat(13).Mul(decimal.NewFromFloat(float64(cval))),
+			},
 		},
 		{
-			name:    "div",
-			t:       ArithmeticDivision,
-			outputs: []float64{14 / cval, 13 / cval},
+			name: "div",
+			t:    ArithmeticDivision,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14).Div(decimal.NewFromFloat(float64(cval))),
+				decimal.NewFromFloat(13).Div(decimal.NewFromFloat(float64(cval))),
+			},
 		},
 		{
-			name:    "abs",
-			t:       ArithmeticAbsDiff,
-			outputs: []float64{math.Abs(14 - cval), math.Abs(13 - cval)},
+			name: "abs",
+			t:    ArithmeticAbsDiff,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14).Sub(decimal.NewFromFloat(float64(cval))).Abs(),
+				decimal.NewFromFloat(13).Sub(decimal.NewFromFloat(float64(cval))).Abs(),
+			},
 		},
 	}
 
@@ -81,12 +96,14 @@ func TestArithmetic(t *testing.T) {
 
 	for i, o := range io {
 		nowv := s.GetValueForInterval(now)
-		if *(nowv.Indicators[o.name]) != o.outputs[0] {
-			t.Errorf("expected: %+v but got %+v at idx %d", o.outputs[0], *(nowv.Indicators[o.name]), i)
+		fst, _ := o.outputs[0].Float64()
+		snd, _ := o.outputs[1].Float64()
+		if *(nowv.Indicators[o.name]) != fst {
+			t.Errorf("expected: %+v but got %+v at idx %d", fst, *(nowv.Indicators[o.name]), i)
 		}
 		fivv := s.GetValueForInterval(fivemin)
-		if *(fivv.Indicators[o.name]) != o.outputs[1] {
-			t.Errorf("expected: %+v but got %+v at idx %d", o.outputs[1], *(fivv.Indicators[o.name]), i)
+		if *(fivv.Indicators[o.name]) != snd {
+			t.Errorf("expected: %+v but got %+v at idx %d", snd, *(fivv.Indicators[o.name]), i)
 		}
 	}
 }

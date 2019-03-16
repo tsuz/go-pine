@@ -8,7 +8,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type ema struct {
+type median struct {
 	lastUpdate OHLCV
 	lookback   int
 	opts       *SeriesOpts
@@ -19,9 +19,9 @@ type ema struct {
 	src        Indicator
 }
 
-// NewEMA creates a new EMA indicator
-func NewEMA(i Indicator, lookback int) Indicator {
-	return &ema{
+// NewMedian creates a new Median indicator
+func NewMedian(i Indicator, lookback int) Indicator {
+	return &median{
 		src:       i,
 		lookback:  lookback,
 		genval:    make(map[time.Time]*TimeValue, lookback),
@@ -31,7 +31,7 @@ func NewEMA(i Indicator, lookback int) Indicator {
 	}
 }
 
-func (i *ema) GetValueForInterval(t time.Time) *Interval {
+func (i *median) GetValueForInterval(t time.Time) *Interval {
 	v, ok := i.genval[t]
 	if !ok {
 		return nil
@@ -42,7 +42,7 @@ func (i *ema) GetValueForInterval(t time.Time) *Interval {
 	}
 }
 
-func (i *ema) shouldUpdate(v OHLCV) bool {
+func (i *median) shouldUpdate(v OHLCV) bool {
 	downval := i.src.GetValueForInterval(v.S)
 	if downval == nil {
 		// src value does not exist so cannot generate
@@ -59,53 +59,46 @@ func (i *ema) shouldUpdate(v OHLCV) bool {
 	return false
 }
 
-func (i *ema) generateEma(t time.Time) error {
+func (i *median) generateMedian(t time.Time) error {
 	total := len(i.srcvalues)
 	firstidx := total - i.lookback
-	// not enough data
 	if firstidx < 0 {
 		return nil
 	}
-	tv := NewTimeValue(t, 0)
-	if firstidx == 0 {
-		// get SMA for initial value
-		val := decimal.NewFromFloat(0.0)
-		for j := firstidx; j < total; j++ {
-			val = val.Add(decimal.NewFromFloat(i.srcvalues[j].Value))
-		}
-		avg := val.Div(decimal.NewFromFloat(float64(i.lookback)))
-		tv.Value, _ = avg.Float64()
-	} else if firstidx > 0 {
-		// get previous value
-		lastgen := len(i.genvalues) - 1
-		if lastgen < 0 {
-			return errors.New("Last gen value should have been there")
-		}
-		last := i.genvalues[lastgen]
-		k := decimal.NewFromFloat(2.0).Div(decimal.NewFromFloat(float64(i.lookback + 1.0)))
-		srcval := i.src.GetValueForInterval(t)
-		if srcval == nil {
-			return errors.New("srcval cannot be obtained in EMA")
-		}
-		tv.Value, _ = decimal.NewFromFloat(srcval.Value).
-			Sub(decimal.NewFromFloat(last.Value)).
-			Mul(k).
-			Add(decimal.NewFromFloat(last.Value)).
+
+	var avg float64
+	// odd number
+	if i.lookback%2 == 1 {
+		idx := firstidx + (i.lookback-1)/2
+		avg = i.srcvalues[idx].Value
+	} else {
+		// even number
+		i1 := firstidx + i.lookback/2
+		i2 := i1 - 1
+		avg, _ = decimal.NewFromFloat(i.srcvalues[i1].Value).
+			Add(decimal.NewFromFloat(i.srcvalues[i2].Value)).
+			Div(decimal.NewFromFloat(2.0)).
 			Float64()
 	}
-	if len(i.genvalues) == cap(i.genvalues) {
-		var old *TimeValue
-		old, i.genvalues = i.genvalues[0], i.genvalues[1:]
-		delete(i.genval, old.Time)
+	tv := NewTimeValue(t, avg)
+	_, ok := i.genval[t]
+	if !ok {
+		if len(i.genvalues) == cap(i.genvalues) {
+			var old *TimeValue
+			old, i.genvalues = i.genvalues[0], i.genvalues[1:]
+			delete(i.genval, old.Time)
+		}
+		i.genval[t] = tv
+		i.genvalues = append(i.genvalues, tv)
+	} else {
+		i.genval[t] = tv
 	}
-	i.genval[t] = tv
-	i.genvalues = append(i.genvalues, tv)
 	return nil
 }
 
-func (i *ema) Update(v OHLCV) error {
+func (i *median) Update(v OHLCV) error {
 	if err := i.src.Update(v); err != nil {
-		return errors.Wrap(err, "error received from src in EMA")
+		return errors.Wrap(err, "error received from src in Median")
 	}
 	if !i.shouldUpdate(v) {
 		return nil
@@ -125,7 +118,7 @@ func (i *ema) Update(v OHLCV) error {
 			var old *TimeValue
 			old, i.srcvalues = i.srcvalues[0], i.srcvalues[1:]
 			if old == nil {
-				return errors.New("unexpected nil in ema array first el")
+				return errors.New("unexpected nil in median array first el")
 			}
 			delete(i.srcval, old.Time)
 		}
@@ -133,16 +126,16 @@ func (i *ema) Update(v OHLCV) error {
 		i.srcvalues = append(i.srcvalues, tv)
 	} else if src.Value != val.Value {
 		// source value has changed
-		i.srcval[v.S].Value = src.Value
+		i.srcval[v.S].Value = val.Value
 	}
-	i.generateEma(v.S)
+	i.generateMedian(v.S)
 
 	return nil
 }
 
-func (i *ema) ApplyOpts(opts SeriesOpts) error {
+func (i *median) ApplyOpts(opts SeriesOpts) error {
 	if opts.Max < i.lookback {
-		return errors.New("SeriesOpts max cannot be less than EMA lookback value")
+		return errors.New("SeriesOpts max cannot be less than Median lookback value")
 	}
 	return nil
 }

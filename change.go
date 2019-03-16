@@ -3,6 +3,8 @@ package pine
 import (
 	"time"
 
+	"github.com/shopspring/decimal"
+
 	"github.com/pkg/errors"
 )
 
@@ -10,14 +12,27 @@ type chg struct {
 	lastUpdate OHLCV
 	lookback   int
 	opts       *SeriesOpts
+	chgopts    *ChangeOpts
 	src        Indicator
 }
 
+type ChangeOpts struct {
+	DiffType ChangeDiffType
+}
+
+type ChangeDiffType int
+
+const (
+	ChangeDiffTypeDiff ChangeDiffType = iota
+	ChangeDiffTypeRatio
+)
+
 // NewChange creates a new Change indicator
-func NewChange(i Indicator, lookback int) Indicator {
+func NewChange(i Indicator, lookback int, opts *ChangeOpts) Indicator {
 	return &chg{
-		src:      i,
+		chgopts:  opts,
 		lookback: lookback,
+		src:      i,
 	}
 }
 
@@ -31,9 +46,16 @@ func (i *chg) GetValueForInterval(t time.Time) *Interval {
 		// handle empty case values
 		return nil
 	}
+	var computed decimal.Decimal
+	if i.chgopts != nil && i.chgopts.DiffType == ChangeDiffTypeRatio {
+		computed = decimal.NewFromFloat(v1.Value).Div(decimal.NewFromFloat(v2.Value))
+	} else {
+		computed = decimal.NewFromFloat(v1.Value).Sub(decimal.NewFromFloat(v2.Value))
+	}
+	v, _ := computed.Float64()
 	return &Interval{
 		StartTime: t,
-		Value:     v1.Value - v2.Value,
+		Value:     v,
 	}
 }
 

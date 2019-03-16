@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"math"
 	"testing"
 	"time"
 
@@ -63,7 +62,7 @@ func TestOHLCProp(t *testing.T) {
 		},
 		{
 			prop:   OHLCPropHLC3,
-			output: []float64{14, 14.3333},
+			output: []float64{14, 14.333333333333334},
 		},
 	}
 	for i, o := range io {
@@ -74,16 +73,12 @@ func TestOHLCProp(t *testing.T) {
 		p := NewOHLCProp(o.prop)
 		s.AddIndicator("val", p)
 		nowv := s.GetValueForInterval(now)
-		if !isWithin(*(nowv.Indicators["val"]), o.output[0], 0.001) {
+		if *(nowv.Indicators["val"]) != o.output[0] {
 			t.Errorf("expected: %+v but got %+v for idx: %d, first val", o.output[0], *(nowv.Indicators["val"]), i)
 		}
 		fivev := s.GetValueForInterval(fivemin)
-		if !isWithin(*(fivev.Indicators["val"]), o.output[1], 0.001) {
+		if *(fivev.Indicators["val"]) != o.output[1] {
 			t.Errorf("expected: %+v but got %+v for idx: %d, seocnd val", o.output[1], *(fivev.Indicators["val"]), i)
 		}
 	}
-}
-
-func isWithin(a, b, e float64) bool {
-	return math.Abs(a-b) < e
 }
