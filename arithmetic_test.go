@@ -64,6 +64,22 @@ func TestArithmetic(t *testing.T) {
 				decimal.NewFromFloat(13).Sub(decimal.NewFromFloat(float64(cval))).Abs(),
 			},
 		},
+		{
+			name: "max",
+			t:    ArithmeticMax,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(15.21),
+				decimal.NewFromFloat(15.21),
+			},
+		},
+		{
+			name: "min",
+			t:    ArithmeticMin,
+			outputs: []decimal.Decimal{
+				decimal.NewFromFloat(14),
+				decimal.NewFromFloat(13),
+			},
+		},
 	}
 
 	data := []OHLCV{

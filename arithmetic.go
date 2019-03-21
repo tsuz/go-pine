@@ -22,6 +22,10 @@ const (
 	ArithmeticDivision
 	// ArithmeticAbsDiff shows absolute difference math.Abs(a-b)
 	ArithmeticAbsDiff
+	// ArithmeticMax shows maximum of the two
+	ArithmeticMax
+	// ArithmeticMin shows minimum of the two
+	ArithmeticMin
 )
 
 type arith struct {
@@ -79,6 +83,18 @@ func (i *arith) generateValue(ai, bi *Interval) *float64 {
 		val = a.Div(b)
 	case ArithmeticAbsDiff:
 		val = a.Sub(b).Abs()
+	case ArithmeticMax:
+		if a.GreaterThan(b) {
+			val = a
+		} else {
+			val = b
+		}
+	case ArithmeticMin:
+		if a.LessThan(b) {
+			val = a
+		} else {
+			val = b
+		}
 	}
 	f64, _ := val.Float64()
 	return &f64
