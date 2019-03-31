@@ -125,5 +125,8 @@ func (i *sma) ApplyOpts(opts SeriesOpts) error {
 	if opts.Max < i.lookback {
 		return errors.New("SeriesOpts max cannot be less than SMA lookback value")
 	}
+	if err := i.src.ApplyOpts(opts); err != nil {
+		return errors.Wrap(err, "error applying opts in source")
+	}
 	return nil
 }
