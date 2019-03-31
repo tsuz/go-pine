@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"math"
 	"testing"
 	"time"
@@ -107,7 +106,6 @@ func TestStdDev(t *testing.T) {
 		t.Fatal(err)
 	}
 	for idx, exp := range sdTests.expected {
-		log.Println(idx)
 		tim := now.Add(time.Duration(idx*itvl) * time.Second)
 		v := s.GetValueForInterval(tim)
 		if v == nil {
