@@ -1,7 +1,6 @@
 package pine
 
 import (
-	"log"
 	"math"
 	"time"
 
@@ -118,7 +117,6 @@ func (i *stddev) ApplyOpts(opts SeriesOpts) error {
 func (i *stddev) generateStdDev(t time.Time) error {
 	total := len(i.srcvalues)
 	firstidx := total - i.lookback
-	log.Printf("total %+v lookback %+v %t", total, i.lookback, firstidx < 0)
 	if firstidx < 0 {
 		return nil
 	}
@@ -144,14 +142,12 @@ func (i *stddev) generateStdDev(t time.Time) error {
 			var old *TimeValue
 			old, i.genvalues = i.genvalues[0], i.genvalues[1:]
 			delete(i.genval, old.Time)
-			log.Printf("removing %+v", old)
 		}
 		i.genval[t] = tv
 		i.genvalues = append(i.genvalues, tv)
 	} else {
 		i.genval[t] = tv
 	}
-	log.Printf("end val %+v %+v %+v", stddev, t, tv)
 	return nil
 }
 
