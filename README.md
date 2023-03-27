@@ -81,12 +81,37 @@ log.Printf("Indicator values: %+v", v.Indicators)
 ```
 
 
-## Limitations
+## Supported Features
 
-- Assumes initial data is sequential in time ascending order
+The functions are listed in the [Pine Script reference manual V5][1]
+
+Language Operators
+
+| Pine Script | Go Pine |
+|--|--|
+| != | .NotEq() | 
+| == | .Eq() | 
+| + | ArithmeticAddition | 
+| - | AArithmeticSubtraction | 
+| * | ArithmeticMultiplication |
+| / | ArithmeticDivision |
+
+Mathematical Operators
+
+| Pine Script | Go Pine | 
+|--|--|
+| math.max | ArithmeticMax |
+| math.min | ArithmeticMin |
+
+Technical Indicators
+
+| Pine Script | Go Pine |
+|--|--|
+| ta.median | .NewMedian()| 
+| ta.sma | .NewSMA() | 
+| ta.stdev | .NewStDev() | 
 
 
-## Features
-TBD
 
+[1]: https://www.tradingview.com/pine-script-reference/v5/
 
