@@ -1,14 +1,17 @@
-# go-pine
-Pinescript to Golang
+# Go Pine
+
+Backtesting tool written in Golang inspired by PineScript from TradingView.
 
 [![Build Status](https://dl.circleci.com/status-badge/img/gh/tsuz/go-pine/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tsuz/go-pine/tree/main)
-
 [![docs godocs](https://img.shields.io/badge/docs-godoc-brightgreen.svg?style=flat)](https://godoc.org/github.com/tsuz/go-pine)
 [![codecov](https://codecov.io/gh/tsuz/go-pine/branch/main/graph/badge.svg?token=1EeuK2Ro6F)](https://codecov.io/gh/tsuz/go-pine)
 [![Go Report Card](https://goreportcard.com/badge/tsuz/go-pine)](https://goreportcard.com/report/tsuz/go-pine) 
 [![HitCount](http://hits.dwyl.io/tsuz/go-pine.svg)](http://hits.dwyl.io/tsuz/go-pine)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba4f05de8cb12c615695/maintainability)](https://codeclimate.com/github/tsuz/go-pine/maintainability)
 
+## Requirements
+
+- Golang v1.20 (recommended)
 
 ## Example
 
