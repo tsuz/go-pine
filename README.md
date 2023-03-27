@@ -15,7 +15,10 @@ Backtesting tool written in Golang inspired by PineScript from TradingView.
 
 ## Example
 
-*PineScript*
+### Backtest
+
+**Pine Script**
+
 ```js
 
 study("Pine test")
@@ -31,52 +34,74 @@ multi = basis * basis2
 upperBB = basis + span
 lowerBB = basis - span
 
+strategy.entry("Buy1", strategy.long, qty=1, limit=1234.56, stop=1211, comment="My Long Signal")
 ```
 
 *Golang*
+
+my_strategy.go
+
 ```go
-// initiate
-initialData := make([]pine.OHLCV)
-opts := pine.SeriesOpts{
-  Interval: 300,
-  Max: 30,
-  EmptyInst: pine.EmptyInstUseLastClose,
+
+type mystrat struct{
+  ser: pine.Series
 }
-s, _ := pine.NewSeries(initialData, opts)
 
-// load indicators
-short := 5
-long := 20
-span := 10
-source := pine.NewOHLCProp(pine.OHLCPropClose)
-basis := pine.NewSMA(source, short)
-basis2 := pine.NewSMA(source, long)
-multi := pine.NewArithmetic(pine.ArithmeticMultiplication, basis, basis2)
-upperBB := pine.NewArithmetic(pine.ArithmeticAddition, basis, span)
-lowerBB := pine.NewArithmetic(pine.ArithmeticSubtraction, basis, span)
+func NewMyStrat() (pine.BackTestable, error) {
+  opts := pine.OHLCVSeriesOpts{
+    // OHLC interval in milliseconds. Below equates to a 5 minute interval.
+    Interval: 300000,
+    
+    // The first OHLCV that will be fed into the backtest logic. This will also be used as the OHLCV's start offset
+    StartTime: time.Date(2009, 1, 1, 12, 0, 0, 0, time.UTC),
+    
+    // How many look backs to cache. Defaults to 100.
+    Max: 500,
+  }
+  ser, err := pine.NewOHLCVSeries(initialData, opts)
+  s := &strat{ ser: ser }
+  return s, err
+}
 
-s.AddIndicator("upperBB", upperBB)
-s.AddIndicator("lowerBB", lowerBB)
-s.AddIndicator("multi", multi)
+func (mystrat *s) OnNextOHLCV(st Strategy) error {
+  series := st.GetOHLCVSeries()
 
-// then add OHLCV or exec and play
-t := time.Now()
-s.AddOHLCV(pine.OHLCV{O: 14, L: 10, H: 19, C: 14, V: 432, S: t })
-s.AddOHLCV(pine.OHLCV{O: 15, L: 8, H: 18, C: 15, V: 192, S: t.Add(time.Minute * 5) })
-s.AddOHLCV(pine.OHLCV{O: 16, L: 9, H: 16, C: 13, V: 325, S: t.Add(time.Minute * 10) })
-s.AddOHLCV(pine.OHLCV{O: 17, L: 10, H: 19, C: 11, V: 82, S: t.Add(time.Minute * 15) })
-...
+  short := 5
+  long := 20
+  span := 10
+  source := pine.Close
 
-// or, if you're relying on exec information
-s.AddExec(pine.TPQ{Qty: 13, Px: 12.3, Timestamp: t.Add(time.Second * 4) })
-s.AddExec(pine.TPQ{Qty: 18, Px: 12.5, Timestamp: t.Add(time.Second * 8) })
-s.AddExec(pine.TPQ{Qty: 12, Px: 12.6, Timestamp: t.Add(time.Second * 8) })
+  basis := series.GetSMA(source, short)
+  basis2 := series.GetSMA(source, long)
+  multi := basis.Add(basis2)
+  upperBB := basis.AddInt(span)
+  lowerBB := basis.SubInt(span)
+  
+  log.Printf("Get upper boundary", upperBB)
+  log.Printf("Get lower boundary", lowerBB)
 
+  entry1 := pine.EntryOpts {
+    Comment: "My Long Signal",
+    Limit: "1234.56",
+    Stop: "1211",
+    Qty: "1",
+    Side: pine.Long,
+  }
+  st.Entry("Buy1", entry1)
 
-v := s.GetValueForInterval(t)
+  return nil
+}
+```
 
-log.Printf("OHLCV: %+v", v.OHLCV)
-log.Printf("Indicator values: %+v", v.Indicators)
+**main.go**
+
+```go
+
+s, _ := NewMyStrat()
+res, _ := pine.RunBacktest(s)
+
+log.Printf("Results are %+v", res)
+// NetProfit: 649%, Total Closed Trades: 436, Percent Profitable: 61.93%, Profit Factor: 1.622, Max Drawdown: -27.44%, Avg Trade: 14.89, Avg # Bars in Trade
 
 ```
 
