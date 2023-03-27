@@ -77,12 +77,7 @@ log.Printf("Indicator values: %+v", v.Indicators)
 ```
 
 
-## Limitations
-
-- Assumes initial data is sequential in time ascending order
-
-
-## Features
+## Supported Features
 
 The functions are listed in the [Pine Script reference manual V5][1]
 
