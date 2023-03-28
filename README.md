@@ -48,34 +48,22 @@ type mystrat struct{
 }
 
 func NewMyStrat() (pine.BackTestable, error) {
-  opts := pine.OHLCVSeriesOpts{
-    // OHLC interval in milliseconds. Below equates to a 5 minute interval.
-    Interval: 300000,
-    
-    // The first OHLCV that will be fed into the backtest logic. This will also be used as the OHLCV's start offset
-    StartTime: time.Date(2009, 1, 1, 12, 0, 0, 0, time.UTC),
-    
-    // How many look backs to cache. Defaults to 100.
-    Max: 500,
-  }
-  ser, err := pine.NewOHLCVSeries(initialData, opts)
-  s := &strat{ ser: ser }
-  return s, err
+  m := &mystrat{}
+  return m, err
 }
 
-func (mystrat *s) OnNextOHLCV(st Strategy) error {
-  series := st.GetOHLCVSeries()
+func (mystrat *m) OnNextOHLCV(strategy pine.Strategy, s pine.OHLCVSeries, states map[string]interface{}) error {
 
   short := 5
   long := 20
   span := 10
   source := pine.Close
 
-  basis := series.GetSMA(source, short)
-  basis2 := series.GetSMA(source, long)
+  basis := s.GetSMA(source, short)
+  basis2 := s.GetSMA(source, long)
   multi := basis.Add(basis2)
-  upperBB := basis.AddInt(span)
-  lowerBB := basis.SubInt(span)
+  upperBB := basis.AddConst(span)
+  lowerBB := basis.AddConst(span)
   
   log.Printf("Get upper boundary", upperBB)
   log.Printf("Get lower boundary", lowerBB)
@@ -87,7 +75,7 @@ func (mystrat *s) OnNextOHLCV(st Strategy) error {
     Qty: "1",
     Side: pine.Long,
   }
-  st.Entry("Buy1", entry1)
+  strategy.Entry("Buy1", entry1)
 
   return nil
 }
@@ -98,7 +86,18 @@ func (mystrat *s) OnNextOHLCV(st Strategy) error {
 ```go
 
 s, _ := NewMyStrat()
-res, _ := pine.RunBacktest(s)
+opts := pine.OHLCVSeriesOpts{
+  // OHLC interval in milliseconds. Below equates to a 5 minute interval.
+  Interval: 300000,
+  
+  // The first OHLCV that will be fed into the backtest logic. This will also be used as the OHLCV's start offset
+  StartTime: time.Date(2009, 1, 1, 12, 0, 0, 0, time.UTC),
+  
+  // How many look backs to cache. Defaults to 100.
+  Max: 500,
+}
+ohlcv, _ := pine.NewOHLCVSeries(initialData, opts)
+res, _ := pine.RunBacktest(ohlcv, s)
 
 log.Printf("Results are %+v", res)
 // NetProfit: 649%, Total Closed Trades: 436, Percent Profitable: 61.93%, Profit Factor: 1.622, Max Drawdown: -27.44%, Avg Trade: 14.89, Avg # Bars in Trade
