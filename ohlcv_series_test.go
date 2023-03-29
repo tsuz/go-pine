@@ -42,6 +42,12 @@ func TestNewOHLCVSeries(t *testing.T) {
 			if val != v.vals[j] {
 				t.Errorf("Expected %+v to bs %+v but got %+v", p, v.vals[j], val)
 			}
+			t.Error()
 		}
+	}
+
+	// if this is last, return nil
+	if v := s.Next(); v != nil {
+		t.Errorf("Expected to be nil but got %+v", v)
 	}
 }

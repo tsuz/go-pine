@@ -1,29 +1,5 @@
 package pine
 
-import (
-	"time"
-)
-
-type ValueSeries interface {
-	// ID() string
-	// Add(ValueSeries) ValueSeries
-	// AddConst(float64) ValueSeries
-	// Div(ValueSeries) ValueSeries
-	// DivConst(float64) ValueSeries
-	// Mul(ValueSeries) ValueSeries
-	// MulConst(float64) ValueSeries
-	// Sub(ValueSeries) ValueSeries
-	// SubConst(float64) ValueSeries
-
-	// appends new value
-	Push(time.Time, float64)
-
-	Val() float64
-	Get(time.Time) (float64, bool)
-	SetCurrent(time.Time) bool
-	// GetCurrent() (time.Time, float64, bool)
-}
-
 type OHLCVSeries interface {
 	// GetSeries returns series of values for a property
 	GetSeries(OHLCProp) ValueSeries
@@ -64,7 +40,10 @@ func (s *ohlcvSeries) Next() *OHLCV {
 		s.cur = &s.ohlcv[0]
 		return s.cur
 	}
-
+	// don't move the cursor just yet
+	if s.cur.next == nil {
+		return nil
+	}
 	s.cur = s.cur.next
 	return s.cur
 }
