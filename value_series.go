@@ -28,7 +28,7 @@ type ValueSeries interface {
 	// GetFirst gets the first item in value series
 	GetFirst() *Value
 
-	Val() float64
+	Val() *float64
 	SetCurrent(time.Time) bool
 	GetCurrent() *Value
 }
@@ -92,8 +92,11 @@ func (s *valueSeries) GetLast() *Value {
 	return s.getValue(s.ord[len(s.ord)-1])
 }
 
-func (s *valueSeries) Val() float64 {
-	return s.cur.v
+func (s *valueSeries) Val() *float64 {
+	if s.cur == nil {
+		return nil
+	}
+	return &s.cur.v
 }
 
 func (s *valueSeries) Get(t time.Time) *Value {

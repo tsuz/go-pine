@@ -39,7 +39,7 @@ func TestNewOHLCVSeries(t *testing.T) {
 		for j, p := range v.prop {
 			vals := s.GetSeries(p)
 			val := vals.Val()
-			if val != v.vals[j] {
+			if *val != v.vals[j] {
 				t.Errorf("Expected %+v to bs %+v but got %+v", p, v.vals[j], val)
 			}
 		}
