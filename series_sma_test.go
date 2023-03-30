@@ -8,7 +8,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// TestSeriesSMANoIteration tests when no next() has been called
+// TestSeriesSMANoIteration tests this sceneario where there's no iteration yet
+//
+// t=time.Time (no iteration) | 1  |  2   | 3  | 4  |
+// p=ValueSeries              | 14 |  15  | 17 | 18 |
+// sma=ValueSeries            |    |      |    |    |
 func TestSeriesSMANoIteration(t *testing.T) {
 
 	start := time.Now()
@@ -33,8 +37,87 @@ func TestSeriesSMANoIteration(t *testing.T) {
 	}
 }
 
-// TestSeriesSMAIteration tests when no next() has been called
-func TestSeriesSMAIteration(t *testing.T) {
+// TestSeriesSMAIteration3 tests this scneario when the iterator is at t=3 is not at the end
+//
+// t=time.Time (no iteration) | 1  |  2   | 3  (here) | 4  |
+// p=ValueSeries              | 13 |  15  | 17        | 18 |
+// sma(close, 1)              |    |      | 17        |    |
+// sma(close, 2)              |    |      | 16        |    |
+// sma(close, 3)              |    |      | 15        |    |
+// sma(close, 4)              |    |      | nil       |    |
+func TestSeriesSMAIteration3(t *testing.T) {
+
+	start := time.Now()
+	data := OHLCVTestData(start, 4, 5*60*1000)
+	data[0].C = 13
+	data[1].C = 15
+	data[2].C = 17
+	data[3].C = 18
+
+	log.Printf("Data[0].S, %+v, 3s: %+v", data[0].S, data[3].S)
+
+	series, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	series.Next()
+	series.Next()
+	series.Next()
+
+	testTable := []struct {
+		lookback int
+		exp      float64
+		isNil    bool
+	}{
+		{
+			lookback: 1,
+			exp:      17,
+		},
+		{
+			lookback: 2,
+			exp:      16,
+		},
+		{
+			lookback: 3,
+			exp:      15,
+		},
+		{
+			lookback: 4,
+			exp:      0,
+			isNil:    true,
+		},
+	}
+
+	for i, v := range testTable {
+		prop := series.GetSeries(OHLCPropClose)
+
+		sma, err := SMA(prop, int64(v.lookback))
+		if err != nil {
+			t.Fatal(errors.Wrap(err, "error SMA"))
+		}
+
+		if sma == nil {
+			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
+		}
+		if v.isNil && sma.Val() != nil {
+			t.Error("expected to be nil but got non nil")
+		}
+		if !v.isNil && *sma.Val() != v.exp {
+			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *sma.Val(), v.lookback)
+		}
+	}
+}
+
+// TestSeriesSMAIteration4 tests this scneario when the iterator is at t=4
+//
+// t=time.Time (no iteration) | 1  |  2   | 3  | 4 (here)  |
+// p=ValueSeries              | 14 |  15  | 17 | 18        |
+// sma(close, 1)              |    |      |    | 18        |
+// sma(close, 2)              |    |      |    | 17.5      |
+// sma(close, 3)              |    |      |    | 17        |
+// sma(close, 4)              |    |      |    | 16.5      |
+func TestSeriesSMAIteration4(t *testing.T) {
 
 	start := time.Now()
 	data := OHLCVTestData(start, 4, 5*60*1000)
@@ -93,6 +176,11 @@ func TestSeriesSMAIteration(t *testing.T) {
 	}
 }
 
+// TestSeriesSMANotEnoughData tests this scneario when the lookback is more than the number of data available
+//
+// t=time.Time    | 1  |  2   | 3  | 4 (here)  |
+// p=ValueSeries  | 14 |  15  | 17 | 18        |
+// sma(close, 5)  |    |      |    | nil       |
 func TestSeriesSMANotEnoughData(t *testing.T) {
 
 	start := time.Now()
