@@ -104,6 +104,11 @@ log.Printf("Results are %+v", res)
 
 ```
 
+## Data Integrity
+
+This library does not make assumptions about the initial OHLCV data which means the developer is responsible for generating the OHLCV slice in an ascending order with correct intervals. The technical analysis indicators uses each candle as a period and so if there are missing time period (i.e. no executions), then it will skip that interval. 
+
+`time.Time` is sometimes used as the unique identifier for `Value` struct so avoid having duplicate time.
 
 ## Supported Features
 
