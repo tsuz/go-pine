@@ -176,6 +176,52 @@ func TestSeriesSMAIteration4(t *testing.T) {
 	}
 }
 
+// TestSeriesSMANested tests nested SMA
+//
+// t=time.Time (no iteration) | 1  |  2    | 3     | 4 (here)  |
+// p=ValueSeries              | 14 |  15   | 17    | 18        |
+// sma(close, 2)              |    |  14.5 | 16    | 17.5      |
+// sma(sma(close, 2), 2)      |    |       | 15.25 | 16.75     |
+func TestSeriesSMANested(t *testing.T) {
+
+	start := time.Now()
+	data := OHLCVTestData(start, 4, 5*60*1000)
+	data[0].C = 14
+	data[1].C = 15
+	data[2].C = 17
+	data[3].C = 18
+
+	log.Printf("Data[0].S, %+v, 3s: %+v", data[0].S, data[3].S)
+
+	series, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	series.Next()
+	series.Next()
+	series.Next()
+
+	testTable := []float64{15.25, 16.75}
+
+	for _, v := range testTable {
+		prop := series.GetSeries(OHLCPropClose)
+
+		sma, err := SMA(prop, 2)
+		if err != nil {
+			t.Fatal(errors.Wrap(err, "error SMA"))
+		}
+		sma2, err := SMA(sma, int64(2))
+		if err != nil {
+			t.Fatal(errors.Wrap(err, "error SMA2"))
+		}
+		if *sma2.Val() != v {
+			t.Errorf("expectd %+v but got %+v", v, *sma2.Val())
+		}
+		series.Next()
+	}
+}
+
 // TestSeriesSMANotEnoughData tests this scneario when the lookback is more than the number of data available
 //
 // t=time.Time    | 1  |  2   | 3  | 4 (here)  |
