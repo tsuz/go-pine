@@ -82,7 +82,7 @@ func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {
 			// previous ema exists, just do multiplication to that
 			if preve != nil {
 				nextEMA := (v.v-preve.v)*mul + preve.v
-				ema.Push(v.t, nextEMA)
+				ema.Set(v.t, nextEMA)
 				continue
 			}
 		}
@@ -93,7 +93,7 @@ func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {
 
 		if fseek == l {
 			avg := ftot / float64(fseek)
-			ema.Push(v.t, avg)
+			ema.Set(v.t, avg)
 		}
 
 		if v.next == nil {

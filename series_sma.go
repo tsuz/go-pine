@@ -96,7 +96,7 @@ func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 			if toUpdate[k].seeked == l {
 				if toUpdate[k].total > 0 {
 					v := toUpdate[k].valuetot / float64(toUpdate[k].total)
-					sma.Push(f.t, v)
+					sma.Set(f.t, v)
 				}
 				delete(calcs, k)
 			}
