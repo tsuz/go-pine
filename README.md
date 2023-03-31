@@ -120,25 +120,25 @@ Language Operators
 |--|--|
 | != | .NotEq() | 
 | == | .Eq() | 
-| + | ArithmeticAddition | 
-| - | AArithmeticSubtraction | 
-| * | ArithmeticMultiplication |
-| / | ArithmeticDivision |
+| + | ValueSeries.Add() | 
+| - | ValueSeries.Sub() | 
+| * | ValueSeries.Mul() |
+| / | ValueSeries.Div() |
 
 Mathematical Operators
 
 | Pine Script | Go Pine | 
 |--|--|
-| math.max | ArithmeticMax |
-| math.min | ArithmeticMin |
+| | |
 
 Technical Indicators
 
 | Pine Script | Go Pine |
 |--|--|
-| ta.median | .NewMedian()| 
-| ta.sma | .NewSMA() | 
-| ta.stdev | .NewStDev() | 
+| ta.ema | pine.EMA() | 
+| ta.rma | pine.RMA() | 
+| ta.rsi | pine.RSI() | 
+| ta.sma | pine.SMA() | 
 
 
 
