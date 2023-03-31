@@ -114,10 +114,6 @@ func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 	return sma, nil
 }
 
-func RSI(p ValueSeries, l int64) (ValueSeries, error) {
-	return nil, nil
-}
-
 var cache map[string]ValueSeries = make(map[string]ValueSeries)
 
 func getCache(key string) ValueSeries {
