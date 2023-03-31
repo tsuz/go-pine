@@ -2,15 +2,7 @@ package pine
 
 import (
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
-
-type emaCalcItem struct {
-	valuetot float64
-	total    int64
-	seeked   int64
-}
 
 // EMA generates a ValueSeries of exponential moving average
 // the variable ema=ValueSeries is the exponentially weighted moving average values of p=ValueSeries
@@ -28,25 +20,18 @@ type emaCalcItem struct {
 // ema(close, 1)              | 13  | 15  | 17  | 18      |
 // ema(close, 2)              | nil | 14  | 16  | 17.3333 |
 func EMA(p ValueSeries, l int64) (ValueSeries, error) {
-	if p == nil || p.GetCurrent() == nil {
-		log.Infof("p is nil %t, p.GetCurrent is nil %t", p == nil, p.GetCurrent() == nil)
-		return nil, nil
-	}
 	key := fmt.Sprintf("ema:%s:%d", p.ID(), l)
 	ema := getCache(key)
 	if ema == nil {
-		log.Printf("Creating new EMA value series")
 		ema = NewValueSeries()
+	}
+
+	if p == nil || p.GetCurrent() == nil {
+		return ema, nil
 	}
 
 	// current available value
 	stop := p.GetCurrent()
-	val := ema.Get(stop.t)
-
-	// if ema exists for this time period, return what we have
-	if val != nil {
-		return ema, nil
-	}
 
 	ema = getEMA(stop, p, ema, l)
 
@@ -79,17 +64,14 @@ func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {
 	for {
 		v := vs.Get(itervt)
 		if v == nil {
-			log.Printf("time to stop (%t) or v is nil (%t), t=%+v", v == nil, v.t.Equal(stop.t), itervt)
 			break
 		}
 		e := ema.Get(itervt)
 		if e != nil && v.next == nil {
-			log.Printf("next value doesnt exist. ending  %+v", v.t)
 			break
 		}
 		if e != nil {
 			itervt = v.next.t
-			log.Printf("ema exists skpping at %+v", v.t)
 			continue
 		}
 
@@ -100,7 +82,6 @@ func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {
 			// previous ema exists, just do multiplication to that
 			if preve != nil {
 				nextEMA := (v.v-preve.v)*mul + preve.v
-				log.Printf("pushed ema to existing for %+v: %+v", v.t, nextEMA)
 				ema.Push(v.t, nextEMA)
 				continue
 			}
@@ -112,57 +93,17 @@ func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {
 
 		if fseek == l {
 			avg := ftot / float64(fseek)
-			log.Printf("pushed new ema for %+v: %+v", v.t, avg)
 			ema.Push(v.t, avg)
 		}
 
 		if v.next == nil {
-			log.Printf("Next doesn't exist breaking at %+v", v.t)
 			break
 		}
 		if v.t.Equal(stop.t) {
-			log.Printf("time to stop %+v", stop.t)
 			break
 		}
 		itervt = v.next.t
 	}
-
-	// emaval := ema.Get(v.t)
-	// if emaval != nil {
-	// 	log.Printf("EMA value already exists at %+v", v.v)
-	// 	return ema
-	// }
-
-	// pushEMA := func(ema ValueSeries, v *Value, emaval *Value, mul float64) {
-	// 	newval := (v.v-emaval.prev.v)*mul + emaval.v
-	// 	log.Printf("Adding EMA at value: %+v, ema: %+v", v.v, newval)
-	// 	ema.Push(v.t, newval)
-	// }
-
-	// log.Printf("Get ema for v: %+v, l: %+v, ema is not nil: %t, current t: %+v, hasprev: %t", v.v, l, emaval != nil, v.t, v.prev != nil)
-
-	// if emaval != nil && emaval.prev != nil {
-	// 	pushEMA(ema, v, emaval, mul)
-	// 	return ema
-	// }
-	// if v.prev == nil {
-	// 	if l > 1 {
-	// 		return ema
-	// 	}
-	// 	log.Printf("Adding EMA at value: %+v, ema: %+v", v.v, v.v)
-	// 	ema.Push(v.t, v.v)
-	// 	return ema
-	// }
-	// // needs to fetch previous values before proceeding
-	// if emaval == nil || emaval.prev == nil {
-	// 	// recursively get previous values
-	// 	ema = getEMA(v.prev, ema, l)
-	// 	emaval := ema.Get(v.t)
-	// 	log.Printf("Done so looking up: %+v emaval: %+v", v.t, emaval)
-	// 	if emaval != nil && emaval.prev != nil {
-	// 		pushEMA(ema, v, emaval, mul)
-	// 	}
-	// }
 
 	return ema
 }

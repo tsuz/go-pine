@@ -8,6 +8,31 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TestSeriesEMANoData tests no data scenario
+//
+// t=time.Time (no iteration) | |
+// p=ValueSeries              | |
+// ema=ValueSeries            | |
+func TestSeriesEMANoData(t *testing.T) {
+
+	start := time.Now()
+	data := OHLCVTestData(start, 4, 5*60*1000)
+
+	series, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	prop := series.GetSeries(OHLCPropClose)
+	ema, err := EMA(prop, 2)
+	if err != nil {
+		t.Fatal(errors.Wrap(err, "error EMA"))
+	}
+	if ema == nil {
+		t.Error("Expected to be non nil but got nil")
+	}
+}
+
 // TestSeriesEMANoIteration tests this sceneario where there's no iteration yet
 //
 // t=time.Time (no iteration) | 1  |  2   | 3  | 4  |
@@ -32,20 +57,20 @@ func TestSeriesEMANoIteration(t *testing.T) {
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error EMA"))
 	}
-	if ema != nil {
-		t.Errorf("Expected to be nil but got %+v", ema)
+	if ema == nil {
+		t.Error("Expected to be non-nil but got nil")
 	}
 }
 
 // TestSeriesEMAIteration4 tests this scneario when the iterator is at t=4 is not at the end
 //
-// t=time.Time (no iteration) | 1   |  2  | 3           | 4 (time here) |
-// p=ValueSeries              | 13  | 15  | 17          | 18            |
-// ema(close, 1)              | 13  | 15  | 17          | 18            |
-// ema(close, 2)              | nil | 14  | 16          | 17.3333       |
-// ema(close, 3)              | nil | nil | 15          | 16.5          |
-// ema(close, 4)              | nil | nil | nil         | 15.75         |
-// ema(close, 5)              | nil | nil | nil         | nil           |
+// t=time.Time     | 1   |  2  | 3           | 4 (time here) |
+// p=ValueSeries   | 13  | 15  | 17          | 18            |
+// ema(close, 1)   | 13  | 15  | 17          | 18            |
+// ema(close, 2)   | nil | 14  | 16          | 17.3333       |
+// ema(close, 3)   | nil | nil | 15          | 16.5          |
+// ema(close, 4)   | nil | nil | nil         | 15.75         |
+// ema(close, 5)   | nil | nil | nil         | nil           |
 func TestSeriesEMAIteration4(t *testing.T) {
 
 	start := time.Now()
@@ -115,13 +140,13 @@ func TestSeriesEMAIteration4(t *testing.T) {
 
 // TestSeriesEMAIteration3 tests this scneario when the iterator is at t=4 is not at the end
 //
-// t=time.Time (no iteration) | 1   |  2  | 3 (time here)  | 4             |
-// p=ValueSeries              | 13  | 15  | 17             | 18            |
-// ema(close, 1)              | 13  | 14  | 17             | 18            |
-// ema(close, 2)              | nil | 14  | 16             | 17.3333       |
-// ema(close, 3)              | nil | nil | 15             | 16.5          |
-// ema(close, 4)              | nil | nil | nil            | 15.75         |
-// ema(close, 5)              | nil | nil | nil            | nil           |
+// t=time.Time    | 1   |  2  | 3 (time here)  | 4             |
+// p=ValueSeries  | 13  | 15  | 17             | 18            |
+// ema(close, 1)  | 13  | 14  | 17             | 18            |
+// ema(close, 2)  | nil | 14  | 16             | 17.3333       |
+// ema(close, 3)  | nil | nil | 15             | 16.5          |
+// ema(close, 4)  | nil | nil | nil            | 15.75         |
+// ema(close, 5)  | nil | nil | nil            | nil           |
 func TestSeriesEMAIteration3(t *testing.T) {
 
 	start := time.Now()
@@ -194,11 +219,11 @@ func TestSeriesEMAIteration3(t *testing.T) {
 
 // TestSeriesEMAIteration3 tests this scneario when the iterator is at t=4 is not at the end
 //
-// t=time.Time (no iteration) | 1   |  2  | 3              | 4 (time here) |
-// p=ValueSeries              | 13  | 15  | 17             | 18            |
-// ema(close, 1)              | 13  | 14  | 17             | 18            |
-// ema(close, 2)              | nil | 14  | 16             | 17.3333       |
-// ema(ema(close, 2), 2)      | nil | nil | 15             | 16.5555       |
+// t=time.Time 		 	  | 1   |  2  | 3              | 4 (time here) |
+// p=ValueSeries          | 13  | 15  | 17             | 18            |
+// ema(close, 1)          | 13  | 14  | 17             | 18            |
+// ema(close, 2)          | nil | 14  | 16             | 17.3333       |
+// ema(ema(close, 2), 2)  | nil | nil | 15             | 16.5555       |
 func TestSeriesEMANested(t *testing.T) {
 
 	start := time.Now()
