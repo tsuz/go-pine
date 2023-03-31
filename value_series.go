@@ -9,7 +9,7 @@ import (
 
 type ValueSeries interface {
 	ID() string
-	// Add(ValueSeries) ValueSeries
+	Add(ValueSeries) ValueSeries
 	AddConst(float64) ValueSeries
 	Div(ValueSeries) ValueSeries
 	// DivConst(float64) ValueSeries
@@ -76,6 +76,22 @@ func (s *valueSeries) Copy() ValueSeries {
 		newv.SetCurrent(cur.t)
 	}
 	return newv
+}
+
+func (s *valueSeries) Add(v ValueSeries) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		newv := v.Get(f.t)
+		if newv != nil {
+			copied.Set(f.t, f.v+newv.v)
+		}
+		f = f.next
+	}
+	return copied
 }
 
 func (s *valueSeries) AddConst(v float64) ValueSeries {
