@@ -4,22 +4,20 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/twinj/uuid"
 )
 
 type ValueSeries interface {
 	ID() string
 	// Add(ValueSeries) ValueSeries
-	// AddConst(float64) ValueSeries
-	// Div(ValueSeries) ValueSeries
+	AddConst(float64) ValueSeries
+	Div(ValueSeries) ValueSeries
 	// DivConst(float64) ValueSeries
 	// Mul(ValueSeries) ValueSeries
 	// MulConst(float64) ValueSeries
-	// Sub(ValueSeries) ValueSeries
+	Sub(ValueSeries) ValueSeries
 	// SubConst(float64) ValueSeries
-
-	// appends new value
-	Push(time.Time, float64)
 
 	// Get gets the item by time in value series
 	Get(time.Time) *Value
@@ -27,6 +25,12 @@ type ValueSeries interface {
 	GetLast() *Value
 	// GetFirst gets the first item in value series
 	GetFirst() *Value
+
+	Copy() ValueSeries
+
+	// replace existing
+	Set(time.Time, float64)
+	SetAll(val float64)
 
 	Val() *float64
 	SetCurrent(time.Time) bool
@@ -56,6 +60,69 @@ func NewValueSeries() ValueSeries {
 		timemap: make(map[int64]*Value),
 	}
 	return v
+}
+
+func (s *valueSeries) Copy() ValueSeries {
+	newv := NewValueSeries()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		newv.Set(f.t, f.v)
+		f = f.next
+	}
+	cur := s.GetCurrent()
+	if cur != nil {
+		newv.SetCurrent(cur.t)
+	}
+	return newv
+}
+
+func (s *valueSeries) AddConst(v float64) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		log.Printf("Add const for v:%+v", f.v)
+		copied.Set(f.t, f.v+v)
+		f = f.next
+	}
+	return copied
+}
+
+func (s *valueSeries) Div(v ValueSeries) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		newv := v.Get(f.t)
+		if newv != nil {
+			copied.Set(f.t, f.v/newv.v)
+		}
+		f = f.next
+	}
+	return copied
+}
+
+func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		newv := v.Get(f.t)
+		if newv != nil {
+			copied.Set(f.t, f.v-newv.v)
+		}
+		f = f.next
+	}
+	return copied
 }
 
 func (s *valueSeries) ID() string {
@@ -116,8 +183,20 @@ func (s *valueSeries) setValue(t int64, v *Value) {
 	s.timemap[t] = v
 }
 
-// Push will append at the end of the list
-func (s *valueSeries) Push(t time.Time, val float64) {
+// Push will append at the end of the list. Replaces value if exists
+func (s *valueSeries) SetAll(val float64) {
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		s.Set(f.t, val)
+		f = f.next
+	}
+}
+
+// Push will append at the end of the list. Replaces value if exists
+func (s *valueSeries) Set(t time.Time, val float64) {
 	curval := s.getValue(t.Unix())
 	if curval != nil {
 		// just replace the map
@@ -126,6 +205,15 @@ func (s *valueSeries) Push(t time.Time, val float64) {
 			prev: s.timemap[t.Unix()].prev,
 			t:    t,
 			v:    val,
+		}
+		if curval.prev != nil {
+			curval.prev.next = v2
+		}
+		if curval.next != nil {
+			curval.next.prev = v2
+		}
+		if s.cur != nil && s.cur.t.Equal(t) {
+			s.cur = v2
 		}
 		s.setValue(t.Unix(), v2)
 		return

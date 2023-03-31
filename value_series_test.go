@@ -9,8 +9,8 @@ func TestValueSeriesGetFirst(t *testing.T) {
 
 	s := NewValueSeries()
 	now := time.Now()
-	s.Push(now, 1)
-	s.Push(now.Add(time.Duration(1000*1e6)), 2)
+	s.Set(now, 1)
+	s.Set(now.Add(time.Duration(1000*1e6)), 2)
 	s.SetCurrent(now)
 	f := s.GetFirst()
 	if f == nil {
