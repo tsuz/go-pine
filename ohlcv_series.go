@@ -66,7 +66,7 @@ func (s *ohlcvSeries) GetSeries(p OHLCProp) ValueSeries {
 		default:
 			continue
 		}
-		vs.Push(v.S, propVal)
+		vs.Set(v.S, propVal)
 	}
 	if s.cur != nil {
 		vs.SetCurrent(s.cur.S)
