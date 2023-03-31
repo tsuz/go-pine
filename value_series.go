@@ -4,7 +4,6 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/twinj/uuid"
 )
 
@@ -86,7 +85,6 @@ func (s *valueSeries) AddConst(v float64) ValueSeries {
 		if f == nil {
 			break
 		}
-		log.Printf("Add const for v:%+v", f.v)
 		copied.Set(f.t, f.v+v)
 		f = f.next
 	}
