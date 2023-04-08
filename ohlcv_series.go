@@ -1,8 +1,15 @@
 package pine
 
 type OHLCVSeries interface {
+
+	// Current returns current ohlcv
+	Current() *OHLCV
+
 	// GetSeries returns series of values for a property
 	GetSeries(OHLCProp) ValueSeries
+
+	// GoToFirst sets the current value to first and returns that value
+	GoToFirst() *OHLCV
 
 	// Next moves the pointer to the next one
 	Next() *OHLCV
@@ -29,6 +36,18 @@ type ohlcvSeries struct {
 
 	// values
 	ohlcv []OHLCV
+}
+
+func (s *ohlcvSeries) Current() *OHLCV {
+	return s.cur
+}
+
+func (s *ohlcvSeries) GoToFirst() *OHLCV {
+	if len(s.ohlcv) == 0 {
+		return nil
+	}
+	s.cur = &s.ohlcv[0]
+	return s.cur
 }
 
 func (s *ohlcvSeries) Next() *OHLCV {
