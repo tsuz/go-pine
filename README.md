@@ -17,98 +17,8 @@ Backtesting tool written in Golang inspired by PineScript from TradingView.
 
 ### Backtest
 
-**Pine Script**
+See [backtest example][2].
 
-```js
-
-study("Pine test")
-
-lengthshort = 5
-lengthlong = 20
-span = 10
-
-source = close
-basis = sma(source, lengthshort)
-basis2 = sma(source, lengthlong)
-multi = basis * basis2
-upperBB = basis + span
-lowerBB = basis - span
-
-strategy.entry("Buy1", strategy.long, qty=1, limit=1234.56, stop=1211, comment="My Long Signal")
-```
-
-*Golang*
-
-my_strategy.go
-
-```go
-
-type mystrat struct{
-  ser: pine.Series
-}
-
-func NewMyStrat() (pine.BackTestable, error) {
-  m := &mystrat{}
-  return m, err
-}
-
-func (mystrat *m) OnNextOHLCV(strategy pine.Strategy, s pine.OHLCVSeries, states map[string]interface{}) error {
-
-  short := 5
-  long := 20
-  span := 10
-  source := pine.Close
-
-  basis := s.GetSMA(source, short)
-  basis2 := s.GetSMA(source, long)
-  multi := basis.Add(basis2)
-  upperBB := basis.AddConst(span)
-  lowerBB := basis.AddConst(span)
-  
-  log.Printf("Get upper boundary", upperBB)
-  log.Printf("Get lower boundary", lowerBB)
-
-  entry1 := pine.EntryOpts {
-    Comment: "My Long Signal",
-    Limit: "1234.56",
-    Stop: "1211",
-    Qty: "1",
-    Side: pine.Long,
-  }
-  strategy.Entry("Buy1", entry1)
-
-  return nil
-}
-```
-
-**main.go**
-
-```go
-
-s, _ := NewMyStrat()
-opts := pine.OHLCVSeriesOpts{
-  // OHLC interval in milliseconds. Below equates to a 5 minute interval.
-  Interval: 300000,
-  
-  // The first OHLCV that will be fed into the backtest logic. This will also be used as the OHLCV's start offset
-  StartTime: time.Date(2009, 1, 1, 12, 0, 0, 0, time.UTC),
-  
-  // How many look backs to cache. Defaults to 100.
-  Max: 500,
-}
-ohlcv, _ := pine.NewOHLCVSeries(initialData, opts)
-res, _ := pine.RunBacktest(ohlcv, s)
-
-log.Printf("Results are %+v", res)
-// NetProfit: 649%, Total Closed Trades: 436, Percent Profitable: 61.93%, Profit Factor: 1.622, Max Drawdown: -27.44%, Avg Trade: 14.89, Avg # Bars in Trade
-
-```
-
-## Data Integrity
-
-This library does not make assumptions about the initial OHLCV data which means the developer is responsible for generating the OHLCV slice in an ascending order with correct intervals. The technical analysis indicators uses each candle as a period and so if there are missing time period (i.e. no executions), then it will skip that interval. 
-
-`time.Time` is sometimes used as the unique identifier for `Value` struct so avoid having duplicate time.
 
 ## Supported Features
 
@@ -141,6 +51,14 @@ Technical Indicators
 | ta.sma | pine.SMA() | 
 
 
+## Data Integrity
+
+This library does not make assumptions about the initial OHLCV data which means the developer is responsible for generating the OHLCV slice in an ascending order with correct intervals. The technical analysis indicators uses each candle as a period and so if there are missing time period (i.e. no executions), then it will skip that interval. 
+
+`time.Time` is sometimes used as the unique identifier for `Value` struct so avoid having duplicate time.
+
 
 [1]: https://www.tradingview.com/pine-script-reference/v5/
 
+
+[2]: backtest/README.md

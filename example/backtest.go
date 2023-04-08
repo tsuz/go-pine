@@ -8,9 +8,7 @@ import (
 	"github.com/tsuz/go-pine/backtest"
 )
 
-type mystrat struct {
-	ser pine.Series
-}
+type mystrat struct{}
 
 func (m *mystrat) OnNextOHLCV(strategy backtest.Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
