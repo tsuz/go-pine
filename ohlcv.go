@@ -9,6 +9,9 @@ type OHLCV struct {
 	C float64
 	V float64
 	S time.Time
+
+	prev *OHLCV
+	next *OHLCV
 }
 
 func NewOHLCVWithSamePx(px, qty float64, t time.Time) OHLCV {
@@ -20,4 +23,14 @@ func NewOHLCVWithSamePx(px, qty float64, t time.Time) OHLCV {
 		V: qty,
 		S: t,
 	}
+}
+
+func (o *OHLCV) Get(p OHLCProp) float64 {
+	switch p {
+	case OHLCPropOpen:
+		return o.O
+	case OHLCPropClose:
+		return o.C
+	}
+	return o.C
 }
