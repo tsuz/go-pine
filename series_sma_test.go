@@ -32,7 +32,7 @@ func TestSeriesSMANoIteration(t *testing.T) {
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error SMA"))
 	}
-	if sma != nil {
+	if sma.Val() != nil {
 		t.Errorf("Expected to be nil but got %+v", sma)
 	}
 }

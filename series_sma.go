@@ -23,14 +23,13 @@ type smaCalcItem struct {
 //
 // sma=ValueSeries |   | 4.5 |   |                   |    |
 func SMA(p ValueSeries, l int64) (ValueSeries, error) {
-	if p == nil || p.GetCurrent() == nil {
-		log.Infof("p is nil %t, p.GetCurrent is nil %t", p == nil, p.GetCurrent() == nil)
-		return nil, nil
-	}
 	key := fmt.Sprintf("sma:%s:%d", p.ID(), l)
 	sma := getCache(key)
 	if sma == nil {
 		sma = NewValueSeries()
+	}
+	if p == nil || p.GetCurrent() == nil {
+		return sma, nil
 	}
 
 	// current available value
