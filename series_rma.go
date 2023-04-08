@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // RMA generates a ValueSeries of weighted average values
@@ -82,7 +80,6 @@ func getRMA(stop *Value, vs ValueSeries, rma ValueSeries, l int64) ValueSeries {
 			// previous ema exists, just do multiplication to that
 			if preve != nil {
 				nextRMA := (preve.v)*(1-mul) + v.v*mul
-				log.Printf("RMA Set t:%+v v:%+v, preve.v:%+v, v.v: %+v", v.t, nextRMA, preve.v, v.v)
 				rma.Set(v.t, nextRMA)
 				continue
 			}
@@ -95,7 +92,6 @@ func getRMA(stop *Value, vs ValueSeries, rma ValueSeries, l int64) ValueSeries {
 		if fseek == l {
 			avg := ftot / float64(fseek)
 			rma.Set(v.t, avg)
-			log.Printf("RMA Set init t:%+v v:%+v", v.t, avg)
 		}
 
 		if v.next == nil {

@@ -131,7 +131,6 @@ func TestSeriesRMAIteration4(t *testing.T) {
 		if v.isNil && rma.Val() != nil {
 			t.Error("expected to be nil but got non nil")
 		}
-		log.Printf("Index %d", i)
 		if !v.isNil && *rma.Val() != v.exp {
 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *rma.Val(), v.lookback)
 		}
@@ -207,7 +206,6 @@ func TestSeriesRMAIteration3(t *testing.T) {
 		if v.isNil && rma.Val() != nil {
 			t.Error("expected to be nil but got non nil")
 		}
-		log.Printf("Index %d", i)
 		if !v.isNil && *rma.Val() != v.exp {
 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *rma.Val(), v.lookback)
 		}

@@ -241,16 +241,12 @@ func (s *valueSeries) Set(t time.Time, val float64) {
 	// no existing values so no previous or next pointers
 	if len(s.ord) == 0 {
 		s.appendValue(v)
-		// s.ord = append(s.ord, v.t.Unix())
-		// s.setValue(t.Unix(), v)
 		return
 	}
 
 	prevt := s.ord[len(s.ord)-1]
 	prev := s.timemap[prevt]
 	v.prev = prev
-	// prev.next = &v
-	// s.ord[len(s.ord)-1] = prev
 
 	s.appendValue(v)
 	curt := s.getValue(v.t.Unix())

@@ -5,7 +5,6 @@ import (
 	"math"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 // RSI generates a ValueSeries of relative strength index
@@ -68,7 +67,6 @@ func getRSIU(stop *Value, vs ValueSeries, rsiu ValueSeries, l int64) ValueSeries
 	var ftot float64
 
 	for {
-		log.Printf("RSIU evaluating t:%+v", itervt)
 		v := vs.Get(itervt)
 		if v == nil {
 			break
@@ -84,16 +82,13 @@ func getRSIU(stop *Value, vs ValueSeries, rsiu ValueSeries, l int64) ValueSeries
 
 		// get previous value
 		if v.prev != nil {
-			log.Printf("RSIU evaluating t:%+v prevval exists", itervt)
 			prevv := v.prev
 			// previous value exists
 			if prevv != nil {
-				log.Printf("RSIU evaluating t:%+v prevval received", itervt)
 				prevr := rsiu.Get(prevv.t)
 
 				// previous rsiu exists
 				if prevr != nil {
-					log.Printf("RSIU evaluating t:%+v prevval rsiu exist", itervt)
 					prevFirstVal := prevv
 					removelb := 1
 					for i := 1; i < int(l)+1; i++ {
@@ -104,13 +99,11 @@ func getRSIU(stop *Value, vs ValueSeries, rsiu ValueSeries, l int64) ValueSeries
 						prevFirstVal = prevFirstVal.prev
 					}
 
-					log.Printf("RSIU evaluating t:%+v removelb: %d, prevFirstVal: %+v", itervt, removelb, prevFirstVal.v)
 					// was able to find previous value
 					if int64(removelb) == l+1 {
 						toAdd := math.Max(v.v-v.prev.v, 0)
 						remval := math.Max(prevFirstVal.next.v-prevFirstVal.v, 0)
 						newrsiu := prevr.v - remval + toAdd
-						log.Printf("RSIU evaluating t:%+v set after %+v", v.t, newrsiu)
 						rsiu.Set(v.t, newrsiu)
 						continue
 					}
@@ -125,7 +118,6 @@ func getRSIU(stop *Value, vs ValueSeries, rsiu ValueSeries, l int64) ValueSeries
 		}
 
 		if fseek == l+1 {
-			log.Printf("RSIU evaluating t:%+v set first %+v", itervt, ftot)
 			rsiu.Set(v.t, ftot)
 		}
 
@@ -160,7 +152,6 @@ func getRSID(stop *Value, vs ValueSeries, rsid ValueSeries, l int64) ValueSeries
 	var ftot float64
 
 	for {
-		log.Printf("RSIU evaluating t:%+v", itervt)
 		v := vs.Get(itervt)
 		if v == nil {
 			break
@@ -176,16 +167,13 @@ func getRSID(stop *Value, vs ValueSeries, rsid ValueSeries, l int64) ValueSeries
 
 		// get previous value
 		if v.prev != nil {
-			log.Printf("RSIU evaluating t:%+v prevval exists", itervt)
 			prevv := v.prev
 			// previous value exists
 			if prevv != nil {
-				log.Printf("RSIU evaluating t:%+v prevval received", itervt)
 				prevr := rsid.Get(prevv.t)
 
 				// previous rsiu exists
 				if prevr != nil {
-					log.Printf("RSIU evaluating t:%+v prevval rsiu exist", itervt)
 					prevFirstVal := prevv
 					removelb := 1
 					for i := 1; i < int(l)+1; i++ {
@@ -196,13 +184,11 @@ func getRSID(stop *Value, vs ValueSeries, rsid ValueSeries, l int64) ValueSeries
 						prevFirstVal = prevFirstVal.prev
 					}
 
-					log.Printf("RSIU evaluating t:%+v removelb: %d, prevFirstVal: %+v", itervt, removelb, prevFirstVal.v)
 					// was able to find previous value
 					if int64(removelb) == l+1 {
 						toAdd := math.Max(v.prev.v-v.v, 0)
 						remval := math.Max(prevFirstVal.v-prevFirstVal.next.v, 0)
 						newrsiu := prevr.v - remval + toAdd
-						log.Printf("RSIU evaluating t:%+v set after %+v", v.t, newrsiu)
 						rsid.Set(v.t, newrsiu)
 						continue
 					}
@@ -217,7 +203,6 @@ func getRSID(stop *Value, vs ValueSeries, rsid ValueSeries, l int64) ValueSeries
 		}
 
 		if fseek == l+1 {
-			log.Printf("RSIU evaluating t:%+v set first %+v", itervt, ftot)
 			rsid.Set(v.t, ftot)
 		}
 
@@ -285,13 +270,8 @@ func getRSI(stop *Value, vs ValueSeries, rsi ValueSeries, l int64) ValueSeries {
 	hundred2 := vs.Copy()
 	hundred2.SetAll(100)
 
-	log.Printf("rmadiv  Val: %+v", rmadiv.GetFirst())
 	res1 := hundred2.Div(rmadiv.AddConst(1.0))
-
-	log.Printf("res1  Val: %+v", res1.GetCurrent())
 	res2 := hundred1.Sub(res1)
-
-	log.Printf("res2  Val: %+v", res2.GetCurrent())
 	firstVal := rsi.GetLast()
 
 	if firstVal == nil {
@@ -320,7 +300,6 @@ func getRSI(stop *Value, vs ValueSeries, rsi ValueSeries, l int64) ValueSeries {
 			continue
 		}
 		if v2 != nil {
-			log.Printf("RSI set t:%+v, v:%+v", v.t, v2.v)
 			rsi.Set(v.t, v2.v)
 		}
 
