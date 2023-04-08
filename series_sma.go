@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type smaCalcItem struct {
@@ -39,7 +37,6 @@ func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 	stop := p.GetCurrent()
 	// where we left off last time
 	val := sma.GetLast()
-	log.Printf("Sma lookback: %d, stop: %+v", l, stop.v)
 
 	var f *Value
 	// if we have not generated any SMAs yet
