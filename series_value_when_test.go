@@ -24,10 +24,6 @@ func TestSeriesValueWhenNoData(t *testing.T) {
 
 	prop := series.GetSeries(OHLCPropClose)
 	bs := NewValueSeries()
-	// bs.Set(data[0].S, 1)
-	// bs.Set(data[1].S, 0)
-	// bs.Set(data[2].S, 1)
-	// bs.Set(data[3].S, 0)
 
 	rsi, err := ValueWhen(bs, prop, 2)
 	if err != nil {
