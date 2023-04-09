@@ -44,6 +44,8 @@ Language Operators
 
 Mathematical Operators
 
+| Pine Script | Go Pine |
+|--|--|
 | math.abs | |
 | math.acos | |
 | math.asin | |
