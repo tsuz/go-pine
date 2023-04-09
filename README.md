@@ -30,26 +30,89 @@ Language Operators
 |--|--|
 | != | .NotEq() | 
 | == | .Eq() | 
+| < | |
+| <= | |
+| > | |
+| >= | |
 | + | ValueSeries.Add() | 
 | - | ValueSeries.Sub() | 
 | * | ValueSeries.Mul() |
 | / | ValueSeries.Div() |
+| % | |
 
-Mathematical Operators
-
-| Pine Script | Go Pine | 
-|--|--|
-| | |
 
 Technical Indicators
 
 | Pine Script | Go Pine |
 |--|--|
-| ta.ema | pine.EMA() | 
+| ta.alma | | 
+| ta.atr | | 
+| ta.barssince | | 
+| ta.bb | | 
+| ta.bbw | | 
+| ta.cci | | 
+| ta.change | | 
+| ta.cmo | | 
+| ta.cog | | 
+| ta.correlation | | 
+| ta.cross | | 
+| ta.crossover | | 
+| ta.crossunder | | 
+| ta.cum | | 
+| ta.dev | | 
+| ta.dmi | | 
+| ta.ema |  pine.EMA() | 
+| ta.falling | | 
+| ta.highest | | 
+| ta.highestbars | | 
+| ta.hma | | 
+| ta.kc | | 
+| ta.kcw | | 
+| ta.linreg | | 
+| ta.lowest | | 
+| ta.lowestbars | | 
+| ta.macd | | 
+| ta.max | | 
+| ta.median | | 
+| ta.mfi | | 
+| ta.min | | 
+| ta.mode | | 
+| ta.mom | | 
+| ta.percentile_linear_interpolation | | 
+| ta.percentile_nearest_rank | | 
+| ta.percentrank | | 
+| ta.pivot_point_levels | | 
+| ta.pivothigh | | 
+| ta.pivotlow | | 
+| ta.range | | 
+| ta.rising | | 
 | ta.rma | pine.RMA() | 
+| ta.roc | | 
 | ta.rsi | pine.RSI() | 
-| ta.sma | pine.SMA() | 
-
+| ta.sar | | 
+| ta.sma | pine.SMA()  | 
+| ta.stdev | | 
+| ta.stoch | | 
+| ta.supertrend | | 
+| ta.swma | | 
+| ta.tr | | 
+| ta.tsi | | 
+| ta.valuewhen | | 
+| ta.variance | | 
+| ta.vwap | | 
+| ta.vwma | | 
+| ta.wma | | 
+| ta.wpr | | 
+| ta.accdist | | 
+| ta.iii | | 
+| ta.nvi | | 
+| ta.obv | | 
+| ta.pvi | | 
+| ta.pvt | | 
+| ta.tr | | 
+| ta.vwap | | 
+| ta.wad | | 
+| ta.wvad | | 
 
 ## Data Integrity
 
