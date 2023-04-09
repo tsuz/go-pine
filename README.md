@@ -48,6 +48,7 @@ Technical Indicators
 | Pine Script | Go Pine |
 |--|--|
 | ta.alma | | 
+| ta.accdist | |
 | ta.atr | | 
 | ta.barssince | | 
 | ta.bb | | 
@@ -68,6 +69,7 @@ Technical Indicators
 | ta.highest | | 
 | ta.highestbars | | 
 | ta.hma | | 
+| ta.iii | | 
 | ta.kc | | 
 | ta.kcw | | 
 | ta.linreg | | 
@@ -80,12 +82,16 @@ Technical Indicators
 | ta.min | | 
 | ta.mode | | 
 | ta.mom | | 
+| ta.nvi | | 
+| ta.obv | | 
 | ta.percentile_linear_interpolation | | 
 | ta.percentile_nearest_rank | | 
 | ta.percentrank | | 
 | ta.pivot_point_levels | | 
 | ta.pivothigh | | 
 | ta.pivotlow | | 
+| ta.pvi | | 
+| ta.pvt | | 
 | ta.range | | 
 | ta.rising | | 
 | ta.rma | pine.RMA() | 
@@ -99,21 +105,13 @@ Technical Indicators
 | ta.swma | | 
 | ta.tr | | 
 | ta.tsi | | 
-| ta.valuewhen | | 
+| ta.valuewhen | pine.ValueWhen() | 
 | ta.variance | | 
 | ta.vwap | | 
 | ta.vwma | | 
+| ta.wad | | 
 | ta.wma | | 
 | ta.wpr | | 
-| ta.accdist | | 
-| ta.iii | | 
-| ta.nvi | | 
-| ta.obv | | 
-| ta.pvi | | 
-| ta.pvt | | 
-| ta.tr | | 
-| ta.vwap | | 
-| ta.wad | | 
 | ta.wvad | | 
 
 ## Data Integrity
