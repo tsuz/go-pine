@@ -2,7 +2,6 @@ package pine
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/pkg/errors"
 )
@@ -44,14 +43,6 @@ func ValueWhen(bs, src ValueSeries, ocr int) (ValueSeries, error) {
 	vw.SetCurrent(stop.t)
 
 	return vw, err
-}
-
-func appendVWArray(a []float64, item float64, l int) []float64 {
-	a = append(a, item)
-	if len(a) > l {
-		a = a[1:]
-	}
-	return a
 }
 
 func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) (ValueSeries, error) {
@@ -98,7 +89,7 @@ func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) (ValueSeries, error
 	}
 
 	// last available does not exist. start from first
-	log.Printf("condSrc %+v", condSrc)
+
 	for {
 		if val == nil {
 			break
