@@ -9,6 +9,8 @@ Backtesting tool written in Golang inspired by PineScript from TradingView.
 [![HitCount](http://hits.dwyl.io/tsuz/go-pine.svg)](http://hits.dwyl.io/tsuz/go-pine)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba4f05de8cb12c615695/maintainability)](https://codeclimate.com/github/tsuz/go-pine/maintainability)
 
+> Note: This library is under heavy development
+
 ## Requirements
 
 - Golang v1.20 (recommended)
