@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"math"
 	"testing"
 	"time"
 )
@@ -14,21 +15,35 @@ func TestNewOHLCVSeries(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	tr1 := math.Abs(data[0].H - data[0].L)
+
+	tr2 := math.Max(
+		math.Abs(data[1].H-data[1].L),
+		math.Max(
+			math.Abs(data[1].H-data[0].C),
+			math.Abs(data[1].L-data[0].C)))
+
+	tr3 := math.Max(
+		math.Abs(data[2].H-data[2].L),
+		math.Max(
+			math.Abs(data[2].H-data[1].C),
+			math.Abs(data[2].L-data[1].C)))
+
 	testTable := []struct {
 		prop []OHLCProp
 		vals []float64
 	}{
 		{
-			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen},
-			vals: []float64{data[0].C, data[0].H, data[0].L, data[0].O},
+			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
+			vals: []float64{data[0].C, data[0].H, data[0].L, data[0].O, tr1},
 		},
 		{
-			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen},
-			vals: []float64{data[1].C, data[1].H, data[1].L, data[1].O},
+			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
+			vals: []float64{data[1].C, data[1].H, data[1].L, data[1].O, tr2},
 		},
 		{
-			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen},
-			vals: []float64{data[2].C, data[2].H, data[2].L, data[2].O},
+			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
+			vals: []float64{data[2].C, data[2].H, data[2].L, data[2].O, tr3},
 		},
 	}
 

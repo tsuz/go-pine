@@ -81,7 +81,7 @@ Technical Indicators
 |--|--|
 | ta.alma | | 
 | ta.accdist | |
-| ta.atr | | 
+| ta.atr | pine.ATR | 
 | ta.barssince | | 
 | ta.bb | | 
 | ta.bbw | | 
@@ -135,7 +135,7 @@ Technical Indicators
 | ta.stoch | | 
 | ta.supertrend | | 
 | ta.swma | | 
-| ta.tr | | 
+| ta.tr | OHLCVSeries.getSeries(OHLCPropTR) | 
 | ta.tsi | | 
 | ta.valuewhen | pine.ValueWhen() | 
 | ta.variance | | 

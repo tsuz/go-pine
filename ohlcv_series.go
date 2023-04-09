@@ -1,5 +1,7 @@
 package pine
 
+import "math"
+
 type OHLCVSeries interface {
 
 	// Current returns current ohlcv
@@ -69,7 +71,7 @@ func (s *ohlcvSeries) Next() *OHLCV {
 
 func (s *ohlcvSeries) GetSeries(p OHLCProp) ValueSeries {
 	vs := NewValueSeries()
-	for _, v := range s.ohlcv {
+	for idx, v := range s.ohlcv {
 		var propVal float64
 		switch p {
 		case OHLCPropClose:
@@ -82,6 +84,18 @@ func (s *ohlcvSeries) GetSeries(p OHLCProp) ValueSeries {
 			propVal = v.L
 		case OHLCPropVolume:
 			propVal = v.V
+		case OHLCPropTR:
+			if idx > 0 {
+				p := s.ohlcv[idx-1]
+				propVal = math.Max(
+					math.Abs(v.H-v.L),
+					math.Max(
+						math.Abs(v.H-p.C),
+						math.Abs(v.L-p.C)))
+			} else {
+				propVal = math.Abs(v.H - v.L)
+			}
+
 		default:
 			continue
 		}

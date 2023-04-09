@@ -22,6 +22,8 @@ const (
 	OHLCPropHL2
 	// OHLCPropHLC3 is (high + low + close) / 3 of OHLC
 	OHLCPropHLC3
+	// OHLCPropTR is true range i.e. max(high - low, abs(high - close[1]), abs(low - close[1])).
+	OHLCPropTR
 )
 
 type ohlcprop struct {
