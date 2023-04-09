@@ -97,7 +97,7 @@ Technical Indicators
 | ta.swma | | 
 | ta.tr | | 
 | ta.tsi | | 
-| ta.valuewhen | | 
+| ta.valuewhen | pine.ValueWhen() | 
 | ta.variance | | 
 | ta.vwap | | 
 | ta.vwma | | 
