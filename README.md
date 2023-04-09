@@ -129,7 +129,7 @@ Technical Indicators
 | ta.rsi | pine.RSI() | 
 | ta.sar | | 
 | ta.sma | pine.SMA()  | 
-| ta.stdev | | 
+| ta.stdev | pine.Stdev() | 
 | ta.stoch | | 
 | ta.supertrend | | 
 | ta.swma | | 
