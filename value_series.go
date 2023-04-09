@@ -12,11 +12,11 @@ type ValueSeries interface {
 	Add(ValueSeries) ValueSeries
 	AddConst(float64) ValueSeries
 	Div(ValueSeries) ValueSeries
-	// DivConst(float64) ValueSeries
-	// Mul(ValueSeries) ValueSeries
+	DivConst(float64) ValueSeries
+	Mul(ValueSeries) ValueSeries
 	// MulConst(float64) ValueSeries
 	Sub(ValueSeries) ValueSeries
-	// SubConst(float64) ValueSeries
+	SubConst(float64) ValueSeries
 
 	// Get gets the item by time in value series
 	Get(time.Time) *Value
@@ -123,6 +123,35 @@ func (s *valueSeries) Div(v ValueSeries) ValueSeries {
 	return copied
 }
 
+func (s *valueSeries) DivConst(v float64) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		copied.Set(f.t, f.v/v)
+		f = f.next
+	}
+	return copied
+}
+
+func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		newv := v.Get(f.t)
+		if newv != nil {
+			copied.Set(f.t, f.v*newv.v)
+		}
+		f = f.next
+	}
+	return copied
+}
+
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
 	copied := s.Copy()
 	f := s.GetFirst()
@@ -134,6 +163,19 @@ func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
 		if newv != nil {
 			copied.Set(f.t, f.v-newv.v)
 		}
+		f = f.next
+	}
+	return copied
+}
+
+func (s *valueSeries) SubConst(v float64) ValueSeries {
+	copied := s.Copy()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		copied.Set(f.t, f.v-v)
 		f = f.next
 	}
 	return copied
