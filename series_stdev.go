@@ -18,6 +18,7 @@ import (
 // TradingView's PineScript has an option to use an unbiased estimator, however; this function currently supports biased estimator.
 // Any effort to add a bias correction factor is welcome.
 //
+// Example:
 // t=time.Time        | 1   |  2  | 3   | 4    | 5      |
 // p=ValueSeries      | 13  | 15  | 11  | 19   | 21     |
 // sma(p, 3)	      | nil | nil | 13  | 15   | 17     |
