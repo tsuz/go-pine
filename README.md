@@ -67,7 +67,7 @@ Mathematical Operators
 | math.rphi | |
 | math.sign | |
 | math.sin | |
-| math.sqrt | |
+| math.sqrt | use pine.Pow(src, 0.5) |
 | math.sum | pine.Sum |
 | math.tan | |
 | math.todegrees | |
