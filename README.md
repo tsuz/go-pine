@@ -60,7 +60,7 @@ Mathematical Operators
 | math.min | |
 | math.phi | |
 | math.pi | |
-| math.pow | |
+| math.pow | pine.Pow |
 | math.random | |
 | math.round | |
 | math.round_to_mintick | |
