@@ -42,6 +42,36 @@ Language Operators
 | / | ValueSeries.Div() |
 | % | |
 
+Mathematical Operators
+
+| math.abs | |
+| math.acos | |
+| math.asin | |
+| math.atan | |
+| math.avg | |
+| math.ceil | |
+| math.cos | |
+| math.e | |
+| math.exp | |
+| math.floor | |
+| math.log | |
+| math.log10 | |
+| math.max | |
+| math.min | |
+| math.phi | |
+| math.pi | |
+| math.pow | pine.Pow |
+| math.random | |
+| math.round | |
+| math.round_to_mintick | |
+| math.rphi | |
+| math.sign | |
+| math.sin | |
+| math.sqrt | use pine.Pow(src, 0.5) |
+| math.sum | pine.Sum |
+| math.tan | |
+| math.todegrees | |
+| math.toradians | |
 
 Technical Indicators
 
@@ -99,7 +129,7 @@ Technical Indicators
 | ta.rsi | pine.RSI() | 
 | ta.sar | | 
 | ta.sma | pine.SMA()  | 
-| ta.stdev | | 
+| ta.stdev | pine.Stdev() | 
 | ta.stoch | | 
 | ta.supertrend | | 
 | ta.swma | | 
