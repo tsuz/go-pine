@@ -98,7 +98,6 @@ Technical Indicators
 | ta.roc | | 
 | ta.rsi | pine.RSI() | 
 | ta.sar | | 
-| ta.sar | | 
 | ta.sma | pine.SMA()  | 
 | ta.stdev | | 
 | ta.stoch | | 
