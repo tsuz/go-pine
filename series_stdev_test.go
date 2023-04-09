@@ -117,56 +117,56 @@ func TestSeriesStdevIteration(t *testing.T) {
 	}
 }
 
-// // TestSeriesRSINotEnoughData tests this scneario when the lookback is more than the number of data available
-// //
-// // t=time.Time    | 1  |  2   | 3  | 4 (here)  |
-// // p=ValueSeries  | 14 |  15  | 17 | 18        |
-// // stdev(close, 5)  | nil| nil  | nil| nil       |
-// func TestSeriesRSINotEnoughData(t *testing.T) {
+// TestSeriesStdevNotEnoughData tests when the lookback is more than the number of data available
+//
+// t=time.Time     | 1  |  2   | 3  | 4 (here)  |
+// p=ValueSeries   | 14 |  15  | 17 | 18        |
+// stdev(close, 5) | nil| nil  | nil| nil       |
+func TestSeriesStdevNotEnoughData(t *testing.T) {
 
-// 	start := time.Now()
-// 	data := OHLCVTestData(start, 4, 5*60*1000)
-// 	data[0].C = 13
-// 	data[1].C = 15
-// 	data[2].C = 11
-// 	data[3].C = 18
+	start := time.Now()
+	data := OHLCVTestData(start, 4, 5*60*1000)
+	data[0].C = 13
+	data[1].C = 15
+	data[2].C = 11
+	data[3].C = 18
 
-// 	series, err := NewOHLCVSeries(data)
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+	series, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 	series.Next()
-// 	series.Next()
-// 	series.Next()
-// 	series.Next()
+	series.Next()
+	series.Next()
+	series.Next()
+	series.Next()
 
-// 	testTable := []struct {
-// 		lookback int
-// 		exp      *float64
-// 	}{
-// 		{
-// 			lookback: 5,
-// 			exp:      nil,
-// 		},
-// 		{
-// 			lookback: 6,
-// 			exp:      nil,
-// 		},
-// 	}
+	testTable := []struct {
+		lookback int
+		exp      *float64
+	}{
+		{
+			lookback: 5,
+			exp:      nil,
+		},
+		{
+			lookback: 6,
+			exp:      nil,
+		},
+	}
 
-// 	for i, v := range testTable {
-// 		prop := series.GetSeries(OHLCPropClose)
+	for i, v := range testTable {
+		prop := series.GetSeries(OHLCPropClose)
 
-// 		stdev, err := RSI(prop, int64(v.lookback))
-// 		if err != nil {
-// 			t.Fatal(errors.Wrap(err, "error RSI"))
-// 		}
-// 		if stdev == nil {
-// 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
-// 		}
-// 		if stdev.Val() != v.exp {
-// 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *stdev.Val(), v.lookback)
-// 		}
-// 	}
-// }
+		stdev, err := Stdev(prop, int64(v.lookback))
+		if err != nil {
+			t.Fatal(errors.Wrap(err, "error RSI"))
+		}
+		if stdev == nil {
+			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
+		}
+		if stdev.Val() != v.exp {
+			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *stdev.Val(), v.lookback)
+		}
+	}
+}
