@@ -51,6 +51,7 @@ type Value struct {
 	next *Value
 }
 
+// NewValueSeries creates an empty series that conforms to ValueSeries
 func NewValueSeries() ValueSeries {
 	u := uuid.NewV4()
 	v := &valueSeries{

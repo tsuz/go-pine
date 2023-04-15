@@ -7,7 +7,9 @@ import (
 )
 
 // ROC calculates the percentage of change (rate of change) between the current value of `source` and its value `length` bars ago.
-// It is calculated by the formula: 100 * change(src, length) / src[length].
+// It is calculated by the formula
+//
+//   - 100 * change(src, length) / src[length].
 //
 // arguments are
 //   - src: ValueSeries - Source data
