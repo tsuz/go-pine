@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"log"
 	"testing"
 	"time"
 
@@ -179,5 +180,23 @@ func BenchmarkChange(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		series.Next()
 		Change(vals, 5)
+	}
+}
+
+func ExampleChange() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		chg, err := Change(close, 12)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error change"))
+		}
+		log.Printf("Change line: %+v", chg.Val())
 	}
 }

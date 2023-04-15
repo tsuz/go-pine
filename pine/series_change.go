@@ -9,14 +9,8 @@ import (
 // Change compares the current `source` value to its value `lookback` bars ago and returns the difference.
 //
 // arguments are
-// src: ValueSeries - Source data
-// lookback: int - Lookback to compare the change
-//
-// t=time.Time      | 1   |  2  | 3   | 4
-// src=ValueSeries  | 11  | 14  | 12  | 13
-// change(src, 1)	| nil |  3  | -2  | 1
-// change(src, 2)	| nil | nil | 1   | -1
-// change(src, 3)	| nil | nil | nil | 2
+//   - src: ValueSeries - Source data to seek difference
+//   - lookback: int - Lookback to compare the change
 func Change(src ValueSeries, lookback int) (ValueSeries, error) {
 	var err error
 	if lookback < 1 {
