@@ -4,8 +4,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/tsuz/go-pine"
 	"github.com/tsuz/go-pine/backtest"
+	"github.com/tsuz/go-pine/pine"
 )
 
 type mystrat struct{}

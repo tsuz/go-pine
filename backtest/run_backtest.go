@@ -2,7 +2,7 @@ package backtest
 
 import (
 	"github.com/pkg/errors"
-	"github.com/tsuz/go-pine"
+	"github.com/tsuz/go-pine/pine"
 )
 
 // Runbacktest starts a backtest
