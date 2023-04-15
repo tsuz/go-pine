@@ -4,21 +4,7 @@ import (
 	"fmt"
 )
 
-// EMA generates a ValueSeries of exponential moving average
-// the variable ema=ValueSeries is the exponentially weighted moving average values of p=ValueSeries
-// ema may be behind where they should be with regards to p.GetCurrent()
-// while ema catches up to where p.GetCurrent() is, the series should also contain
-// all available average values between the last and up to p.GetCurrent()
-//
-// The formula for EMA is EMA=(closing price − previous day’s EMA)× smoothing constant as a decimal + previous day’s EMA
-// where smoothing constant is 2 ÷ (number of time periods + 1)
-// if the previous day's EMA is nil then it's the SMA of the lookback time.
-// Using the above formula, the below example illustrates what EMA values look like
-//
-// t=time.Time (no iteration) | 1   |  2  | 3   | 4       |
-// p=ValueSeries              | 13  | 15  | 17  | 18      |
-// ema(close, 1)              | 13  | 15  | 17  | 18      |
-// ema(close, 2)              | nil | 14  | 16  | 17.3333 |
+// EMA generates a ValueSeries of exponential moving average.
 func EMA(p ValueSeries, l int64) (ValueSeries, error) {
 	key := fmt.Sprintf("ema:%s:%d", p.ID(), l)
 	ema := getCache(key)
