@@ -30,7 +30,7 @@ jobs:
             - "/go/pkg/mod"
       - run:
           name: Run build
-          command: go build
+          command: go build ./...
       - run:
           name: Run tests
           command: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
