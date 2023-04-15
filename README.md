@@ -86,7 +86,7 @@ Technical Indicators
 | ta.bb | | 
 | ta.bbw | | 
 | ta.cci | | 
-| ta.change | | 
+| ta.change | pine.Change() | 
 | ta.cmo | | 
 | ta.cog | | 
 | ta.correlation | | 
