@@ -153,7 +153,7 @@ func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
 }
 
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
-	copied := s.Copy()
+	copied := NewValueSeries()
 	f := s.GetFirst()
 	for {
 		if f == nil {
