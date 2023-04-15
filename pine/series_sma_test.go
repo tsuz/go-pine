@@ -277,3 +277,21 @@ func TestSeriesSMANotEnoughData(t *testing.T) {
 		}
 	}
 }
+
+func ExampleSMA() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		sma, err := SMA(close, 50)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting sma"))
+		}
+		log.Printf("SMA: %+v", sma.Val())
+	}
+}
