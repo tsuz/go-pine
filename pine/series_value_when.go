@@ -8,16 +8,9 @@ import (
 
 // ValueWhen generates a ValueSeries of float
 // arguments are
-// bs: ValueSeries - Value Series where values are 0.0, 1.0 (boolean)
-// src: ValueSeries - Value Series of the source
-// ocr: int - The occurrence of the condition. The numbering starts from 0 and goes back in time, so '0' is the most recent occurrence of `condition`, '1' is the second most recent and so forth. Must be an integer >= 0.
-//
-// t=time.Time (no iteration) | 1   |  2  | 3   | 4  | 5  | 6  |
-// bs=ValueSeries             | 0   |  1  | 0   | 1  | 1  | 0  |
-// src=ValueSeries            | 13  | 15  | 11  | 18 | 20 | 17 |
-// valuewhen(0)=ValueSeries   | nil | 15  | 15  | 18 | 20 | 20 |
-// valuewhen(1)=ValueSeries   | nil | nil | nil | 15 | 18 | 18 |
-// valuewhen(2)=ValueSeries   | nil | nil | nil | nil| 15 | 15 |
+//   - bs: ValueSeries - Value Series where values are 0.0, 1.0 (boolean)
+//   - src: ValueSeries - Value Series of the source
+//   - ocr: int - The occurrence of the condition. The numbering starts from 0 and goes back in time, so '0' is the most recent occurrence of `condition`, '1' is the second most recent and so forth. Must be an integer >= 0.
 func ValueWhen(bs, src ValueSeries, ocr int) (ValueSeries, error) {
 	var err error
 	key := fmt.Sprintf("valuewhen:%s:%s:%d", bs.ID(), src.ID(), ocr)
