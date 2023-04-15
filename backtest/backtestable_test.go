@@ -40,7 +40,7 @@ func (m *mystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[s
 	return nil
 }
 
-func Example() {
+func ExampleBackTestable() {
 	b := &mystrat{}
 	data := pine.OHLCVTestData(time.Now(), 25, 5*60*1000)
 	series, _ := pine.NewOHLCVSeries(data)

@@ -39,5 +39,5 @@ If you like this project, please give it a ⭐️
 [3]: http://pkg.go.dev/github.com/tsuz/go-pine/pine
 [4]: http://pkg.go.dev/github.com/tsuz/go-pine/backtest/
 [5]: https://github.com/tsuz/go-pine/issues/24
-[6]: http://pkg.go.dev/github.com/tsuz/go-pine/backtest/#example_
+[6]: http://pkg.go.dev/github.com/tsuz/go-pine/backtest/#example_BackTestable
 [7]: http://pkg.go.dev/github.com/tsuz/go-pine/pine/#pkg-examples
