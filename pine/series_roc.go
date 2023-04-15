@@ -10,14 +10,8 @@ import (
 // It is calculated by the formula: 100 * change(src, length) / src[length].
 //
 // arguments are
-// src: ValueSeries - Source data
-// length: int - number of bars to lookback. 1 is the previous bar
-//
-// t=time.Time      | 1   |  2      | 3        | 4
-// src=ValueSeries  | 11  | 14      | 12       | 13
-// roc(src, 1)	    | nil | 27.2727 | -14.286  | 8.3333
-// roc(src, 2)	    | nil | nil     | 9.090909 | 7.1429
-// roc(src, 3)	    | nil | nil     | nil      | 18.1818
+//   - src: ValueSeries - Source data
+//   - length: int - number of bars to lookback. 1 is the previous bar
 func ROC(src ValueSeries, l int) (ValueSeries, error) {
 	var err error
 	if l < 1 {

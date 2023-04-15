@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -180,5 +181,23 @@ func BenchmarkROC(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		series.Next()
 		ROC(vals, 5)
+	}
+}
+
+func ExampleROC() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		roc, err := ROC(close, 4)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting roc"))
+		}
+		log.Printf("ROC: %+v", roc.Val())
 	}
 }
