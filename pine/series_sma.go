@@ -11,17 +11,6 @@ type smaCalcItem struct {
 }
 
 // SMA generates a ValueSeries of simple moving averages
-// the variable sma=ValueSeries is the average values of p=ValueSeries
-// sma may be behind where they should be with regards to p.GetCurrent()
-// while sma catches up to where p.GetCurrent() is, the series should also contain
-// all available average values between the last and up to p.GetCurrent()
-//
-// The below example illustrates sma needs to be generated for time=3,4
-//
-//	  t=time.Time  | 1 |  2  | 3 | 4                 | 5  |
-//	p=ValueSeries  | 4 |  5  | 9 | 12 (p.GetCurrent) | 14 |
-//
-// sma=ValueSeries |   | 4.5 |   |                   |    |
 func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 	key := fmt.Sprintf("sma:%s:%d", p.ID(), l)
 	sma := getCache(key)

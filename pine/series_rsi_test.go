@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"log"
 	"testing"
 	"time"
 
@@ -67,8 +68,8 @@ func TestSeriesRSINoIteration(t *testing.T) {
 // p=ValueSeries              | 13  | 15  | 11   | 18         | 20        |
 // u(close, 2)                | nil | nil |  2   | 7          | 9         |
 // d(close, 2)                | nil | nil |  4   | 4          | 0         |
-// rma(u(close,2), 2)		  | nil | nil | nil  | 4.5        | 6.75      |
-// rma(d(close,2), 2)		  | nil | nil | nil  | 4          | 2         |
+// rsi(u(close,2), 2)		  | nil | nil | nil  | 4.5        | 6.75      |
+// rsi(d(close,2), 2)		  | nil | nil | nil  | 4          | 2         |
 // rsi(close, 2)			  | nil | nil | nil| | 52.9411765 | 77.1428571|
 func TestSeriesRSIIteration5(t *testing.T) {
 
@@ -160,5 +161,23 @@ func TestSeriesRSINotEnoughData(t *testing.T) {
 		if rsi.Val() != v.exp {
 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *rsi.Val(), v.lookback)
 		}
+	}
+}
+
+func ExampleRSI() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		rsi, err := RSI(close, 16)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting rsi"))
+		}
+		log.Printf("RSI: %+v", rsi.Val())
 	}
 }

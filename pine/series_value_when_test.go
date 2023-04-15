@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"log"
 	"testing"
 	"time"
 
@@ -205,5 +206,30 @@ func BenchmarkValueWhen(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		series.Next()
 		ValueWhen(bs, vals, 5)
+	}
+}
+
+func ExampleValueWhen() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+
+	// value series with 0.0 or 1.0 (true/false)
+	bs := NewValueSeries()
+	for _, v := range data {
+		bs.Set(v.S, float64(int(v.C)%2))
+	}
+
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		vw, err := ValueWhen(close, bs, 12)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting ValueWhen"))
+		}
+		log.Printf("ValueWhen: %+v", vw.Val())
 	}
 }

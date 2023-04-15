@@ -1,4 +1,4 @@
-# Go Pine
+#  🍍 Go Pine
 
 Backtesting tool written in Golang inspired by PineScript from TradingView.
 
@@ -9,151 +9,38 @@ Backtesting tool written in Golang inspired by PineScript from TradingView.
 [![HitCount](http://hits.dwyl.io/tsuz/go-pine.svg)](http://hits.dwyl.io/tsuz/go-pine)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba4f05de8cb12c615695/maintainability)](https://codeclimate.com/github/tsuz/go-pine/maintainability)
 
-> Note: This library is under heavy development
 
-## Requirements
+## 📘 Documentation
 
-- Golang v1.20 (recommended)
-
-## Example
-
-### Backtest
-
-See [backtest example][2].
+- For core indicators, checkout the [Indicator documentation][3]
+- For backtesting, checkout the [Backtest documentation][4]
 
 
-## Supported Features
+## 🏎️ Features
 
-The functions are listed in the [Pine Script reference manual V5][1]
+- 15+ Supported indicators and examples and [more coming][5].
+- Supports [PineScript V5 API][1]
+- Similar looking syntax to Pinescript, making conversion to Golang easy
+- Many examples ([backtest][6], [indicator][7])
+- Tick level analysis
+- Backtesting capability
+- Predicting indicators (coming soon)
 
-Language Operators
+## ❤️ Support
 
-| Pine Script | Go Pine |
-|--|--|
-| != | .NotEq() | 
-| == | .Eq() | 
-| < | |
-| <= | |
-| > | |
-| >= | |
-| + | ValueSeries.Add() | 
-| - | ValueSeries.Sub() | 
-| * | ValueSeries.Mul() |
-| / | ValueSeries.Div() |
-| % | |
+If you like this project, please give it a ⭐️
 
-Mathematical Operators
+<a href="https://github.com/tsuz/go-pine/stargazers"><img src="https://img.shields.io/github/stars/tsuz/go-pine?style=social" style="margin-left:0;box-shadow:none;border-radius:0;height:24px"></a>
 
-| Pine Script | Go Pine |
-|--|--|
-| math.abs | |
-| math.acos | |
-| math.asin | |
-| math.atan | |
-| math.avg | |
-| math.ceil | |
-| math.cos | |
-| math.e | |
-| math.exp | |
-| math.floor | |
-| math.log | |
-| math.log10 | |
-| math.max | |
-| math.min | |
-| math.phi | |
-| math.pi | |
-| math.pow | pine.Pow |
-| math.random | |
-| math.round | |
-| math.round_to_mintick | |
-| math.rphi | |
-| math.sign | |
-| math.sin | |
-| math.sqrt | use pine.Pow(src, 0.5) |
-| math.sum | pine.Sum |
-| math.tan | |
-| math.todegrees | |
-| math.toradians | |
+## ⛔️ Warning
 
-Technical Indicators
-
-| Pine Script | Go Pine |
-|--|--|
-| ta.alma | | 
-| ta.accdist | |
-| ta.atr | pine.ATR | 
-| ta.barssince | | 
-| ta.bb | | 
-| ta.bbw | | 
-| ta.cci | | 
-| ta.change | pine.Change() | 
-| ta.cmo | | 
-| ta.cog | | 
-| ta.correlation | | 
-| ta.cross | | 
-| ta.crossover | | 
-| ta.crossunder | | 
-| ta.cum | | 
-| ta.dev | | 
-| ta.dmi | | 
-| ta.ema |  pine.EMA() | 
-| ta.falling | | 
-| ta.highest | | 
-| ta.highestbars | | 
-| ta.hma | | 
-| ta.iii | | 
-| ta.kc | | 
-| ta.kcw | | 
-| ta.linreg | | 
-| ta.lowest | | 
-| ta.lowestbars | | 
-| ta.macd | pine.MACD() | 
-| ta.max | | 
-| ta.median | | 
-| ta.mfi | | 
-| ta.min | | 
-| ta.mode | | 
-| ta.mom | | 
-| ta.nvi | | 
-| ta.obv | | 
-| ta.percentile_linear_interpolation | | 
-| ta.percentile_nearest_rank | | 
-| ta.percentrank | | 
-| ta.pivot_point_levels | | 
-| ta.pivothigh | | 
-| ta.pivotlow | | 
-| ta.pvi | | 
-| ta.pvt | | 
-| ta.range | | 
-| ta.rising | | 
-| ta.rma | pine.RMA() | 
-| ta.roc | pine.ROC() | 
-| ta.rsi | pine.RSI() | 
-| ta.sar | | 
-| ta.sma | pine.SMA()  | 
-| ta.stdev | pine.Stdev() | 
-| ta.stoch | | 
-| ta.supertrend | | 
-| ta.swma | | 
-| ta.tr | OHLCVSeries.getSeries(OHLCPropTR) | 
-| ta.tsi | | 
-| ta.valuewhen | pine.ValueWhen() | 
-| ta.variance | pine.Variance() | 
-| ta.vwap | | 
-| ta.vwma | | 
-| ta.wad | | 
-| ta.wma | | 
-| ta.wpr | | 
-| ta.wvad | | 
-
-## Data Integrity
-
-This library does not make assumptions about the initial OHLCV data which means the developer is responsible for generating the OHLCV slice in an ascending order with correct intervals. The technical analysis indicators uses each candle as a period and so if there are missing time period (i.e. no executions), then it will skip that interval. 
-
-`time.Time` is sometimes used as the unique identifier for `Value` struct so avoid having duplicate time.
+This library is has not been stress tested and is not production ready.
 
 
 [1]: https://www.tradingview.com/pine-script-reference/v5/
-
-
 [2]: backtest/README.md
+[3]: http://pkg.go.dev/github.com/tsuz/go-pine/pine
+[4]: http://pkg.go.dev/github.com/tsuz/go-pine/backtest/
+[5]: https://github.com/tsuz/go-pine/issues/24
+[6]: http://pkg.go.dev/github.com/tsuz/go-pine/backtest/#example_BackTestable
+[7]: http://pkg.go.dev/github.com/tsuz/go-pine/pine/#pkg-examples

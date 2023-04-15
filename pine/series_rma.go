@@ -4,19 +4,7 @@ import (
 	"fmt"
 )
 
-// RMA generates a ValueSeries of weighted average values
-// the variable rma=ValueSeries is the relative strength values of p=ValueSeries
-// This ValueSeries guarantees to contain values up to p.GetCurrent()
-//
-// The formula for RMA is
-// alpha = 1/length
-// sum = 0.0
-// sum := na(sum[1]) ? ta.sma(src, length) : alpha * src + (1 - alpha) * nz(sum[1])
-// Using the above formula, the below example illustrates what EMA values look like
-//
-// t=time.Time (no iteration) | 1   |  2  | 3   | 4       |
-// p=ValueSeries              | 13  | 15  | 17  | 18      |
-// rsa(close, 2)              | nil | 14  | 16  | 17.3333 |
+// RMA generates a ValueSeries of the exponentially weighted moving average with alpha = 1 / length.
 func RMA(p ValueSeries, l int64) (ValueSeries, error) {
 	key := fmt.Sprintf("rma:%s:%d", p.ID(), l)
 	rma := getCache(key)

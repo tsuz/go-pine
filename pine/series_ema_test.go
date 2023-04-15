@@ -315,3 +315,21 @@ func TestSeriesEMANotEnoughData(t *testing.T) {
 		}
 	}
 }
+
+func ExampleEMA() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		ema, err := EMA(close, 20)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error EMA"))
+		}
+		log.Printf("EMA: %+v", ema.Val())
+	}
+}

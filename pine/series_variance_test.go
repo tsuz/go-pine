@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -181,5 +182,23 @@ func BenchmarkVariance(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		series.Next()
 		Variance(vals, 5)
+	}
+}
+
+func ExampleVariance() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		variance, err := Variance(close, 20)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting variance"))
+		}
+		log.Printf("Variance: %+v", variance.Val())
 	}
 }

@@ -9,13 +9,8 @@ import (
 // Sum generates a ValueSeries of summation of previous values
 //
 // Parameters
-// p - ValueSeries: source data
-// l - lookback: lookback periods [1, ∞)
-//
-// Example:
-// t=time.Time       | 1   |  2  | 3    | 4    | 5  |
-// p=ValueSeries     | 13  | 15  | 11   | 19   | 21 |
-// sum(p, 3)	     | nil | nil | 39   | 45   | 51 |
+//   - p - ValueSeries: source data
+//   - l - int: lookback periods [1, ∞)
 func Sum(p ValueSeries, l int) (ValueSeries, error) {
 	var err error
 	key := fmt.Sprintf("sum:%s:%d", p.ID(), l)

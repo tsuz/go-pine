@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -168,5 +169,23 @@ func TestSeriesStdevNotEnoughData(t *testing.T) {
 		if stdev.Val() != v.exp {
 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *stdev.Val(), v.lookback)
 		}
+	}
+}
+
+func ExampleStdev() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		stdev, err := Stdev(close, 12)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting stdev"))
+		}
+		log.Printf("Stdev: %+v", stdev.Val())
 	}
 }

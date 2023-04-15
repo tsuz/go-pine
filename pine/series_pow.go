@@ -7,17 +7,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Sum generates a ValueSeries of summation of previous values
+// Pow generates a ValueSeries of values from power function
 //
 // Parameters
-// p - ValueSeries: source data
-// l - lookback: lookback periods [1, ∞)
-//
-// Example:
-// t=time.Time       | 1     |  2    | 3     |
-// p=ValueSeries     | 13    | 15    | 11    |
-// pow(0.5)     	 | 3.606 | 3.873 | 3.317 |
-// pow(2)       	 | 169   | 225   | 121   |
+//   - p - ValueSeries: source data
+//   - exp - float64: exponent of the power function
 func Pow(src ValueSeries, exp float64) (ValueSeries, error) {
 	var err error
 	key := fmt.Sprintf("pow:%s:%.8f", src.ID(), exp)

@@ -8,23 +8,12 @@ import (
 )
 
 // RSI generates a ValueSeries of relative strength index
-// the variable rsi=ValueSeries is the relative strength values of p=ValueSeries
-// This ValueSeries guarantees to contain values up to p.GetCurrent()
 //
 // The formula for RSI is
-// u = Count the number of p(t+1) - p(t) > 0 as gains
-// d = Count the number of p(t+1) - p(t) < 0 as losses
-// rs = ta.rma(u) / ta.rma(d)
-// res = 100 - 100 / (1 + rs)
-// Using the above formula, the below example illustrates what EMA values look like
-//
-// t=time.Time (no iteration) | 1   |  2  | 3    | 4          | 5  |
-// p=ValueSeries              | 13  | 15  | 11   | 18         | 20 |
-// u(close, 2)                | nil | nil |  2   | 7          | 9  |
-// d(close, 2)                | nil | nil |  4   | 4          | 0  |
-// rma(u(close,2), 2)		  | nil | nil |  1   | 4.5        | 8  |
-// rma(d(close,2), 2)		  | nil | nil |  2 	 | 2          | 2  |
-// rsi(close, 2)			  | nil | nil | 33.33| 69.2307692 | 20 |
+//   - u = Count the number of p(t+1) - p(t) > 0 as gains
+//   - d = Count the number of p(t+1) - p(t) < 0 as losses
+//   - rs = ta.rma(u) / ta.rma(d)
+//   - res = 100 - 100 / (1 + rs)
 func RSI(p ValueSeries, l int64) (ValueSeries, error) {
 	key := fmt.Sprintf("rsi:%s:%d", p.ID(), l)
 	rsi := getCache(key)
