@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"log"
 	"testing"
 	"time"
 
@@ -127,5 +128,24 @@ func TestSeriesSumIteration(t *testing.T) {
 				// OK
 			}
 		}
+	}
+}
+
+func ExampleSum() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		// Get the sum of last 10 values
+		sum, err := Sum(close, 10)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting sum"))
+		}
+		log.Printf("Sum: %+v", sum.Val())
 	}
 }
