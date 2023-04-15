@@ -138,7 +138,7 @@ Technical Indicators
 | ta.tr | OHLCVSeries.getSeries(OHLCPropTR) | 
 | ta.tsi | | 
 | ta.valuewhen | pine.ValueWhen() | 
-| ta.variance | | 
+| ta.variance | pine.Variance() | 
 | ta.vwap | | 
 | ta.vwma | | 
 | ta.wad | | 
