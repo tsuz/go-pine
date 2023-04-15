@@ -127,7 +127,7 @@ Technical Indicators
 | ta.range | | 
 | ta.rising | | 
 | ta.rma | pine.RMA() | 
-| ta.roc | | 
+| ta.roc | pine.ROC() | 
 | ta.rsi | pine.RSI() | 
 | ta.sar | | 
 | ta.sma | pine.SMA()  | 
