@@ -107,7 +107,7 @@ Technical Indicators
 | ta.linreg | | 
 | ta.lowest | | 
 | ta.lowestbars | | 
-| ta.macd | | 
+| ta.macd | pine.MACD() | 
 | ta.max | | 
 | ta.median | | 
 | ta.mfi | | 

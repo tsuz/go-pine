@@ -118,12 +118,16 @@ func TestValueSeriesMul(t *testing.T) {
 func TestValueSeriesSub(t *testing.T) {
 	a := NewValueSeries()
 	now := time.Now()
+	nilTime := now.Add(time.Duration(3000 * 1e6))
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(now.Add(time.Duration(2000*1e6)), 3)
+	a.Set(nilTime, 4)
 
 	b := NewValueSeries()
 	b.Set(now, 4)
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
+	b.Set(now.Add(time.Duration(2000*1e6)), 1)
 
 	c := a.Sub(b)
 	c.SetCurrent(now)
@@ -135,7 +139,14 @@ func TestValueSeriesSub(t *testing.T) {
 		t.Errorf("expected %+v but got %+v", -3, f.v)
 	}
 	if f.next.v != -2 {
-		t.Errorf("expected %+v but got %+v", -2, f.v)
+		t.Errorf("expected %+v but got %+v", -2, f.next.v)
+	}
+	if f.next.next.v != 2 {
+		t.Errorf("expected %+v but got %+v", 2, f.next.next.v)
+	}
+	n := c.Get(nilTime)
+	if n != nil {
+		t.Errorf("expected nil but got %+v", n.v)
 	}
 }
 
