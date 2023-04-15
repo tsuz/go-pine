@@ -2,7 +2,6 @@ package pine
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/pkg/errors"
 )
@@ -35,33 +34,21 @@ func Stdev(p ValueSeries, l int64) (ValueSeries, error) {
 		stdev = NewValueSeries()
 	}
 
-	sma, err := SMA(p, l)
-	if err != nil {
-		return stdev, errors.Wrap(err, "error getting sma")
-	}
-
 	// current available value
 	stop := p.GetCurrent()
 	if stop == nil {
 		return stdev, nil
 	}
 
-	meanv := sma.Get(stop.t)
-	if meanv == nil {
+	if stdev.Get(stop.t) != nil {
 		return stdev, nil
 	}
 
-	diff := p.SubConst(meanv.v)
-	sqrt, err := Pow(diff, 2)
+	vari, err := Variance(p, l)
 	if err != nil {
-		return stdev, errors.Wrap(err, "error pow(2)")
+		return nil, errors.Wrap(err, "error getting variance")
 	}
-	sum, err := Sum(sqrt, int(l))
-	if err != nil {
-		return stdev, errors.Wrap(err, "error sum")
-	}
-	denom := math.Max(float64(l-1), 1)
-	vari := sum.DivConst(denom)
+
 	stdev, err = Pow(vari, 0.5)
 	if err != nil {
 		return stdev, errors.Wrap(err, "error pow(0.5)")
