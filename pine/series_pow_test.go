@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -121,5 +122,24 @@ func TestSeriesPowIteration(t *testing.T) {
 				// OK
 			}
 		}
+	}
+}
+
+func ExamplePow() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		added := close.AddConst(3.0)
+		pow, err := Pow(added, 2)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error getting pow"))
+		}
+		log.Printf("Pow: %+v", pow.Val())
 	}
 }
