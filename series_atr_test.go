@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -171,6 +172,23 @@ func TestSeriesATRNotEnoughData(t *testing.T) {
 		}
 		if atr.Val() != v.exp {
 			t.Errorf("Expected to get %+v but got %+v for lookback %+v", v.exp, *atr.Val(), v.lookback)
+		}
+	}
+}
+
+func ExampleATR() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+
+	for {
+		if series.Next() == nil {
+			break
+		}
+		tr := series.GetSeries(OHLCPropTR)
+		atr, _ := ATR(tr, 3)
+		if atr.Val() != nil {
+			log.Printf("ATR value: %+v", *atr.Val())
 		}
 	}
 }
