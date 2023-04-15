@@ -2,6 +2,7 @@ package pine
 
 import (
 	"fmt"
+	"log"
 	"testing"
 	"time"
 
@@ -186,4 +187,18 @@ func BenchmarkMACD(b *testing.B) {
 		series.Next()
 		MACD(vals, 12, 26, 9)
 	}
+}
+
+func ExampleMACD() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	close := series.GetSeries(OHLCPropClose)
+	mline, sigline, histline, err := MACD(close, 12, 26, 9)
+	if err != nil {
+		log.Fatal(errors.Wrap(err, "error MACD"))
+	}
+	log.Printf("MACD line: %+v", mline.Val())
+	log.Printf("Signal line: %+v", sigline.Val())
+	log.Printf("Hist line: %+v", histline.Val())
 }
