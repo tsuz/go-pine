@@ -32,6 +32,9 @@ If you like this project, please give it a ⭐️
 
 <a href="https://github.com/tsuz/go-pine/stargazers"><img src="https://img.shields.io/github/stars/tsuz/go-pine?style=social" style="margin-left:0;box-shadow:none;border-radius:0;height:24px"></a>
 
+## ⛔️ Warning
+
+This library is has not been stress tested and is not production ready.
 
 
 [1]: https://www.tradingview.com/pine-script-reference/v5/
