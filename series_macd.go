@@ -10,28 +10,23 @@ import (
 // It is supposed to reveal changes in the strength, direction, momentum, and duration of a trend in a stock's price.
 //
 // The formula for MACD is
-// MACD Line: (12-day EMA - 26-day EMA)
-// Signal Line: 9-day EMA of MACD Line
-// MACD Histogram: MACD Line - Signal Line
+//
+//   - MACD Line: (12-day EMA - 26-day EMA)
+//   - Signal Line: 9-day EMA of MACD Line
+//   - MACD Histogram: MACD Line - Signal Line
 //
 // The arguments are:
-// source: ValueSeries - source of data
-// fastlen: int - fast len of MACD series
-// slowlen: int - slow len of MACD series
-// siglen: int - signal length of MACD series
+//
+//   - source: ValueSeries - source of data
+//   - fastlen: int - fast len of MACD series
+//   - slowlen: int - slow len of MACD series
+//   - siglen: int - signal length of MACD series
 //
 // The return values are:
-// - macdLine
-// - signalLine
-// - histLine
-// - error
-//
-// t=time.Time                          | 1   |  2  | 3   | 4       |
-// p=ValueSeries                        | 13  | 15  | 17  | 18      |
-// ema(close, 1)                        | 13  | 15  | 17  | 18      |
-// ema(close, 2)                        | nil | 14  | 16  | 17.3333 |
-// ema(close, 1) - ema(close,2)         | nil |  1  |  1  |  0.6666 |
-// ema(ema(close, 1) - ema(close,2), 2) | nil | nil |  1  |  0.7777 |
+//   - macdLine: ValueSeries - MACD Line
+//   - signalLine: ValueSeries - Signal Line
+//   - histLine: ValueSeries - MACD Histogram
+//   - err: error
 func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSeries, ValueSeries, error) {
 	macdlineKey := fmt.Sprintf("macdline:%s:%d:%d:%d", src.ID(), fastlen, slowlen, siglen)
 	macdline := getCache(macdlineKey)
