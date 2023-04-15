@@ -311,3 +311,21 @@ func TestSeriesRMANotEnoughData(t *testing.T) {
 		}
 	}
 }
+
+func ExampleRMA() {
+	start := time.Now()
+	data := OHLCVTestData(start, 10000, 5*60*1000)
+	series, _ := NewOHLCVSeries(data)
+	for {
+		if series.Next() == nil {
+			break
+		}
+
+		close := series.GetSeries(OHLCPropClose)
+		rma, err := RMA(close, 12)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "error geting rma"))
+		}
+		log.Printf("RMA: %+v", rma.Val())
+	}
+}
