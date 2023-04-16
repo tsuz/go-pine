@@ -5,6 +5,12 @@ import (
 )
 
 type Strategy interface {
+	// Cancel cancels specific order if it's not filled
+	Cancel(string) error
+
+	// CancelAll cancels all orders
+	CancelAll() error
+
 	Execute(pine.OHLCV) error
 	Entry(string, EntryOpts) error
 	Exit(string) error
