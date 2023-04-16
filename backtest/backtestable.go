@@ -18,15 +18,20 @@ type BacktestResult struct {
 	TotalClosedTrades int64
 }
 
+// EntryOpts is additional entry options
 type EntryOpts struct {
 	Comment string
-	Limit   *float64
-	OrdID   string
-	Side    Side
-	Stop    string
-	Qty     string
+
+	// Limit price is used if this value is non nil. If it's nil, market order is executed
+	Limit *float64
+
+	OrdID string
+	Side  Side
+	Stop  string
+	Qty   string
 }
 
+// Px generates a non nil float64
 func Px(v float64) *float64 {
 	v2 := &v
 	return v2
@@ -38,19 +43,6 @@ const (
 	Long  Side = "long"
 	Short Side = "short"
 )
-
-type OrdMethod string
-
-const (
-	Limit  OrdMethod = "limit"
-	Market OrdMethod = "market"
-)
-
-type Order struct {
-	EntryPx float64
-	OrdID   string
-	Method  OrdMethod
-}
 
 type Position struct {
 	EntryPx   float64
