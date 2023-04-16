@@ -3,7 +3,7 @@ package backtest
 func (s *strategy) Cancel(ordID string) error {
 	for _, v := range s.ordEntry {
 		if v.OrdID == ordID {
-			delete(s.ordEntry, ordID)
+			s.deleteEntryOrder(ordID)
 		}
 	}
 
@@ -12,7 +12,7 @@ func (s *strategy) Cancel(ordID string) error {
 
 func (s *strategy) CancelAll() error {
 	for _, v := range s.ordEntry {
-		delete(s.ordEntry, v.OrdID)
+		s.deleteEntryOrder(v.OrdID)
 	}
 
 	return nil
