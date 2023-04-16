@@ -14,7 +14,7 @@ type ValueSeries interface {
 	Div(ValueSeries) ValueSeries
 	DivConst(float64) ValueSeries
 	Mul(ValueSeries) ValueSeries
-	// MulConst(float64) ValueSeries
+	MulConst(float64) ValueSeries
 	Sub(ValueSeries) ValueSeries
 	SubConst(float64) ValueSeries
 
@@ -148,6 +148,19 @@ func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
 		if newv != nil {
 			copied.Set(f.t, f.v*newv.v)
 		}
+		f = f.next
+	}
+	return copied
+}
+
+func (s *valueSeries) MulConst(v float64) ValueSeries {
+	copied := NewValueSeries()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+		copied.Set(f.t, f.v*v)
 		f = f.next
 	}
 	return copied
