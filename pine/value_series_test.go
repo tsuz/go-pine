@@ -115,6 +115,25 @@ func TestValueSeriesMul(t *testing.T) {
 	}
 }
 
+func TestValueSeriesMulConst(t *testing.T) {
+	a := NewValueSeries()
+	now := time.Now()
+	a.Set(now, 1)
+	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+
+	b := a.MulConst(3)
+	f := b.GetFirst()
+	if f == nil {
+		t.Fatalf("expected to be non nil but got nil")
+	}
+	if f.v != 3 {
+		t.Errorf("expected %+v but got %+v", 3, f.v)
+	}
+	if f.next.v != 6 {
+		t.Errorf("expected %+v but got %+v", 6, f.v)
+	}
+}
+
 func TestValueSeriesSub(t *testing.T) {
 	a := NewValueSeries()
 	now := time.Now()
