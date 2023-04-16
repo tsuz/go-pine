@@ -20,11 +20,16 @@ type BacktestResult struct {
 
 type EntryOpts struct {
 	Comment string
-	Limit   string
+	Limit   *float64
 	OrdID   string
 	Side    Side
 	Stop    string
 	Qty     string
+}
+
+func Px(v float64) *float64 {
+	v2 := &v
+	return v2
 }
 
 type Side string
