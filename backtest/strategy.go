@@ -75,8 +75,24 @@ func (s *strategy) Execute(ohlcv pine.OHLCV) error {
 		if found {
 			continue
 		}
+
+		entryPx := ohlcv.O
+
+		// if limit order, see if it gets filled
+		if v.Limit != nil {
+			if v.Side == Long && *v.Limit < ohlcv.L {
+				// long order not filled
+				continue
+			}
+			if v.Side == Short && *v.Limit > ohlcv.H {
+				// short order not filled
+				continue
+			}
+			entryPx = *v.Limit
+		}
+
 		pos := Position{
-			EntryPx:   ohlcv.O,
+			EntryPx:   entryPx,
 			EntryTime: ohlcv.S,
 			EntrySide: v.Side,
 			OrdID:     v.OrdID,
