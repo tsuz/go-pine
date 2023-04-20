@@ -10,6 +10,7 @@ func TestValueSeriesAdd(t *testing.T) {
 	now := time.Now()
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(now.Add(time.Duration(2000*1e6)), 4) // this doesn't exist in b
 
 	b := NewValueSeries()
 	b.Set(now, 4)
@@ -26,6 +27,16 @@ func TestValueSeriesAdd(t *testing.T) {
 	}
 	if f.next.v != 6 {
 		t.Errorf("expected %+v but got %+v", 6, f.v)
+	}
+	if f.next.next != nil {
+		t.Errorf("expected nil but got %+v", f.next.next.v)
+	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.Add(b)
+	if *d.Val() != 6 {
+		t.Errorf("expected 6 but got %+v", *d.Val())
 	}
 }
 
@@ -46,6 +57,13 @@ func TestValueSeriesAddConst(t *testing.T) {
 	if f.next.v != 5 {
 		t.Errorf("expected %+v but got %+v", 5, f.v)
 	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.AddConst(3)
+	if *d.Val() != 5 {
+		t.Errorf("expected 5 but got %+v", *d.Val())
+	}
 }
 
 func TestValueSeriesDiv(t *testing.T) {
@@ -53,6 +71,7 @@ func TestValueSeriesDiv(t *testing.T) {
 	now := time.Now()
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(now.Add(time.Duration(2000*1e6)), 3)
 
 	b := NewValueSeries()
 	b.Set(now, 4)
@@ -69,6 +88,16 @@ func TestValueSeriesDiv(t *testing.T) {
 	}
 	if f.next.v != 0.5 {
 		t.Errorf("expected %+v but got %+v", 0.5, f.v)
+	}
+	if f.next.next != nil {
+		t.Errorf("expected nil but got %+v", f.next.next.v)
+	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.Div(b)
+	if *d.Val() != 0.5 {
+		t.Errorf("expected .5 but got %+v", *d.Val())
 	}
 }
 
@@ -89,6 +118,13 @@ func TestValueSeriesDivConst(t *testing.T) {
 	if f.next.v != 0.5 {
 		t.Errorf("expected %+v but got %+v", 0.5, f.v)
 	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.DivConst(4)
+	if *d.Val() != 0.5 {
+		t.Errorf("expected .5 but got %+v", *d.Val())
+	}
 }
 
 func TestValueSeriesMul(t *testing.T) {
@@ -96,6 +132,7 @@ func TestValueSeriesMul(t *testing.T) {
 	now := time.Now()
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(now.Add(time.Duration(2000*1e6)), 3) // this doesn't exist in b
 
 	b := NewValueSeries()
 	b.Set(now, 4)
@@ -112,6 +149,16 @@ func TestValueSeriesMul(t *testing.T) {
 	}
 	if f.next.v != 8 {
 		t.Errorf("expected %+v but got %+v", 8, f.v)
+	}
+	if f.next.next != nil {
+		t.Errorf("expected nil but got %+v", f.next.next.v)
+	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.Mul(b)
+	if *d.Val() != 8 {
+		t.Errorf("expected 8 but got %+v", *d.Val())
 	}
 }
 
@@ -131,6 +178,13 @@ func TestValueSeriesMulConst(t *testing.T) {
 	}
 	if f.next.v != 6 {
 		t.Errorf("expected %+v but got %+v", 6, f.v)
+	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.MulConst(3)
+	if *d.Val() != 6.0 {
+		t.Errorf("expected 6 but got %+v", *d.Val())
 	}
 }
 
@@ -167,6 +221,13 @@ func TestValueSeriesSub(t *testing.T) {
 	if n != nil {
 		t.Errorf("expected nil but got %+v", n.v)
 	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.Sub(b)
+	if *d.Val() != -2 {
+		t.Errorf("expected -2 but got %+v", *d.Val())
+	}
 }
 
 func TestValueSeriesSubConst(t *testing.T) {
@@ -185,6 +246,13 @@ func TestValueSeriesSubConst(t *testing.T) {
 	}
 	if f.next.v != -1 {
 		t.Errorf("expected %+v but got %+v", -1, f.v)
+	}
+
+	// current time is passed on
+	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
+	d := a.SubConst(3)
+	if *d.Val() != -1 {
+		t.Errorf("expected -1 but got %+v", *d.Val())
 	}
 }
 
