@@ -1,8 +1,12 @@
 package backtest
 
-import "github.com/tsuz/go-pine/pine"
+import (
+	"github.com/tsuz/go-pine/pine"
+)
 
 func (s *strategy) Execute(ohlcv pine.OHLCV) error {
+	delFromOrdEntry := make([]string, 0)
+
 	// convert open entry orders into open positions
 	for _, v := range s.ordEntry {
 		_, found := s.findPos(v.OrdID)
@@ -32,8 +36,13 @@ func (s *strategy) Execute(ohlcv pine.OHLCV) error {
 			OrdID:     v.OrdID,
 		}
 		s.setOpenPos(v.OrdID, pos)
+
+		delFromOrdEntry = append(delFromOrdEntry, v.OrdID)
 	}
-	s.ordEntry = make(map[string]EntryOpts)
+
+	for _, v := range delFromOrdEntry {
+		s.deleteEntryOrder(v)
+	}
 
 	// convert positions into exit orders
 	for id := range s.ordExit {
