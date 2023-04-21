@@ -33,7 +33,6 @@ func (s *strategy) Execute(ohlcv pine.OHLCV) error {
 		}
 		s.setOpenPos(v.OrdID, pos)
 	}
-	s.ordEntry = make(map[string]EntryOpts)
 
 	// convert positions into exit orders
 	for id := range s.ordExit {
