@@ -100,6 +100,41 @@ func TestRunBacktestLongLimitOrderPersist(t *testing.T) {
 	}
 }
 
+// TestRunBacktestLongLimitOrderNotPersistAfterExit that limit orders should persist for multiple candles
+func TestRunBacktestLongLimitOrderNotPersistAfterExit(t *testing.T) {
+	b := &testLongLimitMystrat{}
+	data := pine.OHLCVTestData(time.Now(), 4, 5*60*1000)
+	data[0].C = 14.5 // <-- limit order triggered
+	data[0].L = 15
+	data[1].L = 13   // <-- limit order filled
+	data[1].C = 17   // <-- exit triggered
+	data[2].O = 15   // <-- exit filled
+	data[2].L = 13   // <-- limit order should not be open anymore so no trigger
+	data[2].C = 15   // <-- limit order should not be open anymore so no trigger
+	data[3].O = 16.1 // <-- exit triggered
+	data[3].C = 17   // <-- should not fill
+
+	series, _ := pine.NewOHLCVSeries(data)
+
+	res, err := RunBacktest(series, b)
+	if err != nil {
+		t.Fatal(errors.Wrap(err, "error runbacktest"))
+	}
+
+	if res.TotalClosedTrades != 1 {
+		t.Errorf("Expected total trades to be 1 but got %d", res.TotalClosedTrades)
+	}
+	if res.PercentProfitable != 1 {
+		t.Errorf("Expected pct profitable to be 1 but got %+v", res.PercentProfitable)
+	}
+	if res.ProfitableTrades != 1 {
+		t.Errorf("Expected profitable trades to be 1 but got %+v", res.ProfitableTrades)
+	}
+	if fmt.Sprintf("%.03f", res.NetProfit) != "1.064" {
+		t.Errorf("Expected NetProfit to be 1.154 but got %+v", res.NetProfit)
+	}
+}
+
 // TestRunBacktestLongLimitNotExecuted tests limit orders are not executed
 func TestRunBacktestLongLimitNotExecuted(t *testing.T) {
 	b := &testLongLimitMystrat{}
