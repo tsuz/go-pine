@@ -16,6 +16,6 @@ Market order will be executed on the next OHLCV bar.
 
 ### Limit Order
 
-Limit order will be placed and valid until either it is executed or cancelled.
+Limit order will be placed and open until either it is executed or cancelled.
 
 
