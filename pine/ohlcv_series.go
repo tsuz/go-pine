@@ -16,6 +16,7 @@ type OHLCVSeries interface {
 	OHLCVBaseSeries
 }
 
+// NewDynamicOHLCVSeries generates a dynamic OHLCV series
 func NewDynamicOHLCVSeries(ohlcv []OHLCV, ds DataSource) (OHLCVSeries, error) {
 	s := NewOHLCVBaseSeries()
 
