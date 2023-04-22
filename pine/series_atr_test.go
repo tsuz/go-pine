@@ -182,7 +182,7 @@ func ExampleATR() {
 	series, _ := NewOHLCVSeries(data)
 
 	for {
-		if series.Next() == nil {
+		if v, _ := series.Next(); v == nil {
 			break
 		}
 		tr := series.GetSeries(OHLCPropTR)

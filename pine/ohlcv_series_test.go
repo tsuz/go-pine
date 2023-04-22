@@ -47,7 +47,7 @@ func TestNewOHLCVSeries(t *testing.T) {
 		},
 	}
 
-	for _, v := range testTable {
+	for i, v := range testTable {
 		// move to next iteration
 		s.Next()
 
@@ -55,13 +55,56 @@ func TestNewOHLCVSeries(t *testing.T) {
 			vals := s.GetSeries(p)
 			val := vals.Val()
 			if *val != v.vals[j] {
-				t.Errorf("Expected %+v to bs %+v but got %+v", p, v.vals[j], val)
+				t.Errorf("Expected %+v to bs %+v but got %+v for i: %d, j: %d", p, v.vals[j], val, i, j)
 			}
 		}
 	}
 
 	// if this is last, return nil
-	if v := s.Next(); v != nil {
+	if v, _ := s.Next(); v != nil {
 		t.Errorf("Expected to be nil but got %+v", v)
+	}
+}
+
+func TestNewOHLCVSeriesPush(t *testing.T) {
+	start := time.Now()
+	data := OHLCVTestData(start, 3, 5*60*1000)
+	empty := make([]OHLCV, 0)
+	s, err := NewOHLCVSeries(empty)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i, v := range data {
+		s.Push(v)
+
+		if s.Len() != i+1 {
+			t.Errorf("expected len of %d but got %d", i+1, s.Len())
+		}
+	}
+
+	for i := 0; i < 3; i++ {
+		s.Next()
+		close := s.GetSeries(OHLCPropClose)
+		if *close.Val() != data[i].C {
+			t.Errorf("expected %+v but got %+v", data[i].C, *close.Val())
+		}
+	}
+}
+
+func TestNewOHLCVSeriesShift(t *testing.T) {
+	start := time.Now()
+	data := OHLCVTestData(start, 3, 5*60*1000)
+
+	s, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := 0; i < 3; i++ {
+		s.Shift()
+		if s.Len() != 3-(i+1) {
+			t.Errorf("expected len of %d but got %d", 3-(i+1), s.Len())
+		}
 	}
 }

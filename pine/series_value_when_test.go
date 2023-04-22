@@ -221,7 +221,7 @@ func ExampleValueWhen() {
 	}
 
 	for {
-		if series.Next() == nil {
+		if v, _ := series.Next(); v == nil {
 			break
 		}
 

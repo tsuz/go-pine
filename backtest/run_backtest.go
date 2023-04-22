@@ -16,7 +16,11 @@ func RunBacktest(series pine.OHLCVSeries, b BackTestable) (*BacktestResult, erro
 		if err := b.OnNextOHLCV(strategy, series, states); err != nil {
 			return nil, errors.Wrap(err, "error calling OnNextOHLCV")
 		}
-		next := series.Next()
+		next, err := series.Next()
+		if err != nil {
+			return nil, errors.Wrap(err, "error next")
+		}
+
 		if next == nil {
 			break
 		}
