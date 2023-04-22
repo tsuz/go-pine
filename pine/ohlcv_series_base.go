@@ -37,6 +37,7 @@ type OHLCVBaseSeries interface {
 
 func NewOHLCVBaseSeries() OHLCVBaseSeries {
 	s := &ohlcvBaseSeries{
+		max:  1000, // default maximum items
 		vals: make(map[int64]OHLCV),
 	}
 	return s
@@ -52,7 +53,7 @@ type ohlcvBaseSeries struct {
 
 	last *OHLCV
 
-	// max number of candles. 0 means no limit. Defaults to 0
+	// max number of candles. 0 means no limit. Defaults to 1000
 	max int64
 
 	vals map[int64]OHLCV
