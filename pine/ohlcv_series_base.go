@@ -68,7 +68,7 @@ func (s *ohlcvBaseSeries) Push(o OHLCV) {
 	if s.first == nil {
 		s.first = &o
 	}
-	s.resize(s.max)
+	s.resize()
 }
 
 func (s *ohlcvBaseSeries) Shift() bool {
@@ -180,15 +180,13 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 
 func (s *ohlcvBaseSeries) SetMax(m int64) {
 
-	// set upon exit
-	defer func() {
-		s.max = m
-	}()
+	s.max = m
 
-	s.resize(m)
+	s.resize()
 }
 
-func (s *ohlcvBaseSeries) resize(m int64) {
+func (s *ohlcvBaseSeries) resize() {
+	m := s.max
 	// set to unlimited, nothing to perform
 	if m == 0 {
 		return
