@@ -127,6 +127,64 @@ func TestValueSeriesDivConst(t *testing.T) {
 	}
 }
 
+// TestValueSeriesSetMaxResize tests when set max is called after data is populated
+func TestValueSeriesSetMaxResize(t *testing.T) {
+	a := NewValueSeries()
+	now := time.Now()
+	t1 := time.Now()
+	t2 := now.Add(time.Duration(1000 * 1e6))
+	t3 := now.Add(time.Duration(2000 * 1e6))
+	a.Set(t1, 1)
+	a.Set(t2, 2)
+	a.Set(t3, 4) // this doesn't exist in b
+	a.SetMax(2)
+
+	v1 := a.Get(t1)
+	if v1 != nil {
+		t.Errorf("expected to be nil but got %+v", v1.v)
+	}
+	v1 = a.Get(t2)
+	if v1.v != 2 {
+		t.Errorf("expected to be 2 but got %+v", v1.v)
+	}
+	v1 = a.Get(t3)
+	if v1.v != 4 {
+		t.Errorf("expected to be 4 but got %+v", v1.v)
+	}
+	if a.Len() != 2 {
+		t.Errorf("expected to be 2 but got %+v", a.Len())
+	}
+}
+
+// TestValueSeriesSetMaxPushResize tests when max is set and then data is populated
+func TestValueSeriesSetMaxPushResize(t *testing.T) {
+	a := NewValueSeries()
+	a.SetMax(2)
+	now := time.Now()
+	t1 := time.Now()
+	t2 := now.Add(time.Duration(1000 * 1e6))
+	t3 := now.Add(time.Duration(2000 * 1e6))
+	a.Set(t1, 1)
+	a.Set(t2, 2)
+	a.Set(t3, 4) // this doesn't exist in b
+
+	v1 := a.Get(t1)
+	if v1 != nil {
+		t.Errorf("expected to be nil but got %+v", v1.v)
+	}
+	v1 = a.Get(t2)
+	if v1.v != 2 {
+		t.Errorf("expected to be 2 but got %+v", v1.v)
+	}
+	v1 = a.Get(t3)
+	if v1.v != 4 {
+		t.Errorf("expected to be 4 but got %+v", v1.v)
+	}
+	if a.Len() != 2 {
+		t.Errorf("expected to be 2 but got %+v", a.Len())
+	}
+}
+
 func TestValueSeriesMul(t *testing.T) {
 	a := NewValueSeries()
 	now := time.Now()
