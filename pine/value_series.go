@@ -49,7 +49,7 @@ type valueSeries struct {
 	cur   *Value
 	first *Value
 	last  *Value
-	// max number of candles. 0 means no limit. Defaults to 200
+	// max number of candles. 0 means no limit. Defaults to 1000
 	max int64
 	sync.Mutex
 	timemap map[int64]*Value
@@ -67,7 +67,7 @@ func NewValueSeries() ValueSeries {
 	u := uuid.NewV4()
 	v := &valueSeries{
 		id:      u.String(),
-		max:     200, // default maximum items
+		max:     1000, // default maximum items
 		timemap: make(map[int64]*Value),
 	}
 	return v
