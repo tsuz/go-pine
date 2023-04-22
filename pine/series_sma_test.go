@@ -283,7 +283,7 @@ func ExampleSMA() {
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
 	for {
-		if series.Next() == nil {
+		if v, _ := series.Next(); v == nil {
 			break
 		}
 
