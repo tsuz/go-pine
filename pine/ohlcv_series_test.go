@@ -108,3 +108,48 @@ func TestNewOHLCVSeriesShift(t *testing.T) {
 		}
 	}
 }
+
+func TestNewOHLCVSeriesMaxResize(t *testing.T) {
+	start := time.Now()
+	data := OHLCVTestData(start, 6, 5*60*1000)
+
+	s, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.SetMax(3)
+
+	for i := 0; i < 3; i++ {
+		v, _ := s.Next()
+		if v.C != data[i+3].C {
+			t.Errorf("expected %+v but got %+v", v.C, data[i+3].C)
+		}
+	}
+}
+
+func TestNewOHLCVSeriesMaxCheckUponPush(t *testing.T) {
+	start := time.Now()
+	data := OHLCVTestData(start, 3, 5*60*1000)
+	newv := OHLCVTestData(start.Add(3*5*time.Minute), 1, 5*60*1000)
+
+	s, err := NewOHLCVSeries(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.SetMax(3)
+
+	s.Push(newv[0])
+
+	for i := 0; i < 3; i++ {
+		v, _ := s.Next()
+		if i < 2 {
+			if v.C != data[i+1].C {
+				t.Errorf("expected %+v but got %+v for %d", data[i+1].C, v.C, i)
+			}
+		} else {
+			if v.C != newv[0].C {
+				t.Errorf("expected %+v but got %+v for %d", v.C, newv[0].C, i)
+			}
+		}
+	}
+}

@@ -30,10 +30,14 @@ type OHLCVBaseSeries interface {
 
 	// registers data source for dynamic updates
 	RegisterDataSource(DataSource)
+
+	// set the maximum number of OHLCV items. This helps prevent high memory usage.
+	SetMax(int64)
 }
 
 func NewOHLCVBaseSeries() OHLCVBaseSeries {
 	s := &ohlcvBaseSeries{
+		max:  1000, // default maximum items
 		vals: make(map[int64]OHLCV),
 	}
 	return s
@@ -49,6 +53,9 @@ type ohlcvBaseSeries struct {
 
 	last *OHLCV
 
+	// max number of candles. 0 means no limit. Defaults to 1000
+	max int64
+
 	vals map[int64]OHLCV
 }
 
@@ -62,6 +69,7 @@ func (s *ohlcvBaseSeries) Push(o OHLCV) {
 	if s.first == nil {
 		s.first = &o
 	}
+	s.resize()
 }
 
 func (s *ohlcvBaseSeries) Shift() bool {
@@ -169,4 +177,25 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 		vs.SetCurrent(s.cur.S)
 	}
 	return vs
+}
+
+func (s *ohlcvBaseSeries) SetMax(m int64) {
+
+	s.max = m
+
+	s.resize()
+}
+
+func (s *ohlcvBaseSeries) resize() {
+	m := s.max
+	// set to unlimited, nothing to perform
+	if m == 0 {
+		return
+	}
+	for {
+		if int64(s.Len()) <= m {
+			break
+		}
+		s.Shift()
+	}
 }

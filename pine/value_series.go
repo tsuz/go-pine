@@ -25,14 +25,23 @@ type ValueSeries interface {
 	// GetFirst gets the first item in value series
 	GetFirst() *Value
 
+	// Gets size of the ValueSeries
+	Len() int
+
 	Copy() ValueSeries
 
 	Set(time.Time, float64)
 	SetAll(val float64)
 
+	Shift() bool
+
 	Val() *float64
 	SetCurrent(time.Time) bool
 	GetCurrent() *Value
+
+	// set the maximum number of items.
+	// This helps prevent allocating too much memory
+	SetMax(int64)
 }
 
 type valueSeries struct {
@@ -40,6 +49,8 @@ type valueSeries struct {
 	cur   *Value
 	first *Value
 	last  *Value
+	// max number of candles. 0 means no limit. Defaults to 200
+	max int64
 	sync.Mutex
 	timemap map[int64]*Value
 }
@@ -56,6 +67,7 @@ func NewValueSeries() ValueSeries {
 	u := uuid.NewV4()
 	v := &valueSeries{
 		id:      u.String(),
+		max:     200, // default maximum items
 		timemap: make(map[int64]*Value),
 	}
 	return v
@@ -139,6 +151,10 @@ func (s *valueSeries) DivConst(v float64) ValueSeries {
 	})
 }
 
+func (s *valueSeries) Len() int {
+	return len(s.timemap)
+}
+
 func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
 	return s.operation(v, func(a, b float64) float64 {
 		return a * b
@@ -149,6 +165,11 @@ func (s *valueSeries) MulConst(v float64) ValueSeries {
 	return s.operationConst(func(a float64) float64 {
 		return a * v
 	})
+}
+
+func (s *valueSeries) SetMax(m int64) {
+	s.max = m
+	s.resize()
 }
 
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
@@ -206,6 +227,7 @@ func (s *valueSeries) getValue(t int64) *Value {
 
 func (s *valueSeries) setValue(t int64, v *Value) {
 	s.timemap[t] = v
+	s.resize()
 }
 
 // Push will append at the end of the list. Replaces value if exists
@@ -263,4 +285,26 @@ func (s *valueSeries) Set(t time.Time, val float64) {
 		s.first = v
 	}
 	s.setValue(t.Unix(), v)
+}
+
+func (s *valueSeries) resize() {
+	// set to unlimited, nothing to perform
+	if s.max == 0 {
+		return
+	}
+	for {
+		if int64(s.Len()) <= s.max {
+			break
+		}
+		s.Shift()
+	}
+}
+
+func (s *valueSeries) Shift() bool {
+	if s.first == nil {
+		return false
+	}
+	delete(s.timemap, s.first.t.Unix())
+	s.first = s.first.next
+	return true
 }
