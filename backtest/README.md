@@ -19,3 +19,23 @@ Market order will be executed on the next OHLCV bar.
 Limit order will be placed and open until either it is executed or cancelled.
 
 
+## Order Entry/Exit States
+
+On each `OnNextOHLCV` method, `Entry()` and `Exit()` enters and exits a position, respectively.
+
+### Entry()
+
+- Calling `Entry()` without a limit price will execute on the next bar's open
+- Calling `Entry()` with a limit price will execute at the limit price if the next bar's low is equal to or below the limit price. The scenario is the same for short orders using the bar's high value.
+- Calling `Entry()` with a limit price that doesn't execute on the next bar's low will be an open order until it is executed or canceled.
+
+
+### Exit()
+
+- Calling `Exit()` without a limit price will execute on the next bar's open.
+
+### Entry() and Exit()
+
+If an order entry and exit both exists for the same order ID, here is the expected behavior:
+
+- If entry and exit are both exist, no trades will be executed.

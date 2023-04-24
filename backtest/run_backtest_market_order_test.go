@@ -63,3 +63,24 @@ func TestRunBacktestMarketOrder(t *testing.T) {
 		t.Errorf("Expected NetProfit to be 1.125 but got %+v", res.NetProfit)
 	}
 }
+
+// TestRunBacktestMarketCancelOutOrder tests when a market entry order and a market exit order are both queued
+func TestRunBacktestMarketCancelOutOrder(t *testing.T) {
+	b := &testMystrat{}
+	data := pine.OHLCVTestData(time.Now(), 4, 5*60*1000)
+	data[0].C = 16
+	data[1].C = 16
+	data[2].C = 16
+	data[3].C = 16
+
+	series, _ := pine.NewOHLCVSeries(data)
+
+	res, err := RunBacktest(series, b)
+	if err != nil {
+		t.Fatal(errors.Wrap(err, "error runbacktest"))
+	}
+
+	if res.TotalClosedTrades != 0 {
+		t.Errorf("Expected total trades to be 0 but got %d", res.TotalClosedTrades)
+	}
+}

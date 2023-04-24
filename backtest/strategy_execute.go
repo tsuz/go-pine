@@ -9,8 +9,13 @@ func (s *strategy) Execute(ohlcv pine.OHLCV) error {
 
 	// convert open entry orders into open positions
 	for _, v := range s.ordEntry {
-		_, found := s.findPos(v.OrdID)
-		if found {
+		// if this order is already executed and is open, continue
+		if _, found := s.findPos(v.OrdID); found {
+			continue
+		}
+
+		// if this is also in the exit queue, then cancel this out
+		if _, found := s.ordExit[v.OrdID]; found {
 			continue
 		}
 
