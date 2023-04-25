@@ -15,7 +15,13 @@ type ValueSeries interface {
 	DivConst(float64) ValueSeries
 	Mul(ValueSeries) ValueSeries
 	MulConst(float64) ValueSeries
-	Operate(v ValueSeries, a func(b, c *float64) *float64) ValueSeries
+
+	// Operate allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called only when non nilable values are found in the ValueSeries of the first argument based on the caller's series.
+	Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries
+
+	// OperateWithNil allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called even when nilable values are found in the ValueSeries of the first argument based on the caller's series.
+	OperateWithNil(v ValueSeries, a func(b, c *float64) *float64) ValueSeries
+
 	Sub(ValueSeries) ValueSeries
 	SubConst(float64) ValueSeries
 
@@ -91,7 +97,30 @@ func (s *valueSeries) Copy() ValueSeries {
 	return newv
 }
 
-func (s *valueSeries) operation(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
+func (s *valueSeries) operation(v ValueSeries, op func(a, b float64) float64) ValueSeries {
+	copied := NewValueSeries()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+
+		newv := v.Get(f.t)
+
+		if newv != nil {
+			copied.Set(f.t, op(f.v, newv.v))
+		}
+
+		f = f.next
+	}
+	cur := s.GetCurrent()
+	if cur != nil {
+		copied.SetCurrent(cur.t)
+	}
+	return copied
+}
+
+func (s *valueSeries) operationWithNil(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
 	copied := NewValueSeries()
 	f := s.GetFirst()
 	for {
@@ -137,11 +166,8 @@ func (s *valueSeries) operationConst(op func(a float64) float64) ValueSeries {
 }
 
 func (s *valueSeries) Add(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a + *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a + b
 	})
 }
 
@@ -152,11 +178,8 @@ func (s *valueSeries) AddConst(c float64) ValueSeries {
 }
 
 func (s *valueSeries) Div(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a / *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a / b
 	})
 }
 
@@ -171,11 +194,8 @@ func (s *valueSeries) Len() int {
 }
 
 func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a * *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a * b
 	})
 }
 
@@ -185,8 +205,12 @@ func (s *valueSeries) MulConst(v float64) ValueSeries {
 	})
 }
 
-func (s *valueSeries) Operate(v ValueSeries, a func(b, c *float64) *float64) ValueSeries {
+func (s *valueSeries) Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries {
 	return s.operation(v, a)
+}
+
+func (s *valueSeries) OperateWithNil(v ValueSeries, a func(b, c *float64) *float64) ValueSeries {
+	return s.operationWithNil(v, a)
 }
 
 func (s *valueSeries) SetMax(m int64) {
@@ -195,11 +219,8 @@ func (s *valueSeries) SetMax(m int64) {
 }
 
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a - *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a - b
 	})
 }
 

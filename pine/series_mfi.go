@@ -27,7 +27,7 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		return mfi, errors.Wrap(err, "error getting change")
 	}
 
-	u := hlc3.Operate(chg, func(a, b *float64) *float64 {
+	u := hlc3.OperateWithNil(chg, func(a, b *float64) *float64 {
 		var v float64
 		// treat nil value as HLC3
 		if b == nil {
@@ -40,7 +40,7 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		}
 		return a
 	})
-	lo := hlc3.Operate(chg, func(a, b *float64) *float64 {
+	lo := hlc3.OperateWithNil(chg, func(a, b *float64) *float64 {
 		var v float64
 		// treat nil value as HLC3
 		if b == nil {

@@ -67,16 +67,15 @@ func TestValueSeriesAddConst(t *testing.T) {
 	}
 }
 
-func TestValueSeriesCustomOperator(t *testing.T) {
+func TestValueSeriesOperator(t *testing.T) {
 	a := NewValueSeries()
 	now := time.Now()
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
 	a.Set(now.Add(time.Duration(2000*1e6)), 3)
 
-	c := a.Operate(a, func(b, c *float64) *float64 {
-		v := math.Mod(*b, 2)
-		return &v
+	c := a.Operate(a, func(b, c float64) float64 {
+		return math.Mod(b, 2)
 	})
 
 	f := c.GetFirst()
@@ -91,6 +90,41 @@ func TestValueSeriesCustomOperator(t *testing.T) {
 	}
 	if f.next.next.v != 1 {
 		t.Errorf("expected %+v but got %+v", 1, f.next.next.v)
+	}
+}
+
+func TestValueSeriesOperatorWithSeries(t *testing.T) {
+	a := NewValueSeries()
+	b := NewValueSeries()
+	t1 := time.Now()
+	t2 := t1.Add(time.Duration(1000 * 1e6))
+	t3 := t2.Add(time.Duration(1000 * 1e6))
+	a.Set(t1, 1)
+
+	b.Set(t1, 1)
+	b.Set(t2, 2)
+	b.Set(t3, 3)
+
+	c := b.OperateWithNil(a, func(bvalue, avalue *float64) *float64 {
+		if avalue == nil {
+			return NewFloat64(0)
+		}
+		return NewFloat64(*avalue + *bvalue)
+	})
+
+	f := c.GetFirst()
+	if f == nil {
+		t.Fatalf("expected to be non nil but got nil")
+	}
+
+	if f.v != 2 {
+		t.Errorf("expected %+v but got %+v", 2, f.v)
+	}
+	if f.next.v != 0 {
+		t.Errorf("expected %+v but got %+v", 0, f.next.v)
+	}
+	if f.next.next.v != 0 {
+		t.Errorf("expected %+v but got %+v", 0, f.next.next.v)
 	}
 }
 
