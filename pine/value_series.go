@@ -97,7 +97,30 @@ func (s *valueSeries) Copy() ValueSeries {
 	return newv
 }
 
-func (s *valueSeries) operation(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
+func (s *valueSeries) operation(v ValueSeries, op func(a, b float64) float64) ValueSeries {
+	copied := NewValueSeries()
+	f := s.GetFirst()
+	for {
+		if f == nil {
+			break
+		}
+
+		newv := v.Get(f.t)
+
+		if newv != nil {
+			copied.Set(f.t, op(f.v, newv.v))
+		}
+
+		f = f.next
+	}
+	cur := s.GetCurrent()
+	if cur != nil {
+		copied.SetCurrent(cur.t)
+	}
+	return copied
+}
+
+func (s *valueSeries) operationWithNil(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
 	copied := NewValueSeries()
 	f := s.GetFirst()
 	for {
@@ -143,11 +166,8 @@ func (s *valueSeries) operationConst(op func(a float64) float64) ValueSeries {
 }
 
 func (s *valueSeries) Add(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a + *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a + b
 	})
 }
 
@@ -158,11 +178,8 @@ func (s *valueSeries) AddConst(c float64) ValueSeries {
 }
 
 func (s *valueSeries) Div(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a / *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a / b
 	})
 }
 
@@ -177,11 +194,8 @@ func (s *valueSeries) Len() int {
 }
 
 func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a * *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a * b
 	})
 }
 
@@ -205,11 +219,8 @@ func (s *valueSeries) SetMax(m int64) {
 }
 
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b *float64) *float64 {
-		if a == nil || b == nil {
-			return nil
-		}
-		return NewFloat64(*a - *b)
+	return s.operation(v, func(a, b float64) float64 {
+		return a - b
 	})
 }
 
