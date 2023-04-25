@@ -171,11 +171,6 @@ func TestSeriesMACDIteration(t *testing.T) {
 	}
 }
 
-func NewFloat64(v float64) *float64 {
-	v2 := v
-	return &v2
-}
-
 func BenchmarkMACD(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

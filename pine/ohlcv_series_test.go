@@ -34,16 +34,16 @@ func TestNewOHLCVSeries(t *testing.T) {
 		vals []float64
 	}{
 		{
-			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
-			vals: []float64{data[0].C, data[0].H, data[0].L, data[0].O, tr1},
+			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR, OHLCPropHLC3},
+			vals: []float64{data[0].C, data[0].H, data[0].L, data[0].O, tr1, (data[0].H + data[0].L + data[0].C) / 3},
 		},
 		{
 			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
-			vals: []float64{data[1].C, data[1].H, data[1].L, data[1].O, tr2},
+			vals: []float64{data[1].C, data[1].H, data[1].L, data[1].O, tr2, (data[1].H + data[1].L + data[1].C) / 3},
 		},
 		{
 			prop: []OHLCProp{OHLCPropClose, OHLCPropHigh, OHLCPropLow, OHLCPropOpen, OHLCPropTR},
-			vals: []float64{data[2].C, data[2].H, data[2].L, data[2].O, tr3},
+			vals: []float64{data[2].C, data[2].H, data[2].L, data[2].O, tr3, (data[2].H + data[2].L + data[2].C) / 3},
 		},
 	}
 

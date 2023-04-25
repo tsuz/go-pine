@@ -15,6 +15,7 @@ type ValueSeries interface {
 	DivConst(float64) ValueSeries
 	Mul(ValueSeries) ValueSeries
 	MulConst(float64) ValueSeries
+	Operate(v ValueSeries, a func(b, c *float64) *float64) ValueSeries
 	Sub(ValueSeries) ValueSeries
 	SubConst(float64) ValueSeries
 
@@ -90,17 +91,25 @@ func (s *valueSeries) Copy() ValueSeries {
 	return newv
 }
 
-func (s *valueSeries) operation(v ValueSeries, op func(a, b float64) float64) ValueSeries {
+func (s *valueSeries) operation(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
 	copied := NewValueSeries()
 	f := s.GetFirst()
 	for {
 		if f == nil {
 			break
 		}
+		var op2 *float64
+
 		newv := v.Get(f.t)
+
 		if newv != nil {
-			copied.Set(f.t, op(f.v, newv.v))
+			op2 = &newv.v
 		}
+
+		if val := op(&f.v, op2); val != nil {
+			copied.Set(f.t, *val)
+		}
+
 		f = f.next
 	}
 	cur := s.GetCurrent()
@@ -128,8 +137,11 @@ func (s *valueSeries) operationConst(op func(a float64) float64) ValueSeries {
 }
 
 func (s *valueSeries) Add(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a + b
+	return s.operation(v, func(a, b *float64) *float64 {
+		if a == nil || b == nil {
+			return nil
+		}
+		return NewFloat64(*a + *b)
 	})
 }
 
@@ -140,8 +152,11 @@ func (s *valueSeries) AddConst(c float64) ValueSeries {
 }
 
 func (s *valueSeries) Div(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a / b
+	return s.operation(v, func(a, b *float64) *float64 {
+		if a == nil || b == nil {
+			return nil
+		}
+		return NewFloat64(*a / *b)
 	})
 }
 
@@ -156,8 +171,11 @@ func (s *valueSeries) Len() int {
 }
 
 func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a * b
+	return s.operation(v, func(a, b *float64) *float64 {
+		if a == nil || b == nil {
+			return nil
+		}
+		return NewFloat64(*a * *b)
 	})
 }
 
@@ -167,14 +185,21 @@ func (s *valueSeries) MulConst(v float64) ValueSeries {
 	})
 }
 
+func (s *valueSeries) Operate(v ValueSeries, a func(b, c *float64) *float64) ValueSeries {
+	return s.operation(v, a)
+}
+
 func (s *valueSeries) SetMax(m int64) {
 	s.max = m
 	s.resize()
 }
 
 func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a - b
+	return s.operation(v, func(a, b *float64) *float64 {
+		if a == nil || b == nil {
+			return nil
+		}
+		return NewFloat64(*a - *b)
 	})
 }
 

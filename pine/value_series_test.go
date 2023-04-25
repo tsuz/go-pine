@@ -1,6 +1,7 @@
 package pine
 
 import (
+	"math"
 	"testing"
 	"time"
 )
@@ -63,6 +64,33 @@ func TestValueSeriesAddConst(t *testing.T) {
 	d := a.AddConst(3)
 	if *d.Val() != 5 {
 		t.Errorf("expected 5 but got %+v", *d.Val())
+	}
+}
+
+func TestValueSeriesCustomOperator(t *testing.T) {
+	a := NewValueSeries()
+	now := time.Now()
+	a.Set(now, 1)
+	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(now.Add(time.Duration(2000*1e6)), 3)
+
+	c := a.Operate(a, func(b, c *float64) *float64 {
+		v := math.Mod(*b, 2)
+		return &v
+	})
+
+	f := c.GetFirst()
+	if f == nil {
+		t.Fatalf("expected to be non nil but got nil")
+	}
+	if f.v != 1 {
+		t.Errorf("expected %+v but got %+v", 0, f.v)
+	}
+	if f.next.v != 0 {
+		t.Errorf("expected %+v but got %+v", 0, f.next.v)
+	}
+	if f.next.next.v != 1 {
+		t.Errorf("expected %+v but got %+v", 1, f.next.next.v)
 	}
 }
 
