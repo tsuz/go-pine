@@ -4,10 +4,13 @@ import (
 	"math"
 
 	"github.com/pkg/errors"
+	"github.com/twinj/uuid"
 )
 
 // OHLCVBaseSeries represents a series of OHLCV type (i.e. open, high, low, close, volume)
 type OHLCVBaseSeries interface {
+	ID() string
+
 	Push(OHLCV)
 
 	Shift() bool
@@ -36,7 +39,9 @@ type OHLCVBaseSeries interface {
 }
 
 func NewOHLCVBaseSeries() OHLCVBaseSeries {
+	u := uuid.NewV4()
 	s := &ohlcvBaseSeries{
+		id:   u.String(),
 		max:  1000, // default maximum items
 		vals: make(map[int64]OHLCV),
 	}
@@ -48,6 +53,8 @@ type ohlcvBaseSeries struct {
 
 	// current ohlcv
 	cur *OHLCV
+
+	id string
 
 	first *OHLCV
 
@@ -92,6 +99,10 @@ func (s *ohlcvBaseSeries) Current() *OHLCV {
 func (s *ohlcvBaseSeries) GoToFirst() *OHLCV {
 	s.cur = s.first
 	return s.cur
+}
+
+func (s *ohlcvBaseSeries) ID() string {
+	return s.id
 }
 
 func (s *ohlcvBaseSeries) fetchAndAppend() (bool, error) {
@@ -165,7 +176,8 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 			} else {
 				propVal = math.Abs(v.H - v.L)
 			}
-
+		case OHLCPropHLC3:
+			propVal = (v.H + v.L + v.C) / 3
 		default:
 			continue
 		}

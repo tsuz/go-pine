@@ -109,3 +109,8 @@ func change(stop Value, src, chg ValueSeries, l int) (ValueSeries, error) {
 
 	return chg, nil
 }
+
+func NewFloat64(v float64) *float64 {
+	v2 := v
+	return &v2
+}
