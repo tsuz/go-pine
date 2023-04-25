@@ -93,7 +93,7 @@ func TestValueSeriesOperator(t *testing.T) {
 	}
 }
 
-func TestValueSeriesOperatorWithSeries(t *testing.T) {
+func TestValueSeriesOperatorWithNil(t *testing.T) {
 	a := NewValueSeries()
 	b := NewValueSeries()
 	t1 := time.Now()
