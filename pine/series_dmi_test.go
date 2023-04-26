@@ -40,10 +40,6 @@ func TestSeriesDMI(t *testing.T) {
 }
 
 // TestSeriesDMINoIteration tests this sceneario where there's no iteration yet
-//
-// t=time.Time (no iteration) | 1  |  2   | 3  | 4  |
-// p=ValueSeries              | 14 |  15  | 17 | 18 |
-// dmi=ValueSeries            |    |      |    |    |
 func TestSeriesDMINoIteration(t *testing.T) {
 
 	start := time.Now()
@@ -67,7 +63,7 @@ func TestSeriesDMINoIteration(t *testing.T) {
 	}
 }
 
-// // TestSeriesDMIIteration tests the output against TradingView's expected values
+// TestSeriesDMIIteration tests the output against TradingView's expected values
 func TestSeriesDMIIteration(t *testing.T) {
 	data := OHLCVStaticTestData()
 	series, err := NewOHLCVSeries(data)
