@@ -7,6 +7,10 @@ import (
 // DMI generates a ValueSeries of directional movement index.
 func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err error) {
 
+	adx = NewValueSeries()
+	dmip = NewValueSeries()
+	dmim = NewValueSeries()
+
 	h := ohlcv.GetSeries(OHLCPropHigh)
 	stop := h.GetCurrent()
 	if stop == nil {

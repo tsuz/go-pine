@@ -24,7 +24,7 @@ func TestSeriesDMI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	dip, dim, adx, err := DMI(series, 15, 3)
+	adx, dip, dim, err := DMI(series, 15, 3)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error DMI"))
 	}
