@@ -10,14 +10,9 @@ import (
 )
 
 // TestSeriesKC tests no data scenario
-//
-// t=time.Time (no iteration) | |
-// p=ValueSeries              | |
-// kc=ValueSeries            | |
 func TestSeriesKC(t *testing.T) {
 
-	start := time.Now()
-	data := OHLCVTestData(start, 4, 5*60*1000)
+	data := OHLCVStaticTestData()
 
 	series, err := NewOHLCVSeries(data)
 	if err != nil {
@@ -41,19 +36,9 @@ func TestSeriesKC(t *testing.T) {
 }
 
 // TestSeriesKCNoIteration tests this sceneario where there's no iteration yet
-//
-// t=time.Time (no iteration) | 1  |  2   | 3  | 4  |
-// p=ValueSeries              | 14 |  15  | 17 | 18 |
-// kc=ValueSeries            |    |      |    |    |
 func TestSeriesKCNoIteration(t *testing.T) {
 
-	start := time.Now()
-	data := OHLCVTestData(start, 4, 5*60*1000)
-	data[0].C = 14
-	data[1].C = 15
-	data[2].C = 17
-	data[3].C = 18
-
+	data := OHLCVStaticTestData()
 	series, err := NewOHLCVSeries(data)
 	if err != nil {
 		t.Fatal(err)
