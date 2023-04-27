@@ -153,35 +153,39 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 		if v == nil {
 			break
 		}
-		var propVal float64
+		var propVal *float64
 		switch p {
 		case OHLCPropClose:
-			propVal = v.C
+			propVal = NewFloat64(v.C)
 		case OHLCPropOpen:
-			propVal = v.O
+			propVal = NewFloat64(v.O)
 		case OHLCPropHigh:
-			propVal = v.H
+			propVal = NewFloat64(v.H)
 		case OHLCPropLow:
-			propVal = v.L
+			propVal = NewFloat64(v.L)
 		case OHLCPropVolume:
-			propVal = v.V
-		case OHLCPropTR:
+			propVal = NewFloat64(v.V)
+		case OHLCPropTR, OHLCPropTRHL:
 			if v.prev != nil {
 				p := v.prev
-				propVal = math.Max(
-					math.Abs(v.H-v.L),
-					math.Max(
-						math.Abs(v.H-p.C),
-						math.Abs(v.L-p.C)))
-			} else {
-				propVal = math.Abs(v.H - v.L)
+				v1 := math.Abs(v.H - v.L)
+				v2 := math.Abs(v.H - p.C)
+				v3 := math.Abs(v.L - p.C)
+				v := math.Max(v1, math.Max(v2, v3))
+				propVal = NewFloat64(v)
+			}
+			if p == OHLCPropTRHL && v.prev == nil {
+				d := v.H - v.L
+				propVal = &d
 			}
 		case OHLCPropHLC3:
-			propVal = (v.H + v.L + v.C) / 3
+			propVal = NewFloat64((v.H + v.L + v.C) / 3)
 		default:
 			continue
 		}
-		vs.Set(v.S, propVal)
+		if propVal != nil {
+			vs.Set(v.S, *propVal)
+		}
 		v = v.next
 	}
 

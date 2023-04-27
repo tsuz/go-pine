@@ -18,7 +18,7 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err err
 	}
 
 	l := ohlcv.GetSeries(OHLCPropLow)
-	tr := ohlcv.GetSeries(OHLCPropTR)
+	tr := ohlcv.GetSeries(OHLCPropTRHL)
 
 	up, err := Change(h, 1)
 	if err != nil {

@@ -98,7 +98,7 @@ func TestSeriesATRIteration(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 
-		prop := series.GetSeries(OHLCPropTR)
+		prop := series.GetSeries(OHLCPropTRHL)
 		atr, err := ATR(prop, 3)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error ATR"))
