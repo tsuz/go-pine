@@ -20,7 +20,7 @@ type ValueSeries interface {
 	Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries
 
 	// OperateWithNil allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called even when nilable values are found in the ValueSeries of the first argument based on the caller's series.
-	OperateWithNil(v ValueSeries, a func(b, c *float64) *float64) ValueSeries
+	OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) ValueSeries
 
 	Sub(ValueSeries) ValueSeries
 	SubConst(float64) ValueSeries
@@ -120,23 +120,18 @@ func (s *valueSeries) operation(v ValueSeries, op func(a, b float64) float64) Va
 	return copied
 }
 
-func (s *valueSeries) operationWithNil(v ValueSeries, op func(a, b *float64) *float64) ValueSeries {
+func (s *valueSeries) operationWithNil(v ValueSeries, op func(a, b *Value) *Value) ValueSeries {
 	copied := NewValueSeries()
 	f := s.GetFirst()
 	for {
 		if f == nil {
 			break
 		}
-		var op2 *float64
 
 		newv := v.Get(f.t)
 
-		if newv != nil {
-			op2 = &newv.v
-		}
-
-		if val := op(&f.v, op2); val != nil {
-			copied.Set(f.t, *val)
+		if val := op(f, newv); val != nil {
+			copied.Set(val.t, val.v)
 		}
 
 		f = f.next
@@ -209,7 +204,7 @@ func (s *valueSeries) Operate(v ValueSeries, a func(b, c float64) float64) Value
 	return s.operation(v, a)
 }
 
-func (s *valueSeries) OperateWithNil(v ValueSeries, a func(b, c *float64) *float64) ValueSeries {
+func (s *valueSeries) OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) ValueSeries {
 	return s.operationWithNil(v, a)
 }
 

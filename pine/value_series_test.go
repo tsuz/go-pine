@@ -105,11 +105,17 @@ func TestValueSeriesOperatorWithNil(t *testing.T) {
 	b.Set(t2, 2)
 	b.Set(t3, 3)
 
-	c := b.OperateWithNil(a, func(bvalue, avalue *float64) *float64 {
+	c := b.OperateWithNil(a, func(bvalue, avalue *Value) *Value {
 		if avalue == nil {
-			return NewFloat64(0)
+			return &Value{
+				t: bvalue.t,
+				v: 0,
+			}
 		}
-		return NewFloat64(*avalue + *bvalue)
+		return &Value{
+			t: avalue.t,
+			v: avalue.v + bvalue.v,
+		}
 	})
 
 	f := c.GetFirst()
