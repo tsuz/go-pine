@@ -18,7 +18,16 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err err
 	}
 
 	l := ohlcv.GetSeries(OHLCPropLow)
-	tr := ohlcv.GetSeries(OHLCPropTR)
+	trraw := ohlcv.GetSeries(OHLCPropTR)
+
+	// set h - l if first value is nil
+	hldiff := h.Sub(l)
+	tr := hldiff.OperateWithNil(trraw, func(hlv, trv *Value) *Value {
+		if trv == nil {
+			return hlv
+		}
+		return trv
+	})
 
 	up, err := Change(h, 1)
 	if err != nil {
