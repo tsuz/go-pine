@@ -165,7 +165,7 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 			propVal = NewFloat64(v.L)
 		case OHLCPropVolume:
 			propVal = NewFloat64(v.V)
-		case OHLCPropTR:
+		case OHLCPropTR, OHLCPropTRHL:
 			if v.prev != nil {
 				p := v.prev
 				v1 := math.Abs(v.H - v.L)
@@ -173,6 +173,10 @@ func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
 				v3 := math.Abs(v.L - p.C)
 				v := math.Max(v1, math.Max(v2, v3))
 				propVal = NewFloat64(v)
+			}
+			if p == OHLCPropTRHL && v.prev == nil {
+				d := v.H - v.L
+				propVal = &d
 			}
 		case OHLCPropHLC3:
 			propVal = NewFloat64((v.H + v.L + v.C) / 3)
