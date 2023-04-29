@@ -347,5 +347,8 @@ func (s *valueSeries) Shift() bool {
 	}
 	delete(s.timemap, s.first.t.Unix())
 	s.first = s.first.next
+	if s.first != nil {
+		s.first.prev = nil
+	}
 	return true
 }

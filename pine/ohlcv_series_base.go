@@ -85,6 +85,9 @@ func (s *ohlcvBaseSeries) Shift() bool {
 	}
 	delete(s.vals, s.first.S.Unix())
 	s.first = s.first.next
+	if s.first != nil {
+		s.first.prev = nil
+	}
 	return true
 }
 
