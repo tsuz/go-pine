@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/tsuz/go-pine/backtest"
 	"github.com/tsuz/go-pine/pine"
