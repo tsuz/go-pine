@@ -54,10 +54,10 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err err
 	if err != nil {
 		return adx, dmip, dmim, errors.Wrap(err, "error RMA")
 	}
-	plus := plusdmrma.Div(trurange).MulConst(100)
-	minus := minusdmrma.Div(trurange).MulConst(100)
+	plus := MulConst(Div(plusdmrma, trurange), 100)
+	minus := MulConst(Div(minusdmrma, trurange), 100)
 
-	sum := plus.Add(minus)
+	sum := Add(plus, minus)
 	denom := sum.Operate(sum, func(a, b float64) float64 {
 		if a == 0 {
 			return 1
@@ -65,11 +65,11 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err err
 		return a
 	})
 
-	adxrma, err := RMA(DiffAbs(plus, minus).Div(denom), 3)
+	adxrma, err := RMA(Div(DiffAbs(plus, minus), denom), 3)
 	if err != nil {
 		return adx, dmip, dmim, errors.Wrap(err, "error RMA for adx")
 	}
-	adx = adxrma.MulConst(100)
+	adx = MulConst(adxrma, 100)
 
 	return adx, plus, minus, nil
 }

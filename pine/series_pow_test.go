@@ -135,7 +135,7 @@ func ExamplePow() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		added := close.AddConst(3.0)
+		added := AddConst(close, 3.0)
 		pow, err := Pow(added, 2)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error getting pow"))

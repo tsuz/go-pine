@@ -17,7 +17,7 @@ func TestValueSeriesAdd(t *testing.T) {
 	b.Set(now, 4)
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
 
-	c := a.Add(b)
+	c := Add(a, b)
 	c.SetCurrent(now)
 	f := c.GetCurrent()
 	if f == nil {
@@ -35,7 +35,7 @@ func TestValueSeriesAdd(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.Add(b)
+	d := Add(a, b)
 	if *d.Val() != 6 {
 		t.Errorf("expected 6 but got %+v", *d.Val())
 	}
@@ -44,10 +44,11 @@ func TestValueSeriesAdd(t *testing.T) {
 func TestValueSeriesAddConst(t *testing.T) {
 	a := NewValueSeries()
 	now := time.Now()
+	t2 := now.Add(time.Duration(1000 * 1e6))
 	a.Set(now, 1)
-	a.Set(now.Add(time.Duration(1000*1e6)), 2)
+	a.Set(t2, 2)
 
-	b := a.AddConst(3)
+	b := AddConst(a, 3)
 	f := b.GetFirst()
 	if f == nil {
 		t.Fatalf("expected to be non nil but got nil")
@@ -60,8 +61,8 @@ func TestValueSeriesAddConst(t *testing.T) {
 	}
 
 	// current time is passed on
-	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.AddConst(3)
+	a.SetCurrent(t2)
+	d := AddConst(a, 3)
 	if *d.Val() != 5 {
 		t.Errorf("expected 5 but got %+v", *d.Val())
 	}
@@ -145,7 +146,7 @@ func TestValueSeriesDiv(t *testing.T) {
 	b.Set(now, 4)
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
 
-	c := a.Div(b)
+	c := Div(a, b)
 	c.SetCurrent(now)
 	f := c.GetCurrent()
 	if f == nil {
@@ -163,7 +164,7 @@ func TestValueSeriesDiv(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.Div(b)
+	d := Div(a, b)
 	if *d.Val() != 0.5 {
 		t.Errorf("expected .5 but got %+v", *d.Val())
 	}
@@ -175,7 +176,7 @@ func TestValueSeriesDivConst(t *testing.T) {
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
 
-	b := a.DivConst(4)
+	b := DivConst(a, 4)
 	f := b.GetFirst()
 	if f == nil {
 		t.Fatalf("expected to be non nil but got nil")
@@ -189,7 +190,7 @@ func TestValueSeriesDivConst(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.DivConst(4)
+	d := DivConst(a, 4)
 	if *d.Val() != 0.5 {
 		t.Errorf("expected .5 but got %+v", *d.Val())
 	}
@@ -264,7 +265,7 @@ func TestValueSeriesMul(t *testing.T) {
 	b.Set(now, 4)
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
 
-	c := a.Mul(b)
+	c := Mul(a, b)
 	c.SetCurrent(now)
 	f := c.GetCurrent()
 	if f == nil {
@@ -282,7 +283,7 @@ func TestValueSeriesMul(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.Mul(b)
+	d := Mul(a, b)
 	if *d.Val() != 8 {
 		t.Errorf("expected 8 but got %+v", *d.Val())
 	}
@@ -294,7 +295,7 @@ func TestValueSeriesMulConst(t *testing.T) {
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
 
-	b := a.MulConst(3)
+	b := MulConst(a, 3)
 	f := b.GetFirst()
 	if f == nil {
 		t.Fatalf("expected to be non nil but got nil")
@@ -308,7 +309,7 @@ func TestValueSeriesMulConst(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.MulConst(3)
+	d := MulConst(a, 3)
 	if *d.Val() != 6.0 {
 		t.Errorf("expected 6 but got %+v", *d.Val())
 	}
@@ -328,7 +329,7 @@ func TestValueSeriesSub(t *testing.T) {
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
 	b.Set(now.Add(time.Duration(2000*1e6)), 1)
 
-	c := a.Sub(b)
+	c := Sub(a, b)
 	c.SetCurrent(now)
 	f := c.GetCurrent()
 	if f == nil {
@@ -350,7 +351,7 @@ func TestValueSeriesSub(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.Sub(b)
+	d := Sub(a, b)
 	if *d.Val() != -2 {
 		t.Errorf("expected -2 but got %+v", *d.Val())
 	}
@@ -362,7 +363,7 @@ func TestValueSeriesSubConst(t *testing.T) {
 	a.Set(now, 1)
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
 
-	b := a.SubConst(3)
+	b := SubConst(a, 3)
 	f := b.GetFirst()
 	if f == nil {
 		t.Fatalf("expected to be non nil but got nil")
@@ -376,7 +377,7 @@ func TestValueSeriesSubConst(t *testing.T) {
 
 	// current time is passed on
 	a.SetCurrent(now.Add(time.Duration(1000 * 1e6)))
-	d := a.SubConst(3)
+	d := SubConst(a, 3)
 	if *d.Val() != -1 {
 		t.Errorf("expected -1 but got %+v", *d.Val())
 	}

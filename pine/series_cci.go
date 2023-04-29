@@ -28,7 +28,7 @@ func CCI(tp ValueSeries, l int64) (ValueSeries, error) {
 		return cci, nil
 	}
 	mav := ma.GetCurrent().v
-	mdv := tp.SubConst(mav)
+	mdv := SubConst(tp, mav)
 	// get absolute value
 	mdvabs := mdv.Operate(mdv, func(a, b float64) float64 {
 		if a < 0 {
@@ -40,10 +40,10 @@ func CCI(tp ValueSeries, l int64) (ValueSeries, error) {
 	if err != nil {
 		return cci, errors.Wrap(err, "error sum mdvabs")
 	}
-	md := mdvabssum.DivConst(float64(l))
-	num := tp.SubConst(mav)
-	denom := md.MulConst(0.015)
-	cci = num.Div(denom)
+	md := DivConst(mdvabssum, float64(l))
+	num := SubConst(tp, mav)
+	denom := MulConst(md, 0.015)
+	cci = Div(num, denom)
 
 	setCache(key, cci)
 
