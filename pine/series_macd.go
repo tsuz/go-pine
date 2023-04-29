@@ -68,7 +68,7 @@ func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSe
 		return macdline, signalLine, macdHistogram, errors.Wrap(err, "error EMA slowlen")
 	}
 
-	macdline = fast.Sub(slow)
+	macdline = Sub(fast, slow)
 	macdline.SetCurrent(stop.t)
 
 	signalLine, err = EMA(macdline, siglen)
@@ -77,7 +77,7 @@ func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSe
 	}
 	signalLine.SetCurrent(stop.t)
 
-	macdHistogram = macdline.Sub(signalLine)
+	macdHistogram = Sub(macdline, signalLine)
 	macdHistogram.SetCurrent(stop.t)
 
 	setCache(macdlineKey, macdline)

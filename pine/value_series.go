@@ -9,21 +9,12 @@ import (
 
 type ValueSeries interface {
 	ID() string
-	Add(ValueSeries) ValueSeries
-	AddConst(float64) ValueSeries
-	Div(ValueSeries) ValueSeries
-	DivConst(float64) ValueSeries
-	Mul(ValueSeries) ValueSeries
-	MulConst(float64) ValueSeries
 
 	// Operate allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called only when non nilable values are found in the ValueSeries of the first argument based on the caller's series.
 	Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries
 
 	// OperateWithNil allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called even when nilable values are found in the ValueSeries of the first argument based on the caller's series.
 	OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) ValueSeries
-
-	Sub(ValueSeries) ValueSeries
-	SubConst(float64) ValueSeries
 
 	// Get gets the item by time in value series
 	Get(time.Time) *Value
@@ -160,44 +151,8 @@ func (s *valueSeries) operationConst(op func(a float64) float64) ValueSeries {
 	return copied
 }
 
-func (s *valueSeries) Add(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a + b
-	})
-}
-
-func (s *valueSeries) AddConst(c float64) ValueSeries {
-	return s.operationConst(func(a float64) float64 {
-		return a + c
-	})
-}
-
-func (s *valueSeries) Div(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a / b
-	})
-}
-
-func (s *valueSeries) DivConst(v float64) ValueSeries {
-	return s.operationConst(func(a float64) float64 {
-		return a / v
-	})
-}
-
 func (s *valueSeries) Len() int {
 	return len(s.timemap)
-}
-
-func (s *valueSeries) Mul(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a * b
-	})
-}
-
-func (s *valueSeries) MulConst(v float64) ValueSeries {
-	return s.operationConst(func(a float64) float64 {
-		return a * v
-	})
 }
 
 func (s *valueSeries) Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries {
@@ -211,18 +166,6 @@ func (s *valueSeries) OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) 
 func (s *valueSeries) SetMax(m int64) {
 	s.max = m
 	s.resize()
-}
-
-func (s *valueSeries) Sub(v ValueSeries) ValueSeries {
-	return s.operation(v, func(a, b float64) float64 {
-		return a - b
-	})
-}
-
-func (s *valueSeries) SubConst(v float64) ValueSeries {
-	return s.operationConst(func(a float64) float64 {
-		return a - v
-	})
 }
 
 func (s *valueSeries) ID() string {

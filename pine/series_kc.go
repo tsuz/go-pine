@@ -25,7 +25,7 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 	} else {
 		h := OHLCVAttr(o, OHLCPropHigh)
 		l := OHLCVAttr(o, OHLCPropLow)
-		span = h.Sub(l)
+		span = Sub(h, l)
 	}
 
 	rangeEma, err := EMA(span, l)
@@ -34,9 +34,9 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 	}
 
 	middle = basis
-	rangeEmaMul := rangeEma.MulConst(mult)
-	upper = basis.Add(rangeEmaMul)
-	lower = basis.Sub(rangeEmaMul)
+	rangeEmaMul := MulConst(rangeEma, mult)
+	upper = Add(basis, rangeEmaMul)
+	lower = Sub(basis, rangeEmaMul)
 
 	middle.SetCurrent(start.t)
 	upper.SetCurrent(start.t)

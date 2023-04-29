@@ -45,8 +45,7 @@ func Variance(p ValueSeries, l int64) (ValueSeries, error) {
 	if meanv == nil {
 		return vari, nil
 	}
-
-	diff := p.SubConst(meanv.v)
+	diff := SubConst(p, meanv.v)
 	sqrt, err := Pow(diff, 2)
 	if err != nil {
 		return vari, errors.Wrap(err, "error pow(2)")
@@ -56,7 +55,7 @@ func Variance(p ValueSeries, l int64) (ValueSeries, error) {
 		return vari, errors.Wrap(err, "error sum")
 	}
 	denom := math.Max(float64(l-1), 1)
-	vari = sum.DivConst(denom)
+	vari = DivConst(sum, denom)
 
 	setCache(key, vari)
 

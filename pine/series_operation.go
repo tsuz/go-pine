@@ -12,18 +12,14 @@ func operation(a, b ValueSeries, ns string, op func(a, b float64) float64) Value
 		dest = NewValueSeries()
 	}
 
-	var firstaVal *Value
-	destlast := dest.GetLast()
-	if destlast == nil {
-		firstaVal = a.GetFirst()
-	} else if destlast != nil {
-		if v := a.Get(destlast.t); v != nil && v.next != nil {
-			firstaVal = v.next
-		}
-	}
+	firstaVal := operationGetStart(a, dest)
 
 	// nowhere to start
 	if firstaVal == nil {
+
+		// propagate current pointer if needed
+		propagateCurrent(a, dest)
+
 		return dest
 	}
 
@@ -42,11 +38,28 @@ func operation(a, b ValueSeries, ns string, op func(a, b float64) float64) Value
 		f = f.next
 	}
 
-	if cur := a.GetCurrent(); cur != nil {
-		dest.SetCurrent(cur.t)
-	}
+	propagateCurrent(a, dest)
 
 	setCache(key, dest)
 
 	return dest
+}
+
+func propagateCurrent(a, dest ValueSeries) {
+	if cur := a.GetCurrent(); cur != nil {
+		dest.SetCurrent(cur.t)
+	}
+}
+
+func operationGetStart(a, dest ValueSeries) *Value {
+	var firstaVal *Value
+	destlast := dest.GetLast()
+	if destlast == nil {
+		firstaVal = a.GetFirst()
+	} else if destlast != nil {
+		if v := a.Get(destlast.t); v != nil && v.next != nil {
+			firstaVal = v.next
+		}
+	}
+	return firstaVal
 }

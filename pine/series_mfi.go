@@ -61,8 +61,8 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		return a
 	})
 
-	uv := vol.Mul(u)
-	lv := vol.Mul(lo)
+	uv := Mul(vol, u)
+	lv := Mul(vol, lo)
 
 	upper, err := Sum(uv, int(l))
 	if err != nil {
@@ -77,7 +77,7 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 	hundo := hlc3.Copy()
 	hundo.SetAll(100)
 
-	mfi = hundo.Sub(hundo.Div(upper.Div(lower).AddConst(1)))
+	mfi = Sub(hundo, Div(hundo, AddConst(Div(upper, lower), 1)))
 
 	setCache(key, mfi)
 
