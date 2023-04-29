@@ -101,6 +101,14 @@ func TestSeriesCCIIteration(t *testing.T) {
 	}
 }
 
+// func TestMemoryLeakCCI(t *testing.T) {
+// 	testMemoryLeak(t, func(o OHLCVSeries) error {
+// 		c := OHLCVAttr(o, OHLCPropClose)
+// 		_, err := CCI(c, 7)
+// 		return err
+// 	})
+// }
+
 func BenchmarkCCI(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

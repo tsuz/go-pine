@@ -125,6 +125,14 @@ func TestSeriesPowIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakPow(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := Pow(prop, 2)
+		return err
+	})
+}
+
 func ExamplePow() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

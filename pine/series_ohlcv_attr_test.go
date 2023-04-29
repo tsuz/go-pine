@@ -95,3 +95,10 @@ func TestNewOHLCVGetTrueRange(t *testing.T) {
 		t.Errorf("Expected to be nil but got %+v", v)
 	}
 }
+
+func TestMemoryLeakOHLCVAttr(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		OHLCVAttr(o, OHLCPropTR)
+		return nil
+	})
+}

@@ -131,6 +131,14 @@ func TestSeriesSumIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakSum(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := Sum(prop, 10)
+		return err
+	})
+}
+
 func ExampleSum() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

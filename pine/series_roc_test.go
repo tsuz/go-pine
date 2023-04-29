@@ -171,6 +171,14 @@ func TestSeriesROCNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakROC(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := ROC(prop, 3)
+		return err
+	})
+}
+
 func BenchmarkROC(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

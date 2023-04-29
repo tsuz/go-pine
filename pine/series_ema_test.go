@@ -316,6 +316,14 @@ func TestSeriesEMANotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakEMA(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		close := OHLCVAttr(o, OHLCPropClose)
+		_, err := EMA(close, 20)
+		return err
+	})
+}
+
 func ExampleEMA() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

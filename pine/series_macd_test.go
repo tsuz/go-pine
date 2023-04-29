@@ -171,6 +171,13 @@ func TestSeriesMACDIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakMACD(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		_, _, _, err := MACD(OHLCVAttr(o, OHLCPropClose), 12, 26, 9)
+		return err
+	})
+}
+
 func BenchmarkMACD(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

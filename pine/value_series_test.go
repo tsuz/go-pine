@@ -401,3 +401,22 @@ func TestValueSeriesGetFirst(t *testing.T) {
 		t.Errorf("expected next value to be 2 but got  %+v", f.next.v)
 	}
 }
+
+func TestMemoryLeakArithmetic(t *testing.T) {
+	v := 4.2351
+
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		c := OHLCVAttr(o, OHLCPropClose)
+		op := OHLCVAttr(o, OHLCPropOpen)
+		s1 := Add(c, op)
+		s2 := AddConst(s1, v)
+		s3 := Sub(s2, c)
+		s4 := SubConst(s3, v)
+		s5 := Mul(s4, s2)
+		s6 := MulConst(s5, v)
+		s7 := Div(s6, c)
+		DivConst(s7, v)
+
+		return nil
+	})
+}
