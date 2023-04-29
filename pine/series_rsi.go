@@ -226,7 +226,10 @@ func getRSI(stop *Value, vs ValueSeries, rsi ValueSeries, l int64) ValueSeries {
 	rsiu.SetCurrent(stop.t)
 	rsid.SetCurrent(stop.t)
 
-	rs := rsiu.Div(rsid)
+	setCache(rsiukey, rsiu)
+	setCache(rsidkey, rsid)
+
+	rs := Div(rsiu, rsid)
 	rsn := rs.GetFirst()
 	// set inifinity to 100
 	for {
@@ -248,19 +251,17 @@ func getRSI(stop *Value, vs ValueSeries, rsi ValueSeries, l int64) ValueSeries {
 		panic(errors.Wrap(err, "Error calling RMA"))
 	}
 
-	rmadiv := rmau.Div(rmad)
+	rmadiv := Div(rmau, rmad)
 
 	if rmadiv.GetCurrent() == nil {
 		return rsi
 	}
 
-	hundred1 := vs.Copy()
-	hundred1.SetAll(100)
-	hundred2 := vs.Copy()
-	hundred2.SetAll(100)
+	hundred := ReplaceAll(vs, 100)
 
-	res1 := hundred2.Div(rmadiv.AddConst(1.0))
-	res2 := hundred1.Sub(res1)
+	res1 := Div(hundred, AddConst(rmadiv, 1.0))
+	res2 := Sub(hundred, res1)
+
 	firstVal := rsi.GetLast()
 
 	if firstVal == nil {

@@ -145,7 +145,7 @@ func TestValueSeriesDiv(t *testing.T) {
 	b.Set(now, 4)
 	b.Set(now.Add(time.Duration(1000*1e6)), 4)
 
-	c := a.Div(b)
+	c := Div(a, b)
 	c.SetCurrent(now)
 	f := c.GetCurrent()
 	if f == nil {
