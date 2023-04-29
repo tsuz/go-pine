@@ -24,8 +24,8 @@ func (m *mystrat) OnNextOHLCV(strategy backtest.Strategy, s pine.OHLCVSeries, st
 	rsi, _ := pine.RSI(close, short)
 	avg, _ := pine.SMA(rsi, long)
 
-	basis3 := basis.Add(basis2)
-	upperBB := basis3.AddConst(span)
+	basis3 := pine.Add(basis, basis2)
+	upperBB := pine.AddConst(basis3, span)
 
 	log.Printf("t: %+v, close: %+v, rsi: %+v, avg: %+v, upperBB: %+v", s.Current().S, close.Val(), rsi.Val(), avg.Val(), upperBB.Val())
 
