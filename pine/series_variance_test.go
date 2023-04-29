@@ -24,7 +24,7 @@ func TestSeriesVarianceNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	variance, err := Variance(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Variance"))
@@ -53,7 +53,7 @@ func TestSeriesVarianceNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	variance, err := RSI(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RSI"))
@@ -94,7 +94,7 @@ func TestSeriesVarianceIteration(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		variance, err := Variance(prop, 3)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Variance"))
@@ -157,7 +157,7 @@ func TestSeriesVarianceNotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		variance, err := Variance(prop, int64(v.lookback))
 		if err != nil {
@@ -177,7 +177,7 @@ func BenchmarkVariance(b *testing.B) {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	vals := series.GetSeries(OHLCPropClose)
+	vals := OHLCVAttr(series, OHLCPropClose)
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
@@ -194,7 +194,7 @@ func ExampleVariance() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		variance, err := Variance(close, 20)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting variance"))

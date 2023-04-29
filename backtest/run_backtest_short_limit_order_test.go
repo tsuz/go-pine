@@ -13,7 +13,7 @@ type testShortLimitMystrat struct{}
 
 func (m *testShortLimitMystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
-	close := s.GetSeries(pine.OHLCPropClose)
+	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 
 	entry1 := EntryOpts{
 		Side:  Short,

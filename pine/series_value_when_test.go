@@ -23,7 +23,7 @@ func TestSeriesValueWhenNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	bs := NewValueSeries()
 
 	rsi, err := ValueWhen(bs, prop, 2)
@@ -61,7 +61,7 @@ func TestSeriesValueWhenNoIteration(t *testing.T) {
 	bs.Set(data[2].S, 1)
 	bs.Set(data[3].S, 0)
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	rsi, err := ValueWhen(bs, prop, 0)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error ValueWhen"))
@@ -125,7 +125,7 @@ func TestSeriesValueWhenIteration5(t *testing.T) {
 		series.Next()
 
 		for i, v := range testTable {
-			prop := series.GetSeries(OHLCPropClose)
+			prop := OHLCVAttr(series, OHLCPropClose)
 			vw, err := ValueWhen(bs, prop, v.ocr)
 			if err != nil {
 				t.Fatal(errors.Wrap(err, "error ValueWhen"))
@@ -180,7 +180,7 @@ func TestSeriesValueWhenNotEnoughData(t *testing.T) {
 	bs.Set(data[2].S, 0)
 	bs.Set(data[3].S, 1)
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 
 	vw, err := ValueWhen(bs, prop, 5)
 	if err != nil {
@@ -196,7 +196,7 @@ func BenchmarkValueWhen(b *testing.B) {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	vals := series.GetSeries(OHLCPropClose)
+	vals := OHLCVAttr(series, OHLCPropClose)
 
 	bs := NewValueSeries()
 	for _, v := range data {
@@ -225,7 +225,7 @@ func ExampleValueWhen() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		vw, err := ValueWhen(close, bs, 12)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting ValueWhen"))

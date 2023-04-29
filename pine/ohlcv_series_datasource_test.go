@@ -38,7 +38,7 @@ func TestNewOHLCVSeriesFetchDataSource(t *testing.T) {
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error fetching next"))
 		}
-		close := s.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(s, OHLCPropClose)
 		if i < len(data) {
 			if *close.Val() != data[i].C {
 				t.Errorf("expected %+v but got %+v", data[i].C, *close.Val())

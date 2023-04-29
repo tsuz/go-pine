@@ -24,7 +24,7 @@ func TestSeriesMACDNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	mline, sigline, histline, err := MACD(prop, 12, 26, 9)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error MACD"))
@@ -59,7 +59,7 @@ func TestSeriesMACDNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	mline, sigline, histline, err := MACD(prop, 12, 26, 9)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error MACD"))
@@ -127,7 +127,7 @@ func TestSeriesMACDIteration(t *testing.T) {
 
 	for i, v := range testTable {
 		series.Next()
-		src := series.GetSeries(OHLCPropClose)
+		src := OHLCVAttr(series, OHLCPropClose)
 		macd, signal, histogram, err := MACD(src, 1, 2, 2)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error macd"))
@@ -176,7 +176,7 @@ func BenchmarkMACD(b *testing.B) {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	vals := series.GetSeries(OHLCPropClose)
+	vals := OHLCVAttr(series, OHLCPropClose)
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
@@ -188,7 +188,7 @@ func ExampleMACD() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	close := series.GetSeries(OHLCPropClose)
+	close := OHLCVAttr(series, OHLCPropClose)
 	mline, sigline, histline, err := MACD(close, 12, 26, 9)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error MACD"))

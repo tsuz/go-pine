@@ -15,7 +15,7 @@ type mystrat struct{}
 
 func (m *mystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
-	close := s.GetSeries(pine.OHLCPropClose)
+	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 	rsi, _ := pine.SMA(close, 2)
 	macd, _, _, _ := pine.MACD(close, 12, 26, 9)
 	stdev, _ := pine.Stdev(close, 24)

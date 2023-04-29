@@ -23,7 +23,7 @@ func TestSeriesRMANoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	rma, err := RMA(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RMA"))
@@ -52,7 +52,7 @@ func TestSeriesRMANoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	rma, err := RMA(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RMA"))
@@ -119,7 +119,7 @@ func TestSeriesRMAIteration4(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		rma, err := RMA(prop, int64(v.lookback))
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error RMA"))
@@ -194,7 +194,7 @@ func TestSeriesRMAIteration3(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		rma, err := RMA(prop, int64(v.lookback))
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error RMA"))
@@ -239,7 +239,7 @@ func TestSeriesRMANested(t *testing.T) {
 	testTable := []float64{14.75, 15.75}
 
 	for _, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		rma, err := RMA(prop, 2)
 		if err != nil {
@@ -297,7 +297,7 @@ func TestSeriesRMANotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		rma, err := RMA(prop, int64(v.lookback))
 		if err != nil {
@@ -321,7 +321,7 @@ func ExampleRMA() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		rma, err := RMA(close, 12)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting rma"))

@@ -18,8 +18,8 @@ func TestSeriesCross(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Cross(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Cross"))
@@ -38,8 +38,8 @@ func TestSeriesCrossNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Cross(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Cross"))
@@ -73,8 +73,8 @@ func TestSeriesCrossIteration(t *testing.T) {
 	for i, v := range tests {
 		series.Next()
 
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		co, err := Cross(c, o)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Cross"))
@@ -95,8 +95,8 @@ func BenchmarkCross(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		Cross(c, o)
 	}
 }
@@ -105,8 +105,8 @@ func ExampleCross() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Cross(c, o)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error Cross"))

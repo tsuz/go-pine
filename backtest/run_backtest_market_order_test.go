@@ -14,7 +14,7 @@ type testMystrat struct{}
 
 func (m *testMystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
-	close := s.GetSeries(pine.OHLCPropClose)
+	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 	avg, _ := pine.SMA(close, 2)
 
 	if avg.Val() != nil {

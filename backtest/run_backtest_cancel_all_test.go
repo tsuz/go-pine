@@ -12,7 +12,7 @@ type testCancelAllMystrat struct{}
 
 func (m *testCancelAllMystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
-	close := s.GetSeries(pine.OHLCPropClose)
+	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 
 	if *close.Val() == 14 {
 		entry1 := EntryOpts{

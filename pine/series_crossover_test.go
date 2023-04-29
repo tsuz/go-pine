@@ -18,8 +18,8 @@ func TestSeriesCrossover(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossover(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Crossover"))
@@ -38,8 +38,8 @@ func TestSeriesCrossoverNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossover(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Crossover"))
@@ -73,8 +73,8 @@ func TestSeriesCrossoverIteration(t *testing.T) {
 	for i, v := range tests {
 		series.Next()
 
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		co, err := Crossover(c, o)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Crossover"))
@@ -95,8 +95,8 @@ func BenchmarkCrossover(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		Crossover(c, o)
 	}
 }
@@ -105,8 +105,8 @@ func ExampleCrossover() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossover(c, o)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error Crossover"))

@@ -23,7 +23,7 @@ func TestSeriesRSINoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	rsi, err := RSI(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RSI"))
@@ -52,7 +52,7 @@ func TestSeriesRSINoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	rsi, err := RSI(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RSI"))
@@ -95,7 +95,7 @@ func TestSeriesRSIIteration5(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		rsi, err := RSI(prop, 2)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error RSI"))
@@ -149,7 +149,7 @@ func TestSeriesRSINotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		rsi, err := RSI(prop, int64(v.lookback))
 		if err != nil {
@@ -173,7 +173,7 @@ func ExampleRSI() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		rsi, err := RSI(close, 16)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting rsi"))

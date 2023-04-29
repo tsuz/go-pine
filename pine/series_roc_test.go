@@ -24,7 +24,7 @@ func TestSeriesROCNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	src := series.GetSeries(OHLCPropClose)
+	src := OHLCVAttr(series, OHLCPropClose)
 
 	rsi, err := ROC(src, 2)
 	if err != nil {
@@ -56,7 +56,7 @@ func TestSeriesROCNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	src := series.GetSeries(OHLCPropClose)
+	src := OHLCVAttr(series, OHLCPropClose)
 	rsi, err := ROC(src, 1)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error ROC"))
@@ -109,7 +109,7 @@ func TestSeriesROCSuccess(t *testing.T) {
 		series.Next()
 
 		for i, v := range testTable {
-			src := series.GetSeries(OHLCPropClose)
+			src := OHLCVAttr(series, OHLCPropClose)
 			vw, err := ROC(src, v.lookback)
 			if err != nil {
 				t.Fatal(errors.Wrap(err, "error ROC"))
@@ -160,7 +160,7 @@ func TestSeriesROCNotEnoughData(t *testing.T) {
 	series.Next()
 	series.Next()
 
-	src := series.GetSeries(OHLCPropClose)
+	src := OHLCVAttr(series, OHLCPropClose)
 
 	vw, err := ROC(src, 4)
 	if err != nil {
@@ -176,7 +176,7 @@ func BenchmarkROC(b *testing.B) {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	vals := series.GetSeries(OHLCPropClose)
+	vals := OHLCVAttr(series, OHLCPropClose)
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
@@ -193,7 +193,7 @@ func ExampleROC() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		roc, err := ROC(close, 4)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting roc"))

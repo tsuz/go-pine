@@ -18,8 +18,8 @@ func TestSeriesCrossunder(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossunder(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Crossunder"))
@@ -38,8 +38,8 @@ func TestSeriesCrossunderNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossunder(c, o)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Crossunder"))
@@ -73,8 +73,8 @@ func TestSeriesCrossunderIteration(t *testing.T) {
 	for i, v := range tests {
 		series.Next()
 
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		co, err := Crossunder(c, o)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Crossunder"))
@@ -95,8 +95,8 @@ func BenchmarkCrossunder(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
-		c := series.GetSeries(OHLCPropClose)
-		o := series.GetSeries(OHLCPropOpen)
+		c := OHLCVAttr(series, OHLCPropClose)
+		o := OHLCVAttr(series, OHLCPropOpen)
 		Crossunder(c, o)
 	}
 }
@@ -105,8 +105,8 @@ func ExampleCrossunder() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	c := series.GetSeries(OHLCPropClose)
-	o := series.GetSeries(OHLCPropOpen)
+	c := OHLCVAttr(series, OHLCPropClose)
+	o := OHLCVAttr(series, OHLCPropOpen)
 	co, err := Crossunder(c, o)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error Crossunder"))

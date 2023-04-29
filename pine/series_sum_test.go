@@ -23,7 +23,7 @@ func TestSeriesSumNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	stdev, err := Sum(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Stdev"))
@@ -52,7 +52,7 @@ func TestSeriesSumNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	sum, err := Sum(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error SUM"))
@@ -106,7 +106,7 @@ func TestSeriesSumIteration(t *testing.T) {
 		series.Next()
 
 		for i, v := range testTable {
-			prop := series.GetSeries(OHLCPropClose)
+			prop := OHLCVAttr(series, OHLCPropClose)
 			sum, err := Sum(prop, v.lookback)
 			if err != nil {
 				t.Fatal(errors.Wrap(err, "error ValueWhen"))
@@ -140,7 +140,7 @@ func ExampleSum() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		// Get the sum of last 10 values
 		sum, err := Sum(close, 10)
 		if err != nil {
