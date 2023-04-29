@@ -23,7 +23,7 @@ func TestSeriesEMANoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	ema, err := EMA(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error EMA"))
@@ -52,7 +52,7 @@ func TestSeriesEMANoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	ema, err := EMA(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error EMA"))
@@ -119,7 +119,7 @@ func TestSeriesEMAIteration4(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		ema, err := EMA(prop, int64(v.lookback))
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error EMA"))
@@ -194,7 +194,7 @@ func TestSeriesEMAIteration3(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		ema, err := EMA(prop, int64(v.lookback))
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error EMA"))
@@ -243,7 +243,7 @@ func TestSeriesEMANested(t *testing.T) {
 	testTable := []float64{15, 16.555555555555554}
 
 	for _, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		ema, err := EMA(prop, 2)
 		if err != nil {
@@ -301,7 +301,7 @@ func TestSeriesEMANotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		ema, err := EMA(prop, int64(v.lookback))
 		if err != nil {
@@ -325,7 +325,7 @@ func ExampleEMA() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		ema, err := EMA(close, 20)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error EMA"))

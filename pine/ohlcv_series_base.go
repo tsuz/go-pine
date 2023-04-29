@@ -1,7 +1,7 @@
 package pine
 
 import (
-	"math"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/twinj/uuid"
@@ -20,8 +20,11 @@ type OHLCVBaseSeries interface {
 	// Current returns current ohlcv
 	Current() *OHLCV
 
-	// GetSeries returns series of values for a property
-	GetSeries(OHLCProp) ValueSeries
+	// Get gets the item by time in value series
+	Get(time.Time) *OHLCV
+
+	// GetFirst returns first value
+	GetFirst() *OHLCV
 
 	// GoToFirst sets the current value to first and returns that value
 	GoToFirst() *OHLCV
@@ -43,7 +46,7 @@ func NewOHLCVBaseSeries() OHLCVBaseSeries {
 	s := &ohlcvBaseSeries{
 		id:   u.String(),
 		max:  1000, // default maximum items
-		vals: make(map[int64]OHLCV),
+		vals: make(map[int64]*OHLCV),
 	}
 	return s
 }
@@ -63,11 +66,11 @@ type ohlcvBaseSeries struct {
 	// max number of candles. 0 means no limit. Defaults to 1000
 	max int64
 
-	vals map[int64]OHLCV
+	vals map[int64]*OHLCV
 }
 
 func (s *ohlcvBaseSeries) Push(o OHLCV) {
-	s.vals[o.S.Unix()] = o
+	s.vals[o.S.Unix()] = &o
 	if s.last != nil {
 		o.prev = s.last
 		s.last.next = &o
@@ -97,6 +100,18 @@ func (s *ohlcvBaseSeries) Len() int {
 
 func (s *ohlcvBaseSeries) Current() *OHLCV {
 	return s.cur
+}
+
+func (s *ohlcvBaseSeries) Get(t time.Time) *OHLCV {
+	return s.getValue(t.Unix())
+}
+
+func (s *ohlcvBaseSeries) getValue(t int64) *OHLCV {
+	return s.vals[t]
+}
+
+func (s *ohlcvBaseSeries) GetFirst() *OHLCV {
+	return s.first
 }
 
 func (s *ohlcvBaseSeries) GoToFirst() *OHLCV {
@@ -147,55 +162,6 @@ func (s *ohlcvBaseSeries) Next() (*OHLCV, error) {
 
 func (s *ohlcvBaseSeries) RegisterDataSource(ds DataSource) {
 	s.ds = ds
-}
-
-func (s *ohlcvBaseSeries) GetSeries(p OHLCProp) ValueSeries {
-	vs := NewValueSeries()
-	v := s.first
-	for {
-		if v == nil {
-			break
-		}
-		var propVal *float64
-		switch p {
-		case OHLCPropClose:
-			propVal = NewFloat64(v.C)
-		case OHLCPropOpen:
-			propVal = NewFloat64(v.O)
-		case OHLCPropHigh:
-			propVal = NewFloat64(v.H)
-		case OHLCPropLow:
-			propVal = NewFloat64(v.L)
-		case OHLCPropVolume:
-			propVal = NewFloat64(v.V)
-		case OHLCPropTR, OHLCPropTRHL:
-			if v.prev != nil {
-				p := v.prev
-				v1 := math.Abs(v.H - v.L)
-				v2 := math.Abs(v.H - p.C)
-				v3 := math.Abs(v.L - p.C)
-				v := math.Max(v1, math.Max(v2, v3))
-				propVal = NewFloat64(v)
-			}
-			if p == OHLCPropTRHL && v.prev == nil {
-				d := v.H - v.L
-				propVal = &d
-			}
-		case OHLCPropHLC3:
-			propVal = NewFloat64((v.H + v.L + v.C) / 3)
-		default:
-			continue
-		}
-		if propVal != nil {
-			vs.Set(v.S, *propVal)
-		}
-		v = v.next
-	}
-
-	if s.cur != nil {
-		vs.SetCurrent(s.cur.S)
-	}
-	return vs
 }
 
 func (s *ohlcvBaseSeries) SetMax(m int64) {

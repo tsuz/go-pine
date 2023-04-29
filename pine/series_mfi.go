@@ -14,8 +14,8 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		mfi = NewValueSeries()
 	}
 
-	hlc3 := o.GetSeries(OHLCPropHLC3)
-	vol := o.GetSeries(OHLCPropVolume)
+	hlc3 := OHLCVAttr(o, OHLCPropHLC3)
+	vol := OHLCVAttr(o, OHLCPropVolume)
 
 	hlc3c := hlc3.GetCurrent()
 	if hlc3c == nil {

@@ -27,7 +27,7 @@ func TestSeriesSMANoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	sma, err := SMA(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error SMA"))
@@ -90,7 +90,7 @@ func TestSeriesSMAIteration3(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		sma, err := SMA(prop, int64(v.lookback))
 		if err != nil {
@@ -161,7 +161,7 @@ func TestSeriesSMAIteration4(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		sma, err := SMA(prop, int64(v.lookback))
 		if err != nil {
@@ -205,7 +205,7 @@ func TestSeriesSMANested(t *testing.T) {
 	testTable := []float64{15.25, 16.75}
 
 	for _, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		sma, err := SMA(prop, 2)
 		if err != nil {
@@ -263,7 +263,7 @@ func TestSeriesSMANotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		sma, err := SMA(prop, int64(v.lookback))
 		if err != nil {
@@ -287,7 +287,7 @@ func ExampleSMA() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		sma, err := SMA(close, 50)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting sma"))

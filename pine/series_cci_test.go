@@ -22,7 +22,7 @@ func TestSeriesCCI(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tp := series.GetSeries(OHLCPropHLC3)
+	tp := OHLCVAttr(series, OHLCPropHLC3)
 
 	cci, err := CCI(tp, 3)
 	if err != nil {
@@ -46,7 +46,7 @@ func TestSeriesCCINoIteration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	tp := series.GetSeries(OHLCPropHLC3)
+	tp := OHLCVAttr(series, OHLCPropHLC3)
 
 	cci, err := CCI(tp, 3)
 	if err != nil {
@@ -80,7 +80,7 @@ func TestSeriesCCIIteration(t *testing.T) {
 
 	for i, v := range tests {
 		series.Next()
-		tp := series.GetSeries(OHLCPropHLC3)
+		tp := OHLCVAttr(series, OHLCPropHLC3)
 		cci, err := CCI(tp, 4)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error cci"))
@@ -109,7 +109,7 @@ func BenchmarkCCI(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
-		tp := series.GetSeries(OHLCPropHLC3)
+		tp := OHLCVAttr(series, OHLCPropHLC3)
 		CCI(tp, 12)
 	}
 }
@@ -118,7 +118,7 @@ func ExampleCCI() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	tp := series.GetSeries(OHLCPropHLC3)
+	tp := OHLCVAttr(series, OHLCPropHLC3)
 	cci, err := CCI(tp, 12)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error CCI"))

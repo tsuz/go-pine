@@ -11,14 +11,14 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, dmip, dmim ValueSeries, err err
 	dmip = NewValueSeries()
 	dmim = NewValueSeries()
 
-	h := ohlcv.GetSeries(OHLCPropHigh)
+	h := OHLCVAttr(ohlcv, OHLCPropHigh)
 	stop := h.GetCurrent()
 	if stop == nil {
 		return
 	}
 
-	l := ohlcv.GetSeries(OHLCPropLow)
-	tr := ohlcv.GetSeries(OHLCPropTRHL)
+	l := OHLCVAttr(ohlcv, OHLCPropLow)
+	tr := OHLCVAttr(ohlcv, OHLCPropTRHL)
 
 	up, err := Change(h, 1)
 	if err != nil {

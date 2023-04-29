@@ -21,10 +21,10 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 	}
 
 	if usetr {
-		span = o.GetSeries(OHLCPropTR)
+		span = OHLCVAttr(o, OHLCPropTR)
 	} else {
-		h := o.GetSeries(OHLCPropHigh)
-		l := o.GetSeries(OHLCPropLow)
+		h := OHLCVAttr(o, OHLCPropHigh)
+		l := OHLCVAttr(o, OHLCPropLow)
 		span = h.Sub(l)
 	}
 

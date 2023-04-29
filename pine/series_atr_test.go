@@ -24,7 +24,7 @@ func TestSeriesATRNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	atr, err := ATR(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error ATR"))
@@ -53,7 +53,7 @@ func TestSeriesATRNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	atr, err := ATR(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RSI"))
@@ -98,7 +98,7 @@ func TestSeriesATRIteration(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 
-		prop := series.GetSeries(OHLCPropTRHL)
+		prop := OHLCVAttr(series, OHLCPropTRHL)
 		atr, err := ATR(prop, 3)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error ATR"))
@@ -161,7 +161,7 @@ func TestSeriesATRNotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		atr, err := ATR(prop, int64(v.lookback))
 		if err != nil {
@@ -185,7 +185,7 @@ func ExampleATR() {
 		if v, _ := series.Next(); v == nil {
 			break
 		}
-		tr := series.GetSeries(OHLCPropTR)
+		tr := OHLCVAttr(series, OHLCPropTR)
 		atr, _ := ATR(tr, 3)
 		if atr.Val() != nil {
 			log.Printf("ATR value: %+v", *atr.Val())

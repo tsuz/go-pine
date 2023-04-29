@@ -18,7 +18,7 @@ func TestSeriesKC(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	close := series.GetSeries(OHLCPropClose)
+	close := OHLCVAttr(series, OHLCPropClose)
 
 	m, u, l, err := KC(close, series, 3, 2.5, true)
 	if err != nil {
@@ -43,7 +43,7 @@ func TestSeriesKCNoIteration(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	close := series.GetSeries(OHLCPropClose)
+	close := OHLCVAttr(series, OHLCPropClose)
 
 	m, u, l, err := KC(close, series, 3, 2.5, true)
 	if err != nil {
@@ -83,7 +83,7 @@ func TestSeriesKCIteration(t *testing.T) {
 
 	for i, v := range tests {
 		series.Next()
-		c := series.GetSeries(OHLCPropClose)
+		c := OHLCVAttr(series, OHLCPropClose)
 		m, u, l, err := KC(c, series, 4, 2.5, false)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error dmi"))
@@ -122,7 +122,7 @@ func BenchmarkKC(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		series.Next()
-		KC(series.GetSeries(OHLCPropClose), series, 4, 2.5, false)
+		KC(OHLCVAttr(series, OHLCPropClose), series, 4, 2.5, false)
 	}
 }
 
@@ -130,7 +130,7 @@ func ExampleKC() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	m, u, l, err := KC(series.GetSeries(OHLCPropClose), series, 4, 2.5, false)
+	m, u, l, err := KC(OHLCVAttr(series, OHLCPropClose), series, 4, 2.5, false)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "error KC"))
 	}

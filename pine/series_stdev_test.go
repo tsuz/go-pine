@@ -24,7 +24,7 @@ func TestSeriesStdevNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	stdev, err := Stdev(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Stdev"))
@@ -53,7 +53,7 @@ func TestSeriesStdevNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	stdev, err := RSI(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error RSI"))
@@ -94,7 +94,7 @@ func TestSeriesStdevIteration(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 		stdev, err := Stdev(prop, 3)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Stdev"))
@@ -157,7 +157,7 @@ func TestSeriesStdevNotEnoughData(t *testing.T) {
 	}
 
 	for i, v := range testTable {
-		prop := series.GetSeries(OHLCPropClose)
+		prop := OHLCVAttr(series, OHLCPropClose)
 
 		stdev, err := Stdev(prop, int64(v.lookback))
 		if err != nil {
@@ -181,7 +181,7 @@ func ExampleStdev() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		stdev, err := Stdev(close, 12)
 		if err != nil {
 			log.Fatal(errors.Wrap(err, "error geting stdev"))

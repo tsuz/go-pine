@@ -24,7 +24,7 @@ func TestSeriesPowNoData(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	stdev, err := Pow(prop, 2.0)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Stdev"))
@@ -53,7 +53,7 @@ func TestSeriesPowNoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	prop := series.GetSeries(OHLCPropClose)
+	prop := OHLCVAttr(series, OHLCPropClose)
 	pow, err := Pow(prop, 2)
 	if err != nil {
 		t.Fatal(errors.Wrap(err, "error Pow"))
@@ -100,7 +100,7 @@ func TestSeriesPowIteration(t *testing.T) {
 		series.Next()
 
 		for i, v := range testTable {
-			prop := series.GetSeries(OHLCPropClose)
+			prop := OHLCVAttr(series, OHLCPropClose)
 			pow, err := Pow(prop, v.exp)
 			if err != nil {
 				t.Fatal(errors.Wrap(err, "error ValueWhen"))
@@ -134,7 +134,7 @@ func ExamplePow() {
 			break
 		}
 
-		close := series.GetSeries(OHLCPropClose)
+		close := OHLCVAttr(series, OHLCPropClose)
 		added := close.AddConst(3.0)
 		pow, err := Pow(added, 2)
 		if err != nil {
