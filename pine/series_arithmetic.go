@@ -1,5 +1,6 @@
 package pine
 
+<<<<<<< HEAD
 import (
 	"fmt"
 )
@@ -13,6 +14,12 @@ func Add(a, b ValueSeries) ValueSeries {
 func AddConst(a ValueSeries, c float64) ValueSeries {
 	key := fmt.Sprintf("addconst:%+v", c)
 	return operationConst(a, key, func(av float64) float64 {
+=======
+import "fmt"
+
+func AddConst(a ValueSeries, c float64) ValueSeries {
+	return operation(a, a, "addconst", func(av, bv float64) float64 {
+>>>>>>> 41691d6 (fix rsi memory leak)
 		return av + c
 	})
 }
