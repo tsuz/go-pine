@@ -2,7 +2,7 @@ package pine
 
 // Crossunder generates ValueSeries of ketler channel's middle, upper and lower in that order.
 func Crossunder(a, b ValueSeries) (ValueSeries, error) {
-	c := a.OperateWithNil(b, func(av, bv *Value) *Value {
+	c := OperateWithNil(a, b, "crossunder", func(av, bv *Value) *Value {
 		if av == nil || bv == nil {
 			return nil
 		}

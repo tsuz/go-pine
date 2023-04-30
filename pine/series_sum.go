@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // Sum generates a ValueSeries of summation of previous values
@@ -12,29 +10,35 @@ import (
 //   - p - ValueSeries: source data
 //   - l - int: lookback periods [1, ∞)
 func Sum(p ValueSeries, l int) (ValueSeries, error) {
-	var err error
+
 	key := fmt.Sprintf("sum:%s:%d", p.ID(), l)
 	sum := getCache(key)
 	if sum == nil {
 		sum = NewValueSeries()
 	}
 
-	// current available value
-	stop := p.GetCurrent()
-	if stop == nil {
-		return sum, nil
-	}
-
-	sum, err = getSum(*stop, sum, p, l)
-	if err != nil {
-		return sum, errors.Wrap(err, "error getsum")
-	}
+	sum = generateSum(p, sum, l)
 
 	setCache(key, sum)
 
-	sum.SetCurrent(stop.t)
-
 	return sum, nil
+}
+
+// SumNoCache generates sum without caching
+func SumNoCache(p ValueSeries, l int) ValueSeries {
+	sum := NewValueSeries()
+	return generateSum(p, sum, l)
+}
+
+func generateSum(p, sum ValueSeries, l int) ValueSeries {
+	// current available value
+	stop := p.GetCurrent()
+	if stop == nil {
+		return sum
+	}
+	sum, _ = getSum(*stop, sum, p, l)
+	sum.SetCurrent(stop.t)
+	return sum
 }
 
 func getSum(stop Value, sum ValueSeries, src ValueSeries, l int) (ValueSeries, error) {

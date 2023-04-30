@@ -170,6 +170,14 @@ func TestSeriesChangeNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakChange(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		c := OHLCVAttr(o, OHLCPropClose)
+		_, err := Change(c, 7)
+		return err
+	})
+}
+
 func BenchmarkChange(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

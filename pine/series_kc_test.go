@@ -114,6 +114,13 @@ func TestSeriesKCIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakKC(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		_, _, _, err := KC(OHLCVAttr(o, OHLCPropClose), o, 4, 2.5, false)
+		return err
+	})
+}
+
 func BenchmarkKC(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

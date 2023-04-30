@@ -172,6 +172,14 @@ func TestSeriesStdevNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakStdev(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := Stdev(prop, 12)
+		return err
+	})
+}
+
 func ExampleStdev() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

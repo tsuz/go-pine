@@ -10,12 +10,6 @@ import (
 type ValueSeries interface {
 	ID() string
 
-	// Operate allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called only when non nilable values are found in the ValueSeries of the first argument based on the caller's series.
-	Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries
-
-	// OperateWithNil allows for a custom mapping using the caller's value and the value from ValueSeries. The second function is called even when nilable values are found in the ValueSeries of the first argument based on the caller's series.
-	OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) ValueSeries
-
 	// Get gets the item by time in value series
 	Get(time.Time) *Value
 	// GetLast gets the last item in value series
@@ -88,79 +82,8 @@ func (s *valueSeries) Copy() ValueSeries {
 	return newv
 }
 
-func (s *valueSeries) operation(v ValueSeries, op func(a, b float64) float64) ValueSeries {
-	copied := NewValueSeries()
-	f := s.GetFirst()
-	for {
-		if f == nil {
-			break
-		}
-
-		newv := v.Get(f.t)
-
-		if newv != nil {
-			copied.Set(f.t, op(f.v, newv.v))
-		}
-
-		f = f.next
-	}
-	cur := s.GetCurrent()
-	if cur != nil {
-		copied.SetCurrent(cur.t)
-	}
-	return copied
-}
-
-func (s *valueSeries) operationWithNil(v ValueSeries, op func(a, b *Value) *Value) ValueSeries {
-	copied := NewValueSeries()
-	f := s.GetFirst()
-	for {
-		if f == nil {
-			break
-		}
-
-		newv := v.Get(f.t)
-
-		if val := op(f, newv); val != nil {
-			copied.Set(val.t, val.v)
-		}
-
-		f = f.next
-	}
-	cur := s.GetCurrent()
-	if cur != nil {
-		copied.SetCurrent(cur.t)
-	}
-	return copied
-}
-
-func (s *valueSeries) operationConst(op func(a float64) float64) ValueSeries {
-	copied := NewValueSeries()
-	f := s.GetFirst()
-	for {
-		if f == nil {
-			break
-		}
-		copied.Set(f.t, op(f.v))
-		f = f.next
-	}
-	cur := s.GetCurrent()
-	if cur != nil {
-		copied.SetCurrent(cur.t)
-	}
-	return copied
-}
-
 func (s *valueSeries) Len() int {
 	return len(s.timemap)
-}
-
-func (s *valueSeries) Operate(v ValueSeries, a func(b, c float64) float64) ValueSeries {
-	return s.operation(v, a)
-}
-
-func (s *valueSeries) OperateWithNil(v ValueSeries, a func(b, c *Value) *Value) ValueSeries {
-	return s.operationWithNil(v, a)
 }
 
 func (s *valueSeries) SetMax(m int64) {

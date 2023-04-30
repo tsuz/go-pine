@@ -278,6 +278,14 @@ func TestSeriesSMANotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakSMA(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := SMA(prop, 12)
+		return err
+	})
+}
+
 func ExampleSMA() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

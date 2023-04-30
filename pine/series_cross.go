@@ -2,7 +2,7 @@ package pine
 
 // Cross generates ValueSeries of ketler channel's middle, upper and lower in that order.
 func Cross(a, b ValueSeries) (ValueSeries, error) {
-	c := a.OperateWithNil(b, func(av, bv *Value) *Value {
+	c := OperateWithNil(a, b, "cross", func(av, bv *Value) *Value {
 		if av == nil || bv == nil {
 			return nil
 		}

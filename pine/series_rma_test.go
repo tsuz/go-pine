@@ -312,6 +312,14 @@ func TestSeriesRMANotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakRMA(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := RMA(prop, 12)
+		return err
+	})
+}
+
 func ExampleRMA() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

@@ -4,8 +4,18 @@ import (
 	"fmt"
 )
 
+// Operate operates on two series. Enabling caching means it starts from where it was left off.
+func Operate(a, b ValueSeries, ns string, op func(b, c float64) float64) ValueSeries {
+	return operation(a, b, ns, op, true)
+}
+
+// OperateNoCache operates on two series without caching
+func OperateNoCache(a, b ValueSeries, ns string, op func(b, c float64) float64) ValueSeries {
+	return operation(a, b, ns, op, false)
+}
+
 // operation operates on a and b ValueSeries using op function. use ns as a unique cache identifier
-func operation(a, b ValueSeries, ns string, op func(a, b float64) float64) ValueSeries {
+func operation(a, b ValueSeries, ns string, op func(a, b float64) float64, cache bool) ValueSeries {
 	key := fmt.Sprintf("operation:%s:%s:%s", a.ID(), b.ID(), ns)
 	dest := getCache(key)
 	if dest == nil {
@@ -40,7 +50,9 @@ func operation(a, b ValueSeries, ns string, op func(a, b float64) float64) Value
 
 	propagateCurrent(a, dest)
 
-	setCache(key, dest)
+	if cache {
+		setCache(key, dest)
+	}
 
 	return dest
 }

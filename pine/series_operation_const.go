@@ -5,7 +5,7 @@ import (
 )
 
 // operationConst operates on a and b ValueSeries using op function. use ns as a unique cache identifier
-func operationConst(a ValueSeries, ns string, op func(a float64) float64) ValueSeries {
+func operationConst(a ValueSeries, ns string, op func(a float64) float64, cache bool) ValueSeries {
 	key := fmt.Sprintf("operationconst:%s:%s", a.ID(), ns)
 	dest := getCache(key)
 	if dest == nil {
@@ -35,7 +35,9 @@ func operationConst(a ValueSeries, ns string, op func(a float64) float64) ValueS
 
 	propagateCurrent(a, dest)
 
-	setCache(key, dest)
+	if cache {
+		setCache(key, dest)
+	}
 
 	return dest
 }

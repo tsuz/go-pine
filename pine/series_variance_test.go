@@ -172,6 +172,14 @@ func TestSeriesVarianceNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakVariance(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		_, err := Variance(prop, 10)
+		return err
+	})
+}
+
 func BenchmarkVariance(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

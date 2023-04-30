@@ -176,6 +176,14 @@ func TestSeriesATRNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakATR(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		c := OHLCVAttr(o, OHLCPropClose)
+		_, err := ATR(c, 7)
+		return err
+	})
+}
+
 func ExampleATR() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)

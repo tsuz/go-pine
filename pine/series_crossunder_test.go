@@ -87,6 +87,15 @@ func TestSeriesCrossunderIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakCrossunder(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		c := OHLCVAttr(o, OHLCPropClose)
+		op := OHLCVAttr(o, OHLCPropOpen)
+		_, err := Crossunder(c, op)
+		return err
+	})
+}
+
 func BenchmarkCrossunder(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

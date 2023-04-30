@@ -118,6 +118,13 @@ func TestSeriesDMIIteration(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakDMI(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		_, _, _, err := DMI(o, 4, 3)
+		return err
+	})
+}
+
 func BenchmarkDMI(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

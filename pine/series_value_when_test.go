@@ -191,6 +191,18 @@ func TestSeriesValueWhenNotEnoughData(t *testing.T) {
 	}
 }
 
+func TestMemoryLeakValueWhen(t *testing.T) {
+	bs := NewValueSeries()
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		prop := OHLCVAttr(o, OHLCPropClose)
+		if c := prop.GetCurrent(); c != nil {
+			bs.Set(c.t, float64(int(c.v)%2))
+		}
+		_, err := ValueWhen(bs, prop, 10)
+		return err
+	})
+}
+
 func BenchmarkValueWhen(b *testing.B) {
 	// run the Fib function b.N times
 	start := time.Now()

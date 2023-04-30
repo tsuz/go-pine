@@ -27,7 +27,7 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		return mfi, errors.Wrap(err, "error getting change")
 	}
 
-	u := hlc3.OperateWithNil(chg, func(a, b *Value) *Value {
+	u := OperateWithNil(hlc3, chg, "mfiu", func(a, b *Value) *Value {
 		var v float64
 		// treat nil value as HLC3
 		if b == nil {
@@ -44,7 +44,7 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		}
 		return a
 	})
-	lo := hlc3.OperateWithNil(chg, func(a, b *Value) *Value {
+	lo := OperateWithNil(hlc3, chg, "mfil", func(a, b *Value) *Value {
 		var v float64
 		// treat nil value as HLC3
 		if b == nil {
@@ -74,14 +74,13 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 		return mfi, errors.Wrap(err, "error getting sum for lower")
 	}
 
-	hundo := hlc3.Copy()
-	hundo.SetAll(100)
+	hundo := ReplaceAll(hlc3, 100)
 
 	mfi = Sub(hundo, Div(hundo, AddConst(Div(upper, lower), 1)))
 
-	setCache(key, mfi)
-
 	mfi.SetCurrent(hlc3c.t)
+
+	setCache(key, mfi)
 
 	return mfi, nil
 }
