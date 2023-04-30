@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesStdevNoData tests no data scenario
@@ -51,10 +49,7 @@ func TestSeriesStdevNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	stdev, err := RSI(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RSI"))
-	}
+	stdev := RSI(prop, 2)
 	if stdev == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}

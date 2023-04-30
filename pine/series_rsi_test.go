@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesRSINoData tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesRSINoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	rsi, err := RSI(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RSI"))
-	}
+	rsi := RSI(prop, 2)
 	if rsi == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -53,10 +48,7 @@ func TestSeriesRSINoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	rsi, err := RSI(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RSI"))
-	}
+	rsi := RSI(prop, 2)
 	if rsi == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -96,11 +88,7 @@ func TestSeriesRSIIteration5(t *testing.T) {
 		series.Next()
 
 		prop := OHLCVAttr(series, OHLCPropClose)
-		rsi, err := RSI(prop, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RSI"))
-		}
-
+		rsi := RSI(prop, 2)
 		if rsi == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -151,10 +139,7 @@ func TestSeriesRSINotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		rsi, err := RSI(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RSI"))
-		}
+		rsi := RSI(prop, int64(v.lookback))
 		if rsi == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -167,8 +152,8 @@ func TestSeriesRSINotEnoughData(t *testing.T) {
 func TestMemoryLeakRSI(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := RSI(prop, 12)
-		return err
+		RSI(prop, 12)
+		return nil
 	})
 }
 
@@ -182,10 +167,7 @@ func ExampleRSI() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		rsi, err := RSI(close, 16)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting rsi"))
-		}
+		rsi := RSI(close, 16)
 		log.Printf("RSI: %+v", rsi.Val())
 	}
 }
