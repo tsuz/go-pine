@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesValueWhenNoData tests no data scenario
@@ -26,10 +24,7 @@ func TestSeriesValueWhenNoData(t *testing.T) {
 	prop := OHLCVAttr(series, OHLCPropClose)
 	bs := NewValueSeries()
 
-	rsi, err := ValueWhen(bs, prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ValueWhen"))
-	}
+	rsi := ValueWhen(bs, prop, 2)
 	if rsi == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -62,10 +57,7 @@ func TestSeriesValueWhenNoIteration(t *testing.T) {
 	bs.Set(data[3].S, 0)
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	rsi, err := ValueWhen(bs, prop, 0)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ValueWhen"))
-	}
+	rsi := ValueWhen(bs, prop, 0)
 	if rsi == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -126,10 +118,7 @@ func TestSeriesValueWhenIteration5(t *testing.T) {
 
 		for i, v := range testTable {
 			prop := OHLCVAttr(series, OHLCPropClose)
-			vw, err := ValueWhen(bs, prop, v.ocr)
-			if err != nil {
-				t.Fatal(errors.Wrap(err, "error ValueWhen"))
-			}
+			vw := ValueWhen(bs, prop, v.ocr)
 			exp := v.vals[j]
 			if exp == 0 {
 				if vw.Val() != nil {
@@ -182,10 +171,7 @@ func TestSeriesValueWhenNotEnoughData(t *testing.T) {
 
 	prop := OHLCVAttr(series, OHLCPropClose)
 
-	vw, err := ValueWhen(bs, prop, 5)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ValueWhen"))
-	}
+	vw := ValueWhen(bs, prop, 5)
 	if vw.Val() != nil {
 		t.Errorf("Expected nil but got %+v", *vw.Val())
 	}
@@ -198,8 +184,8 @@ func TestMemoryLeakValueWhen(t *testing.T) {
 		if c := prop.GetCurrent(); c != nil {
 			bs.Set(c.t, float64(int(c.v)%2))
 		}
-		_, err := ValueWhen(bs, prop, 10)
-		return err
+		ValueWhen(bs, prop, 10)
+		return nil
 	})
 }
 
@@ -238,10 +224,7 @@ func ExampleValueWhen() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		vw, err := ValueWhen(close, bs, 12)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting ValueWhen"))
-		}
+		vw := ValueWhen(close, bs, 12)
 		log.Printf("ValueWhen: %+v", vw.Val())
 	}
 }

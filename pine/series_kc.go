@@ -1,9 +1,7 @@
 package pine
 
-import "github.com/pkg/errors"
-
 // KC generates ValueSeries of ketler channel's middle, upper and lower in that order.
-func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (middle, upper, lower ValueSeries, err error) {
+func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (middle, upper, lower ValueSeries) {
 
 	lower = NewValueSeries()
 	upper = NewValueSeries()
@@ -11,14 +9,11 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 	start := src.GetCurrent()
 
 	if start == nil {
-		return middle, upper, lower, nil
+		return middle, upper, lower
 	}
 
 	var span ValueSeries
-	basis, err := EMA(src, l)
-	if err != nil {
-		return middle, upper, lower, errors.Wrap(err, "error EMA")
-	}
+	basis := EMA(src, l)
 
 	if usetr {
 		span = OHLCVAttr(o, OHLCPropTR)
@@ -28,10 +23,7 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 		span = Sub(h, l)
 	}
 
-	rangeEma, err := EMA(span, l)
-	if err != nil {
-		return middle, upper, lower, errors.Wrap(err, "error EMA")
-	}
+	rangeEma := EMA(span, l)
 
 	middle = basis
 	rangeEmaMul := MulConst(rangeEma, mult)
@@ -42,5 +34,5 @@ func KC(src ValueSeries, o OHLCVSeries, l int64, mult float64, usetr bool) (midd
 	upper.SetCurrent(start.t)
 	lower.SetCurrent(start.t)
 
-	return middle, upper, lower, nil
+	return middle, upper, lower
 }

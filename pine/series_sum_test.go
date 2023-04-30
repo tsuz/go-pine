@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesSumNoData tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesSumNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	stdev, err := Sum(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Stdev"))
-	}
+	stdev := Sum(prop, 2)
 	if stdev == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -53,10 +48,7 @@ func TestSeriesSumNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	sum, err := Sum(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error SUM"))
-	}
+	sum := Sum(prop, 2)
 	if sum == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -107,10 +99,7 @@ func TestSeriesSumIteration(t *testing.T) {
 
 		for i, v := range testTable {
 			prop := OHLCVAttr(series, OHLCPropClose)
-			sum, err := Sum(prop, v.lookback)
-			if err != nil {
-				t.Fatal(errors.Wrap(err, "error ValueWhen"))
-			}
+			sum := Sum(prop, v.lookback)
 			exp := v.vals[j]
 			if exp == 0 {
 				if sum.Val() != nil {
@@ -134,8 +123,8 @@ func TestSeriesSumIteration(t *testing.T) {
 func TestMemoryLeakSum(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := Sum(prop, 10)
-		return err
+		Sum(prop, 10)
+		return nil
 	})
 }
 
@@ -150,10 +139,7 @@ func ExampleSum() {
 
 		close := OHLCVAttr(series, OHLCPropClose)
 		// Get the sum of last 10 values
-		sum, err := Sum(close, 10)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting sum"))
-		}
+		sum := Sum(close, 10)
 		log.Printf("Sum: %+v", sum.Val())
 	}
 }

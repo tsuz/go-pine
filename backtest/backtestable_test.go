@@ -16,10 +16,10 @@ type mystrat struct{}
 func (m *mystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[string]interface{}) error {
 
 	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
-	rsi, _ := pine.SMA(close, 2)
-	macd, _, _, _ := pine.MACD(close, 12, 26, 9)
-	stdev, _ := pine.Stdev(close, 24)
-	ema200, _ := pine.EMA(close, 200)
+	rsi := pine.SMA(close, 2)
+	macd, _, _ := pine.MACD(close, 12, 26, 9)
+	stdev := pine.Stdev(close, 24)
+	ema200 := pine.EMA(close, 200)
 
 	// we haven't seen enough candles to fulfill the lookback period
 	if rsi.Val() == nil || macd.Val() == nil || stdev.Val() == nil || ema200.Val() == nil {

@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesChangeNoData tests no data scenario
@@ -25,10 +23,7 @@ func TestSeriesChangeNoData(t *testing.T) {
 
 	src := OHLCVAttr(series, OHLCPropClose)
 
-	rsi, err := Change(src, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Change"))
-	}
+	rsi := Change(src, 2)
 	if rsi == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -56,10 +51,7 @@ func TestSeriesChangeNoIteration(t *testing.T) {
 	}
 
 	src := OHLCVAttr(series, OHLCPropClose)
-	rsi, err := Change(src, 1)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Change"))
-	}
+	rsi := Change(src, 1)
 	if rsi == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -109,10 +101,7 @@ func TestSeriesChangeSuccess(t *testing.T) {
 
 		for i, v := range testTable {
 			src := OHLCVAttr(series, OHLCPropClose)
-			vw, err := Change(src, v.lookback)
-			if err != nil {
-				t.Fatal(errors.Wrap(err, "error Change"))
-			}
+			vw := Change(src, v.lookback)
 			exp := v.vals[j]
 			if exp == 0 {
 				if vw.Val() != nil {
@@ -161,10 +150,7 @@ func TestSeriesChangeNotEnoughData(t *testing.T) {
 
 	src := OHLCVAttr(series, OHLCPropClose)
 
-	vw, err := Change(src, 4)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Change"))
-	}
+	vw := Change(src, 4)
 	if vw.Val() != nil {
 		t.Errorf("Expected nil but got %+v", *vw.Val())
 	}
@@ -173,8 +159,8 @@ func TestSeriesChangeNotEnoughData(t *testing.T) {
 func TestMemoryLeakChange(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
-		_, err := Change(c, 7)
-		return err
+		Change(c, 7)
+		return nil
 	})
 }
 
@@ -201,10 +187,7 @@ func ExampleChange() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		chg, err := Change(close, 12)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error change"))
-		}
+		chg := Change(close, 12)
 		log.Printf("Change line: %+v", chg.Val())
 	}
 }

@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesROCNoData tests no data scenario
@@ -26,10 +24,7 @@ func TestSeriesROCNoData(t *testing.T) {
 
 	src := OHLCVAttr(series, OHLCPropClose)
 
-	rsi, err := ROC(src, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ROC"))
-	}
+	rsi := ROC(src, 2)
 	if rsi == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -57,10 +52,7 @@ func TestSeriesROCNoIteration(t *testing.T) {
 	}
 
 	src := OHLCVAttr(series, OHLCPropClose)
-	rsi, err := ROC(src, 1)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ROC"))
-	}
+	rsi := ROC(src, 1)
 	if rsi == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -110,10 +102,7 @@ func TestSeriesROCSuccess(t *testing.T) {
 
 		for i, v := range testTable {
 			src := OHLCVAttr(series, OHLCPropClose)
-			vw, err := ROC(src, v.lookback)
-			if err != nil {
-				t.Fatal(errors.Wrap(err, "error ROC"))
-			}
+			vw := ROC(src, v.lookback)
 			exp := v.vals[j]
 			if exp == 0 {
 				if vw.Val() != nil {
@@ -162,10 +151,7 @@ func TestSeriesROCNotEnoughData(t *testing.T) {
 
 	src := OHLCVAttr(series, OHLCPropClose)
 
-	vw, err := ROC(src, 4)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ROC"))
-	}
+	vw := ROC(src, 4)
 	if vw.Val() != nil {
 		t.Errorf("Expected nil but got %+v", *vw.Val())
 	}
@@ -174,8 +160,8 @@ func TestSeriesROCNotEnoughData(t *testing.T) {
 func TestMemoryLeakROC(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := ROC(prop, 3)
-		return err
+		ROC(prop, 3)
+		return nil
 	})
 }
 
@@ -202,10 +188,7 @@ func ExampleROC() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		roc, err := ROC(close, 4)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting roc"))
-		}
+		roc := ROC(close, 4)
 		log.Printf("ROC: %+v", roc.Val())
 	}
 }

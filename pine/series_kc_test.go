@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesKC tests no data scenario
@@ -20,10 +18,7 @@ func TestSeriesKC(t *testing.T) {
 	}
 	close := OHLCVAttr(series, OHLCPropClose)
 
-	m, u, l, err := KC(close, series, 3, 2.5, true)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error KC"))
-	}
+	m, u, l := KC(close, series, 3, 2.5, true)
 	if m == nil {
 		t.Error("Expected kc to be non nil but got nil")
 	}
@@ -45,10 +40,7 @@ func TestSeriesKCNoIteration(t *testing.T) {
 	}
 	close := OHLCVAttr(series, OHLCPropClose)
 
-	m, u, l, err := KC(close, series, 3, 2.5, true)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error KC"))
-	}
+	m, u, l := KC(close, series, 3, 2.5, true)
 	if m == nil {
 		t.Error("Expected kc to be non nil but got nil")
 	}
@@ -84,10 +76,7 @@ func TestSeriesKCIteration(t *testing.T) {
 	for i, v := range tests {
 		series.Next()
 		c := OHLCVAttr(series, OHLCPropClose)
-		m, u, l, err := KC(c, series, 4, 2.5, false)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error dmi"))
-		}
+		m, u, l := KC(c, series, 4, 2.5, false)
 
 		// list can be empty
 		if v == nil {
@@ -116,8 +105,8 @@ func TestSeriesKCIteration(t *testing.T) {
 
 func TestMemoryLeakKC(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
-		_, _, _, err := KC(OHLCVAttr(o, OHLCPropClose), o, 4, 2.5, false)
-		return err
+		KC(OHLCVAttr(o, OHLCPropClose), o, 4, 2.5, false)
+		return nil
 	})
 }
 
@@ -137,9 +126,6 @@ func ExampleKC() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	m, u, l, err := KC(OHLCVAttr(series, OHLCPropClose), series, 4, 2.5, false)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error KC"))
-	}
+	m, u, l := KC(OHLCVAttr(series, OHLCPropClose), series, 4, 2.5, false)
 	log.Printf("KC middle line: %+v, upper: %+v, lower: %+v", m.Val(), u.Val(), l.Val())
 }

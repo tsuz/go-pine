@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesATRNoData tests no data scenario
@@ -25,10 +23,7 @@ func TestSeriesATRNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	atr, err := ATR(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error ATR"))
-	}
+	atr := ATR(prop, 2)
 	if atr == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -54,10 +49,7 @@ func TestSeriesATRNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	atr, err := ATR(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RSI"))
-	}
+	atr := ATR(prop, 2)
 	if atr == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -99,10 +91,7 @@ func TestSeriesATRIteration(t *testing.T) {
 		series.Next()
 
 		prop := OHLCVAttr(series, OHLCPropTRHL)
-		atr, err := ATR(prop, 3)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error ATR"))
-		}
+		atr := ATR(prop, 3)
 		exp := v
 		if exp == 0 {
 			if atr.Val() != nil {
@@ -163,10 +152,7 @@ func TestSeriesATRNotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		atr, err := ATR(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RSI"))
-		}
+		atr := ATR(prop, int64(v.lookback))
 		if atr == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -179,8 +165,8 @@ func TestSeriesATRNotEnoughData(t *testing.T) {
 func TestMemoryLeakATR(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
-		_, err := ATR(c, 7)
-		return err
+		ATR(c, 7)
+		return nil
 	})
 }
 
@@ -194,7 +180,7 @@ func ExampleATR() {
 			break
 		}
 		tr := OHLCVAttr(series, OHLCPropTR)
-		atr, _ := ATR(tr, 3)
+		atr := ATR(tr, 3)
 		if atr.Val() != nil {
 			log.Printf("ATR value: %+v", *atr.Val())
 		}

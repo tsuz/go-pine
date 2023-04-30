@@ -9,7 +9,7 @@ import (
 // Parameters
 //   - p - ValueSeries: source data
 //   - l - int: lookback periods [1, ∞)
-func Sum(p ValueSeries, l int) (ValueSeries, error) {
+func Sum(p ValueSeries, l int) ValueSeries {
 
 	key := fmt.Sprintf("sum:%s:%d", p.ID(), l)
 	sum := getCache(key)
@@ -21,7 +21,7 @@ func Sum(p ValueSeries, l int) (ValueSeries, error) {
 
 	setCache(key, sum)
 
-	return sum, nil
+	return sum
 }
 
 // SumNoCache generates sum without caching
@@ -36,12 +36,12 @@ func generateSum(p, sum ValueSeries, l int) ValueSeries {
 	if stop == nil {
 		return sum
 	}
-	sum, _ = getSum(*stop, sum, p, l)
+	sum = getSum(*stop, sum, p, l)
 	sum.SetCurrent(stop.t)
 	return sum
 }
 
-func getSum(stop Value, sum ValueSeries, src ValueSeries, l int) (ValueSeries, error) {
+func getSum(stop Value, sum ValueSeries, src ValueSeries, l int) ValueSeries {
 
 	// keep track of the source values of sum, maximum of l+1 items
 	sumSrc := make([]float64, 0)
@@ -58,7 +58,7 @@ func getSum(stop Value, sum ValueSeries, src ValueSeries, l int) (ValueSeries, e
 
 	if startNew == nil {
 		// if nothing is to start with, then nothing can be done
-		return sum, nil
+		return sum
 	}
 
 	// populate source values to be summed
@@ -133,5 +133,5 @@ func getSum(stop Value, sum ValueSeries, src ValueSeries, l int) (ValueSeries, e
 		itervt = v.next.t
 	}
 
-	return sum, nil
+	return sum
 }

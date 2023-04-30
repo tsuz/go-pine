@@ -3,8 +3,6 @@ package pine
 import (
 	"fmt"
 	"math"
-
-	"github.com/pkg/errors"
 )
 
 // Variance generates a ValueSeries of variance.
@@ -19,7 +17,7 @@ import (
 //
 // TradingView's PineScript has an option to use an unbiased estimator, however; this function currently supports biased estimator.
 // Any effort to add a bias correction factor is welcome.
-func Variance(p ValueSeries, l int64) (ValueSeries, error) {
+func Variance(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("variance:%s:%d", p.ID(), l)
 	vari := getCache(key)
 	if vari == nil {
@@ -29,27 +27,21 @@ func Variance(p ValueSeries, l int64) (ValueSeries, error) {
 	// current available value
 	stop := p.GetCurrent()
 	if stop == nil {
-		return vari, nil
+		return vari
 	}
 
 	if vari.Get(stop.t) != nil {
-		return vari, nil
+		return vari
 	}
 
-	sma, err := SMA(p, l)
-	if err != nil {
-		return vari, errors.Wrap(err, "error getting sma")
-	}
+	sma := SMA(p, l)
 
 	meanv := sma.Get(stop.t)
 	if meanv == nil {
-		return vari, nil
+		return vari
 	}
 	diff := SubConstNoCache(p, meanv.v)
-	sqrt, err := Pow(diff, 2)
-	if err != nil {
-		return vari, errors.Wrap(err, "error pow(2)")
-	}
+	sqrt := Pow(diff, 2)
 	sum := SumNoCache(sqrt, int(l))
 	denom := math.Max(float64(l-1), 1)
 	vari = DivConstNoCache(sum, denom)
@@ -58,5 +50,5 @@ func Variance(p ValueSeries, l int64) (ValueSeries, error) {
 
 	setCache(key, vari)
 
-	return vari, nil
+	return vari
 }

@@ -25,10 +25,7 @@ func TestSeriesVarianceNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	variance, err := Variance(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Variance"))
-	}
+	variance := Variance(prop, 2)
 	if variance == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -95,10 +92,7 @@ func TestSeriesVarianceIteration(t *testing.T) {
 		series.Next()
 
 		prop := OHLCVAttr(series, OHLCPropClose)
-		variance, err := Variance(prop, 3)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error Variance"))
-		}
+		variance := Variance(prop, 3)
 		exp := v
 		if exp == 0 {
 			if variance.Val() != nil {
@@ -159,10 +153,7 @@ func TestSeriesVarianceNotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		variance, err := Variance(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RSI"))
-		}
+		variance := Variance(prop, int64(v.lookback))
 		if variance == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -175,8 +166,8 @@ func TestSeriesVarianceNotEnoughData(t *testing.T) {
 func TestMemoryLeakVariance(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := Variance(prop, 10)
-		return err
+		Variance(prop, 10)
+		return nil
 	})
 }
 
@@ -203,10 +194,7 @@ func ExampleVariance() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		variance, err := Variance(close, 20)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting variance"))
-		}
+		variance := Variance(close, 20)
 		log.Printf("Variance: %+v", variance.Val())
 	}
 }

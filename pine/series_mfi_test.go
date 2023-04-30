@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesMFI tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesMFI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mfi, err := MFI(series, 3)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error MFI"))
-	}
+	mfi := MFI(series, 3)
 	if mfi == nil {
 		t.Error("Expected mfi to be non nil but got nil")
 	}
@@ -52,10 +47,7 @@ func TestSeriesMFINoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mfi, err := MFI(series, 3)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error MFI"))
-	}
+	mfi := MFI(series, 3)
 	if mfi == nil {
 		t.Error("Expected mfi to be non nil but got nil")
 	}
@@ -84,10 +76,7 @@ func TestSeriesMFIIteration(t *testing.T) {
 
 	for i, v := range tests {
 		series.Next()
-		mfi, err := MFI(series, 4)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error mfi"))
-		}
+		mfi := MFI(series, 4)
 
 		// mfi line
 		if (mfi.Val() == nil) != (v == nil) {
@@ -106,8 +95,8 @@ func TestSeriesMFIIteration(t *testing.T) {
 
 func TestMemoryLeakMFI(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
-		_, err := MFI(o, 12)
-		return err
+		MFI(o, 12)
+		return nil
 	})
 }
 
@@ -127,9 +116,6 @@ func ExampleMFI() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	mfi, err := MFI(series, 12)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error MFI"))
-	}
+	mfi := MFI(series, 12)
 	log.Printf("MFI line: %+v", mfi.Val())
 }

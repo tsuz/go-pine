@@ -5,7 +5,7 @@ import (
 )
 
 // EMA generates a ValueSeries of exponential moving average.
-func EMA(p ValueSeries, l int64) (ValueSeries, error) {
+func EMA(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("ema:%s:%d", p.ID(), l)
 	ema := getCache(key)
 	if ema == nil {
@@ -13,7 +13,7 @@ func EMA(p ValueSeries, l int64) (ValueSeries, error) {
 	}
 
 	if p == nil || p.GetCurrent() == nil {
-		return ema, nil
+		return ema
 	}
 
 	// current available value
@@ -25,7 +25,7 @@ func EMA(p ValueSeries, l int64) (ValueSeries, error) {
 
 	ema.SetCurrent(stop.t)
 
-	return ema, nil
+	return ema
 }
 
 func getEMA(stop *Value, vs ValueSeries, ema ValueSeries, l int64) ValueSeries {

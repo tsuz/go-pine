@@ -2,12 +2,10 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // MFI generates a ValueSeries of exponential moving average.
-func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
+func MFI(o OHLCVSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("mfi:%s:%d", o.ID(), l)
 	mfi := getCache(key)
 	if mfi == nil {
@@ -19,13 +17,10 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 
 	hlc3c := hlc3.GetCurrent()
 	if hlc3c == nil {
-		return mfi, nil
+		return mfi
 	}
 
-	chg, err := Change(hlc3, 1)
-	if err != nil {
-		return mfi, errors.Wrap(err, "error getting change")
-	}
+	chg := Change(hlc3, 1)
 
 	u := OperateWithNil(hlc3, chg, "mfiu", func(a, b *Value) *Value {
 		var v float64
@@ -64,15 +59,9 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 	uv := Mul(vol, u)
 	lv := Mul(vol, lo)
 
-	upper, err := Sum(uv, int(l))
-	if err != nil {
-		return mfi, errors.Wrap(err, "error getting sum for higher")
-	}
+	upper := Sum(uv, int(l))
 
-	lower, err := Sum(lv, int(l))
-	if err != nil {
-		return mfi, errors.Wrap(err, "error getting sum for lower")
-	}
+	lower := Sum(lv, int(l))
 
 	hundo := ReplaceAll(hlc3, 100)
 
@@ -82,5 +71,5 @@ func MFI(o OHLCVSeries, l int64) (ValueSeries, error) {
 
 	setCache(key, mfi)
 
-	return mfi, nil
+	return mfi
 }

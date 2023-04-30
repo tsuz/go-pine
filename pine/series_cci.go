@@ -2,12 +2,10 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // CCI generates a ValueSeries of exponential moving average.
-func CCI(tp ValueSeries, l int64) (ValueSeries, error) {
+func CCI(tp ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("cci:%s:%d", tp.ID(), l)
 	cci := getCache(key)
 	if cci == nil {
@@ -16,17 +14,14 @@ func CCI(tp ValueSeries, l int64) (ValueSeries, error) {
 
 	tpv := tp.GetCurrent()
 	if tpv == nil {
-		return cci, nil
+		return cci
 	}
 
-	ma, err := SMA(tp, l)
-	if err != nil {
-		return cci, errors.Wrap(err, "error sma")
-	}
+	ma := SMA(tp, l)
 
 	// need moving average to perform this
 	if ma.GetCurrent() == nil {
-		return cci, nil
+		return cci
 	}
 	mav := ma.GetCurrent().v
 	mdv := SubConstNoCache(tp, mav)
@@ -47,5 +42,5 @@ func CCI(tp ValueSeries, l int64) (ValueSeries, error) {
 
 	cci.SetCurrent(tpv.t)
 
-	return cci, nil
+	return cci
 }

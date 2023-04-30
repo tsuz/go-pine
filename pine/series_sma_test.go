@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesSMANoIteration tests this sceneario where there's no iteration yet
@@ -28,10 +26,7 @@ func TestSeriesSMANoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	sma, err := SMA(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error SMA"))
-	}
+	sma := SMA(prop, 2)
 	if sma.Val() != nil {
 		t.Errorf("Expected to be nil but got %+v", sma)
 	}
@@ -92,10 +87,7 @@ func TestSeriesSMAIteration3(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		sma, err := SMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error SMA"))
-		}
+		sma := SMA(prop, int64(v.lookback))
 
 		if sma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
@@ -163,10 +155,7 @@ func TestSeriesSMAIteration4(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		sma, err := SMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error SMA"))
-		}
+		sma := SMA(prop, int64(v.lookback))
 		if sma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -207,14 +196,8 @@ func TestSeriesSMANested(t *testing.T) {
 	for _, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		sma, err := SMA(prop, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error SMA"))
-		}
-		sma2, err := SMA(sma, int64(2))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error SMA2"))
-		}
+		sma := SMA(prop, 2)
+		sma2 := SMA(sma, int64(2))
 		if *sma2.Val() != v {
 			t.Errorf("expectd %+v but got %+v", v, *sma2.Val())
 		}
@@ -265,10 +248,7 @@ func TestSeriesSMANotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		sma, err := SMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error SMA"))
-		}
+		sma := SMA(prop, int64(v.lookback))
 		if sma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -281,8 +261,8 @@ func TestSeriesSMANotEnoughData(t *testing.T) {
 func TestMemoryLeakSMA(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := SMA(prop, 12)
-		return err
+		SMA(prop, 12)
+		return nil
 	})
 }
 
@@ -296,10 +276,7 @@ func ExampleSMA() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		sma, err := SMA(close, 50)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting sma"))
-		}
+		sma := SMA(close, 50)
 		log.Printf("SMA: %+v", sma.Val())
 	}
 }

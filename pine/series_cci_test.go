@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesCCI tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesCCI(t *testing.T) {
 	}
 	tp := OHLCVAttr(series, OHLCPropHLC3)
 
-	cci, err := CCI(tp, 3)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error CCI"))
-	}
+	cci := CCI(tp, 3)
 	if cci == nil {
 		t.Error("Expected cci to be non nil but got nil")
 	}
@@ -48,10 +43,7 @@ func TestSeriesCCINoIteration(t *testing.T) {
 	}
 	tp := OHLCVAttr(series, OHLCPropHLC3)
 
-	cci, err := CCI(tp, 3)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error CCI"))
-	}
+	cci := CCI(tp, 3)
 	if cci == nil {
 		t.Error("Expected cci to be non nil but got nil")
 	}
@@ -81,10 +73,7 @@ func TestSeriesCCIIteration(t *testing.T) {
 	for i, v := range tests {
 		series.Next()
 		tp := OHLCVAttr(series, OHLCPropHLC3)
-		cci, err := CCI(tp, 4)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error cci"))
-		}
+		cci := CCI(tp, 4)
 
 		// cci line
 		if (cci.Val() == nil) != (v == nil) {
@@ -104,8 +93,8 @@ func TestSeriesCCIIteration(t *testing.T) {
 func TestMemoryLeakCCI(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
-		_, err := CCI(c, 7)
-		return err
+		CCI(c, 7)
+		return nil
 	})
 }
 
@@ -127,9 +116,6 @@ func ExampleCCI() {
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
 	tp := OHLCVAttr(series, OHLCPropHLC3)
-	cci, err := CCI(tp, 12)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error CCI"))
-	}
+	cci := CCI(tp, 12)
 	log.Printf("CCI line: %+v", cci.Val())
 }

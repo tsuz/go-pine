@@ -11,14 +11,14 @@ type smaCalcItem struct {
 }
 
 // SMA generates a ValueSeries of simple moving averages
-func SMA(p ValueSeries, l int64) (ValueSeries, error) {
+func SMA(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("sma:%s:%d", p.ID(), l)
 	sma := getCache(key)
 	if sma == nil {
 		sma = NewValueSeries()
 	}
 	if p == nil || p.GetCurrent() == nil {
-		return sma, nil
+		return sma
 	}
 
 	// current available value
@@ -34,7 +34,7 @@ func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 
 		// time has not advanced. return cache
 		if val.t.Equal(stop.t) {
-			return sma, nil
+			return sma
 		}
 
 		// value exists, find where we need to start off
@@ -96,7 +96,7 @@ func SMA(p ValueSeries, l int64) (ValueSeries, error) {
 
 	sma.SetCurrent(stop.t)
 
-	return sma, nil
+	return sma
 }
 
 var cache map[string]ValueSeries = make(map[string]ValueSeries)
