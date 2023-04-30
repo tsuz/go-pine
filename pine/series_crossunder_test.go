@@ -20,10 +20,7 @@ func TestSeriesCrossunder(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossunder(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Crossunder"))
-	}
+	co := Crossunder(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -40,10 +37,7 @@ func TestSeriesCrossunderNoIteration(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossunder(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Crossunder"))
-	}
+	co := Crossunder(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -75,7 +69,7 @@ func TestSeriesCrossunderIteration(t *testing.T) {
 
 		c := OHLCVAttr(series, OHLCPropClose)
 		o := OHLCVAttr(series, OHLCPropOpen)
-		co, err := Crossunder(c, o)
+		co := Crossunder(c, o)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Crossunder"))
 		}
@@ -91,8 +85,8 @@ func TestMemoryLeakCrossunder(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
 		op := OHLCVAttr(o, OHLCPropOpen)
-		_, err := Crossunder(c, op)
-		return err
+		Crossunder(c, op)
+		return nil
 	})
 }
 
@@ -116,9 +110,6 @@ func ExampleCrossunder() {
 	series, _ := NewOHLCVSeries(data)
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossunder(c, o)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error Crossunder"))
-	}
+	co := Crossunder(c, o)
 	log.Printf("Did Crossunder? = %t", *co.Val() == 1.0)
 }

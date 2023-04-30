@@ -20,10 +20,7 @@ func TestSeriesCrossover(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossover(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Crossover"))
-	}
+	co := Crossover(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -40,10 +37,7 @@ func TestSeriesCrossoverNoIteration(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossover(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Crossover"))
-	}
+	co := Crossover(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -75,7 +69,7 @@ func TestSeriesCrossoverIteration(t *testing.T) {
 
 		c := OHLCVAttr(series, OHLCPropClose)
 		o := OHLCVAttr(series, OHLCPropOpen)
-		co, err := Crossover(c, o)
+		co := Crossover(c, o)
 		if err != nil {
 			t.Fatal(errors.Wrap(err, "error Crossover"))
 		}
@@ -91,8 +85,8 @@ func TestMemoryLeakCrossover(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
 		op := OHLCVAttr(o, OHLCPropOpen)
-		_, err := Crossover(c, op)
-		return err
+		Crossover(c, op)
+		return nil
 	})
 }
 
@@ -116,9 +110,6 @@ func ExampleCrossover() {
 	series, _ := NewOHLCVSeries(data)
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Crossover(c, o)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error Crossover"))
-	}
+	co := Crossover(c, o)
 	log.Printf("Did Crossover? = %t", *co.Val() == 1.0)
 }

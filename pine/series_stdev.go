@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // Stdev generates a ValueSeries of one standard deviation
@@ -17,7 +15,7 @@ import (
 //
 // TradingView's PineScript has an option to use an unbiased estimator, however; this function currently supports biased estimator.
 // Any effort to add a bias correction factor is welcome.
-func Stdev(p ValueSeries, l int64) (ValueSeries, error) {
+func Stdev(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("stdev:%s:%d", p.ID(), l)
 	stdev := getCache(key)
 	if stdev == nil {
@@ -27,25 +25,20 @@ func Stdev(p ValueSeries, l int64) (ValueSeries, error) {
 	// current available value
 	stop := p.GetCurrent()
 	if stop == nil {
-		return stdev, nil
+		return stdev
 	}
 
 	if stdev.Get(stop.t) != nil {
-		return stdev, nil
+		return stdev
 	}
 
-	vari, err := Variance(p, l)
-	if err != nil {
-		return nil, errors.Wrap(err, "error getting variance")
-	}
+	vari := Variance(p, l)
 
-	stdev, err = Pow(vari, 0.5)
-	if err != nil {
-		return stdev, errors.Wrap(err, "error pow(0.5)")
-	}
+	stdev = Pow(vari, 0.5)
+
 	setCache(key, stdev)
 
 	stdev.SetCurrent(stop.t)
 
-	return stdev, nil
+	return stdev
 }

@@ -14,6 +14,6 @@ package pine
 // The return values are:
 //   - ATR: ValueSeries - ATR
 //   - err: error
-func ATR(tr ValueSeries, l int64) (ValueSeries, error) {
+func ATR(tr ValueSeries, l int64) ValueSeries {
 	return RMA(tr, l)
 }

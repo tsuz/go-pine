@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesCross tests no data scenario
@@ -20,10 +18,7 @@ func TestSeriesCross(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Cross(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Cross"))
-	}
+	co := Cross(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -40,10 +35,7 @@ func TestSeriesCrossNoIteration(t *testing.T) {
 
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Cross(c, o)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Cross"))
-	}
+	co := Cross(c, o)
 	if co == nil {
 		t.Error("Expected co to be non nil but got nil")
 	}
@@ -75,10 +67,7 @@ func TestSeriesCrossIteration(t *testing.T) {
 
 		c := OHLCVAttr(series, OHLCPropClose)
 		o := OHLCVAttr(series, OHLCPropOpen)
-		co, err := Cross(c, o)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error Cross"))
-		}
+		co := Cross(c, o)
 
 		// Lower line
 		if *co.Val() != v {
@@ -91,8 +80,8 @@ func TestMemoryLeakCross(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		c := OHLCVAttr(o, OHLCPropClose)
 		op := OHLCVAttr(o, OHLCPropOpen)
-		_, err := Cross(c, op)
-		return err
+		Cross(c, op)
+		return nil
 	})
 }
 
@@ -116,9 +105,6 @@ func ExampleCross() {
 	series, _ := NewOHLCVSeries(data)
 	c := OHLCVAttr(series, OHLCPropClose)
 	o := OHLCVAttr(series, OHLCPropOpen)
-	co, err := Cross(c, o)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error Cross"))
-	}
+	co := Cross(c, o)
 	log.Printf("Did Cross? = %t", *co.Val() == 1.0)
 }

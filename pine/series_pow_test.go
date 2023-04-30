@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesPowNoData tests no data scenario
@@ -25,10 +23,7 @@ func TestSeriesPowNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	stdev, err := Pow(prop, 2.0)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Stdev"))
-	}
+	stdev := Pow(prop, 2.0)
 	if stdev == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -54,10 +49,7 @@ func TestSeriesPowNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	pow, err := Pow(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Pow"))
-	}
+	pow := Pow(prop, 2)
 	if pow == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -101,10 +93,7 @@ func TestSeriesPowIteration(t *testing.T) {
 
 		for i, v := range testTable {
 			prop := OHLCVAttr(series, OHLCPropClose)
-			pow, err := Pow(prop, v.exp)
-			if err != nil {
-				t.Fatal(errors.Wrap(err, "error ValueWhen"))
-			}
+			pow := Pow(prop, v.exp)
 			exp := v.vals[j]
 			if exp == 0 {
 				if pow.Val() != nil {
@@ -128,8 +117,8 @@ func TestSeriesPowIteration(t *testing.T) {
 func TestMemoryLeakPow(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := Pow(prop, 2)
-		return err
+		Pow(prop, 2)
+		return nil
 	})
 }
 
@@ -144,10 +133,7 @@ func ExamplePow() {
 
 		close := OHLCVAttr(series, OHLCPropClose)
 		added := AddConst(close, 3.0)
-		pow, err := Pow(added, 2)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error getting pow"))
-		}
+		pow := Pow(added, 2)
 		log.Printf("Pow: %+v", pow.Val())
 	}
 }

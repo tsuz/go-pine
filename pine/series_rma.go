@@ -6,7 +6,7 @@ import (
 
 // RMA generates a ValueSeries of the exponentially weighted moving average with alpha = 1 / length.
 // This is equivalent to J. Welles Wilder's smoothed moving average.
-func RMA(p ValueSeries, l int64) (ValueSeries, error) {
+func RMA(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("rma:%s:%d", p.ID(), l)
 	rma := getCache(key)
 	if rma == nil {
@@ -14,7 +14,7 @@ func RMA(p ValueSeries, l int64) (ValueSeries, error) {
 	}
 
 	if p == nil || p.GetCurrent() == nil {
-		return rma, nil
+		return rma
 	}
 
 	// current available value
@@ -26,7 +26,7 @@ func RMA(p ValueSeries, l int64) (ValueSeries, error) {
 
 	rma.SetCurrent(stop.t)
 
-	return rma, nil
+	return rma
 }
 
 func getRMA(stop *Value, vs ValueSeries, rma ValueSeries, l int64) ValueSeries {

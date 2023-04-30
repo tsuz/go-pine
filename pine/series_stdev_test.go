@@ -25,10 +25,7 @@ func TestSeriesStdevNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	stdev, err := Stdev(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error Stdev"))
-	}
+	stdev := Stdev(prop, 2)
 	if stdev == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -95,10 +92,7 @@ func TestSeriesStdevIteration(t *testing.T) {
 		series.Next()
 
 		prop := OHLCVAttr(series, OHLCPropClose)
-		stdev, err := Stdev(prop, 3)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error Stdev"))
-		}
+		stdev := Stdev(prop, 3)
 		exp := v
 		if exp == 0 {
 			if stdev.Val() != nil {
@@ -159,10 +153,7 @@ func TestSeriesStdevNotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		stdev, err := Stdev(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RSI"))
-		}
+		stdev := Stdev(prop, int64(v.lookback))
 		if stdev == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -175,8 +166,8 @@ func TestSeriesStdevNotEnoughData(t *testing.T) {
 func TestMemoryLeakStdev(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := Stdev(prop, 12)
-		return err
+		Stdev(prop, 12)
+		return nil
 	})
 }
 
@@ -190,10 +181,7 @@ func ExampleStdev() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		stdev, err := Stdev(close, 12)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting stdev"))
-		}
+		stdev := Stdev(close, 12)
 		log.Printf("Stdev: %+v", stdev.Val())
 	}
 }

@@ -1,7 +1,7 @@
 package pine
 
 // Crossover generates ValueSeries of ketler channel's middle, upper and lower in that order.
-func Crossover(a, b ValueSeries) (ValueSeries, error) {
+func Crossover(a, b ValueSeries) ValueSeries {
 	c := OperateWithNil(a, b, "crossover", func(av, bv *Value) *Value {
 		if av == nil || bv == nil {
 			return nil
@@ -22,5 +22,5 @@ func Crossover(a, b ValueSeries) (ValueSeries, error) {
 		return zero
 	})
 
-	return c, nil
+	return c
 }

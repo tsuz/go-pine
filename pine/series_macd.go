@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // MACD generates a ValueSeries of MACD (moving average convergence/divergence).
@@ -27,7 +25,7 @@ import (
 //   - signalLine: ValueSeries - Signal Line
 //   - histLine: ValueSeries - MACD Histogram
 //   - err: error
-func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSeries, ValueSeries, error) {
+func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSeries, ValueSeries) {
 	macdlineKey := fmt.Sprintf("macdline:%s:%d:%d:%d", src.ID(), fastlen, slowlen, siglen)
 	macdline := getCache(macdlineKey)
 	if macdline == nil {
@@ -50,31 +48,22 @@ func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSe
 	stop := src.GetCurrent()
 
 	if stop == nil {
-		return macdline, signalLine, macdHistogram, nil
+		return macdline, signalLine, macdHistogram
 	}
 
 	// latest value exists
 	if macdHistogram.Get(stop.t) != nil {
-		return macdline, signalLine, macdHistogram, nil
+		return macdline, signalLine, macdHistogram
 	}
 
-	fast, err := EMA(src, fastlen)
-	if err != nil {
-		return macdline, signalLine, macdHistogram, errors.Wrap(err, "error EMA fastlen")
-	}
+	fast := EMA(src, fastlen)
 
-	slow, err := EMA(src, slowlen)
-	if err != nil {
-		return macdline, signalLine, macdHistogram, errors.Wrap(err, "error EMA slowlen")
-	}
+	slow := EMA(src, slowlen)
 
 	macdline = Sub(fast, slow)
 	macdline.SetCurrent(stop.t)
 
-	signalLine, err = EMA(macdline, siglen)
-	if err != nil {
-		return macdline, signalLine, macdHistogram, errors.Wrap(err, "error macdline siglen")
-	}
+	signalLine = EMA(macdline, siglen)
 	signalLine.SetCurrent(stop.t)
 
 	macdHistogram = Sub(macdline, signalLine)
@@ -84,5 +73,5 @@ func MACD(src ValueSeries, fastlen, slowlen, siglen int64) (ValueSeries, ValueSe
 	setCache(signalLineKey, signalLine)
 	setCache(macdHistogramKey, macdHistogram)
 
-	return macdline, signalLine, macdHistogram, nil
+	return macdline, signalLine, macdHistogram
 }

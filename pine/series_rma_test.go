@@ -4,8 +4,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesRMANoData tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesRMANoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	rma, err := RMA(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RMA"))
-	}
+	rma := RMA(prop, 2)
 	if rma == nil {
 		t.Error("Expected to be non nil but got nil")
 	}
@@ -53,10 +48,7 @@ func TestSeriesRMANoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	rma, err := RMA(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RMA"))
-	}
+	rma := RMA(prop, 2)
 	if rma == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
@@ -120,10 +112,7 @@ func TestSeriesRMAIteration4(t *testing.T) {
 
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
-		rma, err := RMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RMA"))
-		}
+		rma := RMA(prop, int64(v.lookback))
 
 		if rma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
@@ -195,10 +184,7 @@ func TestSeriesRMAIteration3(t *testing.T) {
 
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
-		rma, err := RMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RMA"))
-		}
+		rma := RMA(prop, int64(v.lookback))
 
 		if rma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
@@ -241,14 +227,8 @@ func TestSeriesRMANested(t *testing.T) {
 	for _, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		rma, err := RMA(prop, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RMA"))
-		}
-		rma2, err := RMA(rma, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RMA2"))
-		}
+		rma := RMA(prop, 2)
+		rma2 := RMA(rma, 2)
 		if *rma2.Val() != v {
 			t.Errorf("expectd %+v but got %+v", v, *rma2.Val())
 		}
@@ -299,10 +279,7 @@ func TestSeriesRMANotEnoughData(t *testing.T) {
 	for i, v := range testTable {
 		prop := OHLCVAttr(series, OHLCPropClose)
 
-		rma, err := RMA(prop, int64(v.lookback))
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error RMA"))
-		}
+		rma := RMA(prop, int64(v.lookback))
 		if rma == nil {
 			t.Errorf("Expected to be non nil but got nil at idx: %d", i)
 		}
@@ -315,8 +292,8 @@ func TestSeriesRMANotEnoughData(t *testing.T) {
 func TestMemoryLeakRMA(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
 		prop := OHLCVAttr(o, OHLCPropClose)
-		_, err := RMA(prop, 12)
-		return err
+		RMA(prop, 12)
+		return nil
 	})
 }
 
@@ -330,10 +307,7 @@ func ExampleRMA() {
 		}
 
 		close := OHLCVAttr(series, OHLCPropClose)
-		rma, err := RMA(close, 12)
-		if err != nil {
-			log.Fatal(errors.Wrap(err, "error geting rma"))
-		}
+		rma := RMA(close, 12)
 		log.Printf("RMA: %+v", rma.Val())
 	}
 }

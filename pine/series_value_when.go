@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // ValueWhen generates a ValueSeries of float
@@ -11,8 +9,7 @@ import (
 //   - bs: ValueSeries - Value Series where values are 0.0, 1.0 (boolean)
 //   - src: ValueSeries - Value Series of the source
 //   - ocr: int - The occurrence of the condition. The numbering starts from 0 and goes back in time, so '0' is the most recent occurrence of `condition`, '1' is the second most recent and so forth. Must be an integer >= 0.
-func ValueWhen(bs, src ValueSeries, ocr int) (ValueSeries, error) {
-	var err error
+func ValueWhen(bs, src ValueSeries, ocr int) ValueSeries {
 	key := fmt.Sprintf("valuewhen:%s:%s:%d", bs.ID(), src.ID(), ocr)
 	vw := getCache(key)
 	if vw == nil {
@@ -23,22 +20,19 @@ func ValueWhen(bs, src ValueSeries, ocr int) (ValueSeries, error) {
 	stop := src.GetCurrent()
 
 	if stop == nil {
-		return vw, nil
+		return vw
 	}
 
-	vw, err = valueWhen(*stop, bs, src, vw, ocr)
-	if err != nil {
-		return vw, err
-	}
+	vw = valueWhen(*stop, bs, src, vw, ocr)
 
 	setCache(key, vw)
 
 	vw.SetCurrent(stop.t)
 
-	return vw, err
+	return vw
 }
 
-func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) (ValueSeries, error) {
+func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) ValueSeries {
 
 	var val *Value
 
@@ -53,7 +47,7 @@ func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) (ValueSeries, error
 	}
 
 	if val == nil {
-		return vw, errors.New("expected continuous but found fragmented data and cannot continue")
+		return vw
 	}
 
 	// populate src values if condition=1.0
@@ -106,5 +100,5 @@ func valueWhen(stop Value, bs, src, vw ValueSeries, ocr int) (ValueSeries, error
 		val = val.next
 	}
 
-	return vw, nil
+	return vw
 }

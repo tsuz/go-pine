@@ -2,12 +2,10 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // DMI generates a ValueSeries of directional movement index.
-func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, plus, minus ValueSeries, err error) {
+func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, plus, minus ValueSeries) {
 	adxkey := fmt.Sprintf("adx:%s:%d:%d", ohlcv.ID(), len, smoo)
 	adx = getCache(adxkey)
 	if adx == nil {
@@ -35,14 +33,8 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, plus, minus ValueSeries, err er
 	l := OHLCVAttr(ohlcv, OHLCPropLow)
 	tr := OHLCVAttr(ohlcv, OHLCPropTRHL)
 
-	up, err := Change(h, 1)
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error change")
-	}
-	down, err := Change(l, 1)
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error change")
-	}
+	up := Change(h, 1)
+	down := Change(l, 1)
 	plusdm := Operate(up, down, "dmi:uv", func(uv, dv float64) float64 {
 		dv = dv * -1
 		if uv > dv && uv > 0 {
@@ -57,18 +49,9 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, plus, minus ValueSeries, err er
 		}
 		return 0
 	})
-	trurange, err := RMA(tr, int64(len))
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error trurange")
-	}
-	plusdmrma, err := RMA(plusdm, int64(len))
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error RMA")
-	}
-	minusdmrma, err := RMA(minusdm, int64(len))
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error RMA")
-	}
+	trurange := RMA(tr, int64(len))
+	plusdmrma := RMA(plusdm, int64(len))
+	minusdmrma := RMA(minusdm, int64(len))
 	plus = MulConst(Div(plusdmrma, trurange), 100)
 	minus = MulConst(Div(minusdmrma, trurange), 100)
 
@@ -80,15 +63,12 @@ func DMI(ohlcv OHLCVSeries, len, smoo int) (adx, plus, minus ValueSeries, err er
 		return a
 	})
 
-	adxrma, err := RMA(Div(DiffAbs(plus, minus), denom), 3)
-	if err != nil {
-		return adx, plus, minus, errors.Wrap(err, "error RMA for adx")
-	}
+	adxrma := RMA(Div(DiffAbs(plus, minus), denom), 3)
 	adx = MulConst(adxrma, 100)
 
 	setCache(adxkey, adx)
 	setCache(pluskey, plus)
 	setCache(minuskey, minus)
 
-	return adx, plus, minus, nil
+	return adx, plus, minus
 }

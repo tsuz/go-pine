@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesMACDNoData tests no data scenario
@@ -25,10 +23,7 @@ func TestSeriesMACDNoData(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	mline, sigline, histline, err := MACD(prop, 12, 26, 9)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error MACD"))
-	}
+	mline, sigline, histline := MACD(prop, 12, 26, 9)
 	if mline == nil {
 		t.Error("Expected macdline to be non nil but got nil")
 	}
@@ -60,10 +55,7 @@ func TestSeriesMACDNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	mline, sigline, histline, err := MACD(prop, 12, 26, 9)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error MACD"))
-	}
+	mline, sigline, histline := MACD(prop, 12, 26, 9)
 	if mline == nil {
 		t.Error("Expected macdline to be non nil but got nil")
 	}
@@ -128,10 +120,7 @@ func TestSeriesMACDIteration(t *testing.T) {
 	for i, v := range testTable {
 		series.Next()
 		src := OHLCVAttr(series, OHLCPropClose)
-		macd, signal, histogram, err := MACD(src, 1, 2, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error macd"))
-		}
+		macd, signal, histogram := MACD(src, 1, 2, 2)
 
 		// macd line
 		if (macd.Val() == nil) != (v.macd == nil) {
@@ -173,8 +162,8 @@ func TestSeriesMACDIteration(t *testing.T) {
 
 func TestMemoryLeakMACD(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
-		_, _, _, err := MACD(OHLCVAttr(o, OHLCPropClose), 12, 26, 9)
-		return err
+		MACD(OHLCVAttr(o, OHLCPropClose), 12, 26, 9)
+		return nil
 	})
 }
 
@@ -196,10 +185,7 @@ func ExampleMACD() {
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
 	close := OHLCVAttr(series, OHLCPropClose)
-	mline, sigline, histline, err := MACD(close, 12, 26, 9)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error MACD"))
-	}
+	mline, sigline, histline := MACD(close, 12, 26, 9)
 	log.Printf("MACD line: %+v", mline.Val())
 	log.Printf("Signal line: %+v", sigline.Val())
 	log.Printf("Hist line: %+v", histline.Val())

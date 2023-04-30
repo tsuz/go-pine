@@ -3,8 +3,6 @@ package pine
 import (
 	"fmt"
 	"math"
-
-	"github.com/pkg/errors"
 )
 
 // Pow generates a ValueSeries of values from power function
@@ -12,8 +10,7 @@ import (
 // Parameters
 //   - p - ValueSeries: source data
 //   - exp - float64: exponent of the power function
-func Pow(src ValueSeries, exp float64) (ValueSeries, error) {
-	var err error
+func Pow(src ValueSeries, exp float64) ValueSeries {
 	key := fmt.Sprintf("pow:%s:%.8f", src.ID(), exp)
 	pow := getCache(key)
 	if pow == nil {
@@ -23,23 +20,19 @@ func Pow(src ValueSeries, exp float64) (ValueSeries, error) {
 	// current available value
 	stop := src.GetCurrent()
 	if stop == nil {
-		return pow, nil
+		return pow
 	}
 
-	pow, err = getPow(*stop, pow, src, exp)
-	if err != nil {
-		return pow, errors.Wrap(err, "error getsum")
-	}
-
+	pow = getPow(*stop, pow, src, exp)
 	// disable this for now
 	// setCache(key, pow)
 
 	pow.SetCurrent(stop.t)
 
-	return pow, nil
+	return pow
 }
 
-func getPow(stop Value, pow ValueSeries, src ValueSeries, exp float64) (ValueSeries, error) {
+func getPow(stop Value, pow ValueSeries, src ValueSeries, exp float64) ValueSeries {
 
 	var startNew *Value
 
@@ -54,7 +47,7 @@ func getPow(stop Value, pow ValueSeries, src ValueSeries, exp float64) (ValueSer
 
 	if startNew == nil {
 		// if nothing is to start with, then nothing can be done
-		return pow, nil
+		return pow
 	}
 
 	// first new time
@@ -78,5 +71,5 @@ func getPow(stop Value, pow ValueSeries, src ValueSeries, exp float64) (ValueSer
 		itervt = v.next.t
 	}
 
-	return pow, nil
+	return pow
 }

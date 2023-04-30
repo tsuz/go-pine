@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesDMI tests no data scenario
@@ -24,10 +22,7 @@ func TestSeriesDMI(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	adx, dip, dim, err := DMI(series, 15, 3)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error DMI"))
-	}
+	adx, dip, dim := DMI(series, 15, 3)
 	if dip == nil {
 		t.Error("Expected dip to be non nil but got nil")
 	}
@@ -54,10 +49,7 @@ func TestSeriesDMINoIteration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	adx, _, _, err := DMI(series, 3, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error DMI"))
-	}
+	adx, _, _ := DMI(series, 3, 2)
 	if adx == nil {
 		t.Error("Expected dmi to be non nil but got nil")
 	}
@@ -87,10 +79,7 @@ func TestSeriesDMIIteration(t *testing.T) {
 
 	for i, v := range tests {
 		series.Next()
-		adx, dmip, dmim, err := DMI(series, 4, 2)
-		if err != nil {
-			t.Fatal(errors.Wrap(err, "error dmi"))
-		}
+		adx, dmip, dmim := DMI(series, 4, 2)
 
 		// list can be empty
 		if v == nil {
@@ -120,8 +109,8 @@ func TestSeriesDMIIteration(t *testing.T) {
 
 func TestMemoryLeakDMI(t *testing.T) {
 	testMemoryLeak(t, func(o OHLCVSeries) error {
-		_, _, _, err := DMI(o, 4, 3)
-		return err
+		DMI(o, 4, 3)
+		return nil
 	})
 }
 
@@ -141,9 +130,6 @@ func ExampleDMI() {
 	start := time.Now()
 	data := OHLCVTestData(start, 10000, 5*60*1000)
 	series, _ := NewOHLCVSeries(data)
-	adx, dmip, dmim, err := DMI(series, 4, 3)
-	if err != nil {
-		log.Fatal(errors.Wrap(err, "error DMI"))
-	}
+	adx, dmip, dmim := DMI(series, 4, 3)
 	log.Printf("ADX: %+v, DI+: %+v, DI-: %+v", adx.Val(), dmip.Val(), dmim.Val())
 }

@@ -2,8 +2,6 @@ package pine
 
 import (
 	"fmt"
-
-	"github.com/pkg/errors"
 )
 
 // Change compares the current `source` value to its value `lookback` bars ago and returns the difference.
@@ -11,11 +9,7 @@ import (
 // arguments are
 //   - src: ValueSeries - Source data to seek difference
 //   - lookback: int - Lookback to compare the change
-func Change(src ValueSeries, lookback int) (ValueSeries, error) {
-	var err error
-	if lookback < 1 {
-		return nil, errors.New("Lookback must be 1 or greater")
-	}
+func Change(src ValueSeries, lookback int) ValueSeries {
 	key := fmt.Sprintf("change:%s:%s:%d", src.ID(), src.ID(), lookback)
 	chg := getCache(key)
 	if chg == nil {
@@ -26,22 +20,19 @@ func Change(src ValueSeries, lookback int) (ValueSeries, error) {
 	stop := src.GetCurrent()
 
 	if stop == nil {
-		return chg, nil
+		return chg
 	}
 
-	chg, err = change(*stop, src, chg, lookback)
-	if err != nil {
-		return chg, err
-	}
+	chg = change(*stop, src, chg, lookback)
 
 	setCache(key, chg)
 
 	chg.SetCurrent(stop.t)
 
-	return chg, err
+	return chg
 }
 
-func change(stop Value, src, chg ValueSeries, l int) (ValueSeries, error) {
+func change(stop Value, src, chg ValueSeries, l int) ValueSeries {
 
 	var val *Value
 
@@ -56,7 +47,7 @@ func change(stop Value, src, chg ValueSeries, l int) (ValueSeries, error) {
 	}
 
 	if val == nil {
-		return chg, errors.New("expected continuous but found fragmented data and cannot continue")
+		return chg
 	}
 
 	// populate src values
@@ -107,7 +98,7 @@ func change(stop Value, src, chg ValueSeries, l int) (ValueSeries, error) {
 		val = val.next
 	}
 
-	return chg, nil
+	return chg
 }
 
 func NewFloat64(v float64) *float64 {

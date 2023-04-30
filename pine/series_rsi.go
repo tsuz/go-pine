@@ -3,8 +3,6 @@ package pine
 import (
 	"fmt"
 	"math"
-
-	"github.com/pkg/errors"
 )
 
 // RSI generates a ValueSeries of relative strength index
@@ -242,14 +240,8 @@ func getRSI(stop *Value, vs ValueSeries, rsi ValueSeries, l int64) ValueSeries {
 		rsn = rsn.next
 	}
 
-	rmau, err := RMA(rsiu, l)
-	if err != nil {
-		panic(errors.Wrap(err, "Error calling RMA"))
-	}
-	rmad, err := RMA(rsid, l)
-	if err != nil {
-		panic(errors.Wrap(err, "Error calling RMA"))
-	}
+	rmau := RMA(rsiu, l)
+	rmad := RMA(rsid, l)
 
 	rmadiv := Div(rmau, rmad)
 
