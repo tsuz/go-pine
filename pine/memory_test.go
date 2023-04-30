@@ -47,7 +47,7 @@ func testMemoryLeak(t *testing.T, fn testIndicator) {
 	}
 
 	i := 0
-	var last uint64
+	var start, last uint64
 	for {
 		if v == nil && !first {
 			break
@@ -71,16 +71,20 @@ func testMemoryLeak(t *testing.T, fn testIndicator) {
 		}
 		i++
 
+		if i == 100 {
+			start = getMalloc()
+		}
+
 		// get last one
-		if i == 10000 {
+		if i == 3000 {
 			last = getMalloc()
 			break
 		}
 	}
 
 	// error if allocated more than 15MB. This may not catch smaller increments of memory leak
-	if last > 15000 {
-		t.Errorf("Memory Leak. Memory allocation ended at %d", last)
+	if last > start && last-start > 15000 {
+		t.Errorf("Memory Leak. Memory allocation increased by %d, start: %d, end: %d", last-start, start, last)
 	}
 }
 

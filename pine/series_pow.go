@@ -31,7 +31,8 @@ func Pow(src ValueSeries, exp float64) (ValueSeries, error) {
 		return pow, errors.Wrap(err, "error getsum")
 	}
 
-	setCache(key, pow)
+	// disable this for now
+	// setCache(key, pow)
 
 	pow.SetCurrent(stop.t)
 

@@ -2,14 +2,12 @@ package pine
 
 import (
 	"fmt"
-	"log"
 )
 
 func OperateWithNil(a, b ValueSeries, ns string, op func(a, b *Value) *Value) ValueSeries {
 	key := fmt.Sprintf("operationwnil:%s:%s:%s", a.ID(), b.ID(), ns)
 	dest := getCache(key)
 	if dest == nil {
-		log.Printf("New operation series %+v", key)
 		dest = NewValueSeries()
 	}
 
