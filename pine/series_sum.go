@@ -2,7 +2,6 @@ package pine
 
 import (
 	"fmt"
-	"log"
 )
 
 // Sum generates a ValueSeries of summation of previous values
@@ -15,7 +14,6 @@ func Sum(p ValueSeries, l int) (ValueSeries, error) {
 	key := fmt.Sprintf("sum:%s:%d", p.ID(), l)
 	sum := getCache(key)
 	if sum == nil {
-		log.Printf("New sum series: %+v", key)
 		sum = NewValueSeries()
 	}
 
