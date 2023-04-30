@@ -104,12 +104,12 @@ func TestSeriesMFIIteration(t *testing.T) {
 	}
 }
 
-// func TestMemoryLeakMFI(t *testing.T) {
-// 	testMemoryLeak(t, func(o OHLCVSeries) error {
-// 		_, err := MFI(o, 12)
-// 		return err
-// 	})
-// }
+func TestMemoryLeakMFI(t *testing.T) {
+	testMemoryLeak(t, func(o OHLCVSeries) error {
+		_, err := MFI(o, 12)
+		return err
+	})
+}
 
 func BenchmarkMFI(b *testing.B) {
 	// run the Fib function b.N times

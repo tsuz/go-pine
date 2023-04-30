@@ -4,6 +4,10 @@ import (
 	"fmt"
 )
 
+func Operate(a, b ValueSeries, ns string, op func(b, c float64) float64) ValueSeries {
+	return operation(a, b, ns, op)
+}
+
 // operation operates on a and b ValueSeries using op function. use ns as a unique cache identifier
 func operation(a, b ValueSeries, ns string, op func(a, b float64) float64) ValueSeries {
 	key := fmt.Sprintf("operation:%s:%s:%s", a.ID(), b.ID(), ns)
