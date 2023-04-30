@@ -14,7 +14,14 @@ func AddConst(a ValueSeries, c float64) ValueSeries {
 	key := fmt.Sprintf("addconst:%+v", c)
 	return operationConst(a, key, func(av float64) float64 {
 		return av + c
-	})
+	}, true)
+}
+
+func AddConstNoCache(a ValueSeries, c float64) ValueSeries {
+	key := fmt.Sprintf("addconst:%+v", c)
+	return operationConst(a, key, func(av float64) float64 {
+		return av + c
+	}, false)
 }
 
 func Copy(a ValueSeries) ValueSeries {
@@ -33,7 +40,14 @@ func DivConst(a ValueSeries, c float64) ValueSeries {
 	key := fmt.Sprintf("divconst:%+v", c)
 	return operationConst(a, key, func(av float64) float64 {
 		return av / c
-	})
+	}, true)
+}
+
+func DivConstNoCache(a ValueSeries, c float64) ValueSeries {
+	key := fmt.Sprintf("divconst:%+v", c)
+	return operationConst(a, key, func(av float64) float64 {
+		return av / c
+	}, false)
 }
 
 func Mul(a, b ValueSeries) ValueSeries {
@@ -46,7 +60,14 @@ func MulConst(a ValueSeries, c float64) ValueSeries {
 	key := fmt.Sprintf("mulconst:%+v", c)
 	return operationConst(a, key, func(av float64) float64 {
 		return av * c
-	})
+	}, true)
+}
+
+func MulConstNoCache(a ValueSeries, c float64) ValueSeries {
+	key := fmt.Sprintf("mulconst:%+v", c)
+	return operationConst(a, key, func(av float64) float64 {
+		return av * c
+	}, false)
 }
 
 func ReplaceAll(a ValueSeries, c float64) ValueSeries {
@@ -66,5 +87,12 @@ func SubConst(a ValueSeries, c float64) ValueSeries {
 	key := fmt.Sprintf("subconst:%+v", c)
 	return operationConst(a, key, func(av float64) float64 {
 		return av - c
-	})
+	}, true)
+}
+
+func SubConstNoCache(a ValueSeries, c float64) ValueSeries {
+	key := fmt.Sprintf("subconst:%+v", c)
+	return operationConst(a, key, func(av float64) float64 {
+		return av - c
+	}, false)
 }

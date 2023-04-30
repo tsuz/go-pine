@@ -78,7 +78,7 @@ func testMemoryLeak(t *testing.T, fn testIndicator) {
 		}
 	}
 
-	// error if it's more than 25% allocated - an arbitrary value
+	// error if allocated more than 15MB. This may not catch smaller increments of memory leak
 	if last > 15000 {
 		t.Errorf("Memory Leak. Memory allocation ended at %d", last)
 	}

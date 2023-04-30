@@ -45,21 +45,18 @@ func Variance(p ValueSeries, l int64) (ValueSeries, error) {
 	if meanv == nil {
 		return vari, nil
 	}
-	diff := SubConst(p, meanv.v)
+	diff := SubConstNoCache(p, meanv.v)
 	sqrt, err := Pow(diff, 2)
 	if err != nil {
 		return vari, errors.Wrap(err, "error pow(2)")
 	}
-	sum, err := Sum(sqrt, int(l))
-	if err != nil {
-		return vari, errors.Wrap(err, "error sum")
-	}
+	sum := SumNoCache(sqrt, int(l))
 	denom := math.Max(float64(l-1), 1)
-	vari = DivConst(sum, denom)
-
-	setCache(key, vari)
+	vari = DivConstNoCache(sum, denom)
 
 	vari.SetCurrent(stop.t)
+
+	setCache(key, vari)
 
 	return vari, nil
 }
