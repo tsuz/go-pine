@@ -19,10 +19,10 @@ func (m *mystrat) OnNextOHLCV(strategy backtest.Strategy, s pine.OHLCVSeries, st
 	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 	open := pine.OHLCVAttr(s, pine.OHLCPropOpen)
 
-	basis, _ := pine.SMA(close, short)
-	basis2, _ := pine.SMA(open, long)
+	basis := pine.SMA(close, short)
+	basis2 := pine.SMA(open, long)
 	rsi, _ := pine.RSI(close, short)
-	avg, _ := pine.SMA(rsi, long)
+	avg := pine.SMA(rsi, long)
 
 	basis3 := pine.Add(basis, basis2)
 	upperBB := pine.AddConst(basis3, span)
