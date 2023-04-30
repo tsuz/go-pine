@@ -18,7 +18,7 @@ func (m *mystrat) OnNextOHLCV(strategy Strategy, s pine.OHLCVSeries, state map[s
 	close := pine.OHLCVAttr(s, pine.OHLCPropClose)
 	rsi := pine.SMA(close, 2)
 	macd, _, _ := pine.MACD(close, 12, 26, 9)
-	stdev, _ := pine.Stdev(close, 24)
+	stdev := pine.Stdev(close, 24)
 	ema200 := pine.EMA(close, 200)
 
 	// we haven't seen enough candles to fulfill the lookback period
