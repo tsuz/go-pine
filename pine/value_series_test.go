@@ -75,7 +75,7 @@ func TestValueSeriesOperator(t *testing.T) {
 	a.Set(now.Add(time.Duration(1000*1e6)), 2)
 	a.Set(now.Add(time.Duration(2000*1e6)), 3)
 
-	c := a.Operate(a, func(b, c float64) float64 {
+	c := Operate(a, a, "testvalueseriesoperator", func(b, c float64) float64 {
 		return math.Mod(b, 2)
 	})
 
@@ -106,7 +106,7 @@ func TestValueSeriesOperatorWithNil(t *testing.T) {
 	b.Set(t2, 2)
 	b.Set(t3, 3)
 
-	c := b.OperateWithNil(a, func(bvalue, avalue *Value) *Value {
+	c := OperateWithNil(b, a, "testoperatewithnil", func(bvalue, avalue *Value) *Value {
 		if avalue == nil {
 			return &Value{
 				t: bvalue.t,

@@ -11,7 +11,6 @@ func OperateWithNil(a, b ValueSeries, ns string, op func(a, b *Value) *Value) Va
 		dest = NewValueSeries()
 	}
 
-	// copied := NewValueSeries()
 	f := a.GetFirst()
 	for {
 		if f == nil {
