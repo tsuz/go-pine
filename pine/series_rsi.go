@@ -12,7 +12,7 @@ import (
 //   - d = Count the number of p(t+1) - p(t) < 0 as losses
 //   - rs = ta.rma(u) / ta.rma(d)
 //   - res = 100 - 100 / (1 + rs)
-func RSI(p ValueSeries, l int64) (ValueSeries, error) {
+func RSI(p ValueSeries, l int64) ValueSeries {
 	key := fmt.Sprintf("rsi:%s:%d", p.ID(), l)
 	rsi := getCache(key)
 	if rsi == nil {
@@ -20,7 +20,7 @@ func RSI(p ValueSeries, l int64) (ValueSeries, error) {
 	}
 
 	if p == nil || p.GetCurrent() == nil {
-		return rsi, nil
+		return rsi
 	}
 
 	// current available value
@@ -32,7 +32,7 @@ func RSI(p ValueSeries, l int64) (ValueSeries, error) {
 
 	rsi.SetCurrent(stop.t)
 
-	return rsi, nil
+	return rsi
 }
 
 // getRSIU generates sum gains

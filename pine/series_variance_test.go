@@ -5,8 +5,6 @@ import (
 	"log"
 	"testing"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // TestSeriesVarianceNoData tests no data scenario
@@ -51,10 +49,7 @@ func TestSeriesVarianceNoIteration(t *testing.T) {
 	}
 
 	prop := OHLCVAttr(series, OHLCPropClose)
-	variance, err := RSI(prop, 2)
-	if err != nil {
-		t.Fatal(errors.Wrap(err, "error RSI"))
-	}
+	variance := RSI(prop, 2)
 	if variance == nil {
 		t.Error("Expected to be non-nil but got nil")
 	}
