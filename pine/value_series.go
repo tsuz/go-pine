@@ -21,7 +21,6 @@ type ValueSeries interface {
 	Len() int
 
 	Set(time.Time, float64)
-	SetAll(val float64)
 
 	Shift() bool
 
@@ -116,18 +115,6 @@ func (s *valueSeries) getValue(t int64) *Value {
 func (s *valueSeries) setValue(t int64, v *Value) {
 	s.timemap[t] = v
 	s.resize()
-}
-
-// Push will append at the end of the list. Replaces value if exists
-func (s *valueSeries) SetAll(val float64) {
-	f := s.GetFirst()
-	for {
-		if f == nil {
-			break
-		}
-		s.Set(f.t, val)
-		f = f.next
-	}
 }
 
 // Set appends to the end of the series. If same timestamp exists, its value will be replaced
