@@ -20,8 +20,6 @@ type ValueSeries interface {
 	// Gets size of the ValueSeries
 	Len() int
 
-	Copy() ValueSeries
-
 	Set(time.Time, float64)
 	SetAll(val float64)
 
@@ -63,23 +61,6 @@ func NewValueSeries() ValueSeries {
 		timemap: make(map[int64]*Value),
 	}
 	return v
-}
-
-func (s *valueSeries) Copy() ValueSeries {
-	newv := NewValueSeries()
-	f := s.GetFirst()
-	for {
-		if f == nil {
-			break
-		}
-		newv.Set(f.t, f.v)
-		f = f.next
-	}
-	cur := s.GetCurrent()
-	if cur != nil {
-		newv.SetCurrent(cur.t)
-	}
-	return newv
 }
 
 func (s *valueSeries) Len() int {
