@@ -1,6 +1,6 @@
 #  🍍 Go Pine
 
-Backtesting tool written in Golang inspired by PineScript from TradingView.
+Backtesting and live trading tool written in Golang inspired by PineScript from TradingView.
 
 [![Build Status](https://dl.circleci.com/status-badge/img/gh/tsuz/go-pine/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/tsuz/go-pine/tree/main)
 [![docs godocs](https://img.shields.io/badge/docs-godoc-brightgreen.svg?style=flat)](https://godoc.org/github.com/tsuz/go-pine)
